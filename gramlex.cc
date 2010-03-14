@@ -6,7 +6,7 @@
 #include "ccsstr.h"      // CCSubstrate
 #include "ckheap.h"      // checkHeap
 
-#include <fstream.h>     // cout, ifstream
+#include "sm-fstream.h"  // cout, ifstream
 
 
 // workaround for flex-2.5.31

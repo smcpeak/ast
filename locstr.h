@@ -4,7 +4,7 @@
 #ifndef LOCSTR_H
 #define LOCSTR_H
                                           
-#include <iostream.h>    // ostream
+#include "sm-iostream.h" // ostream
 #include <string.h>      // strlen
 
 #include "strtable.h"    // StringRef

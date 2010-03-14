@@ -11,7 +11,10 @@ LIBSMBASE := $(SMBASE)/libsmbase.a
 
 # external tools
 PERL := @PERL@
-MYFLEX := $(PERL) $(SMBASE)/run-flex.pl
+
+# this script is making the output uncompilable with flex-2.5.35 ...
+#MYFLEX := $(PERL) $(SMBASE)/run-flex.pl
+MYFLEX := flex
 
 # TODO: agramlex.yy.cc apparently has backing up, which should
 # ideally be removed; add -nobackup to the run-flex.pl command

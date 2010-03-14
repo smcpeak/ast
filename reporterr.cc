@@ -3,7 +3,7 @@
 
 #include "reporterr.h"      // this module
 
-#include <iostream.h>       // cout
+#include "sm-iostream.h"    // cout
 
 
 // --------------------- SilentReportError -------------------------

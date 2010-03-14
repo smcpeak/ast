@@ -8,7 +8,7 @@
 #include "agrampar.h"       // agrampar_yylex, etc.
 
 #include <stdlib.h>         // malloc, free
-#include <iostream.h>       // cout
+#include "sm-iostream.h"    // cout
 
 // enable debugging the parser
 #ifndef NDEBUG

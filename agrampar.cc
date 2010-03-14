@@ -12,7 +12,7 @@
 
 #include <string.h>          // strncmp
 #include <ctype.h>           // isalnum
-#include <fstream.h>         // ifstream
+#include "sm-fstream.h"      // ifstream
 
 
 string unbox(string *s)

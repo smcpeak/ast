@@ -1,0 +1,19 @@
+# .gitignore
+
+Makefile
+*.o
+*.d
+*.output
+astgen
+ccsstr
+config.status
+config.summary
+example.cc
+example.h
+ext1.cc
+ext1.h
+*.a
+agramlex.yy.cc
+testcout
+
+# EOF

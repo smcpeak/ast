@@ -17,7 +17,7 @@
 // FlexLexer.h myself.
 #include "sm_flexlexer.h"     // yyFlexLexer
 
-#include <iostream.h>         // istream
+#include "sm-iostream.h"      // istream
 
 // token code definitions
 #define TOK_EOF 0             // better name

@@ -9,7 +9,7 @@
 #include "str.h"         // string
 #include "locstr.h"      // LocString
 
-#include <iostream.h>    // ostream
+#include "sm-iostream.h" // ostream
 
 // ----------------- downcasts --------------------
 // the 'if' variants return NULL if the type isn't what's expected;

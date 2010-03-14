@@ -8,8 +8,9 @@
 
 #include "str.h"         // string
 #include "srcloc.h"      // SourceLoc
+#include "sm-stdint.h"   // uintptr_t
 
-typedef unsigned int xmlUniqueId_t;
+typedef uintptr_t xmlUniqueId_t;
 
 // manage identity canonicality; we now map addresses one to one to a
 // sequence number; this means that the ids should be canonical now
