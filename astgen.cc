@@ -2197,14 +2197,10 @@ void CGen::emitXmlVisitorImplementation()
         // prevent unused variable warning when compiling client code;
         // FIX: turn on when take away the '= NULL' code below.
 //          if (clazz->args.isNotEmpty() || clazz->decls.isNotEmpty()) {
-        out << "    " << clazz->name << " *obj0 = obj->as" << clazz->name << "();\n";
+        out << "    " << clazz->name << " * UNUSED obj0 = obj->as" << clazz->name << "();\n";
 //          }
         emitXmlCtorArgs(clazz->args, "obj0", clazz->name);
         emitXmlFields(clazz->decls, "obj0", clazz->name);
-
-        // prevent unused variable warning when compiling client code;
-        // FIX: remove when all kinds of fields are printed
-        out << "    obj0 = NULL;\n";
 
         out << "    break;\n";
         out << "    }\n";
