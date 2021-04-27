@@ -9,12 +9,14 @@ all: ccsstr astgen libast.a example.o ext1.o
 SMBASE := @SMBASE@
 LIBSMBASE := $(SMBASE)/libsmbase.a
 
+FLEXDIR := ../flex
+RUNFLEX := $(FLEXDIR)/flex
+FLEXINC := $(FLEXDIR)
+
+
 # external tools
 PERL := @PERL@
 
-# this script is making the output uncompilable with flex-2.5.35 ...
-#MYFLEX := $(PERL) $(SMBASE)/run-flex.pl
-MYFLEX := flex
 
 # TODO: agramlex.yy.cc apparently has backing up, which should
 # ideally be removed; add -nobackup to the run-flex.pl command
@@ -25,7 +27,7 @@ MYFLEX := flex
 CXX := $(CXX)
 
 # flags for the C and C++ compilers (and preprocessor)
-CCFLAGS := @CCFLAGS@ -I$(SMBASE)
+CCFLAGS := @CCFLAGS@ -I$(SMBASE) -I$(FLEXINC)
 
 # flags for the linker
 LDFLAGS := -g -Wall $(LIBSMBASE)
@@ -72,10 +74,9 @@ agrampar.tab.cc agrampar.tab.h agrampar.codes.h: agrampar.y
 
 agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
 
-# have to use sed to change the forward declaration of 'istream'
-# into an #include, so the std:: namespace doesn't cause a problem
+# Use $(RUNFLEX) to fix some C++ issues in the Flex output.
 agramlex.yy.cc: gramlex.h agramlex.lex agrampar.codes.h
-	$(MYFLEX) -o$@ agramlex.lex
+	$(RUNFLEX) -o$@ agramlex.lex
 
 
 # ------------------------- ccsstr ---------------------
