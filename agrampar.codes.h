@@ -1,34 +1,33 @@
-# define YYTOKENTYPE
-#define TOK_NAME 258
-#define TOK_INTLIT 259
-#define TOK_EMBEDDED_CODE 260
-#define TOK_LBRACE 261
-#define TOK_RBRACE 262
-#define TOK_SEMICOLON 263
-#define TOK_ARROW 264
-#define TOK_LPAREN 265
-#define TOK_RPAREN 266
-#define TOK_LANGLE 267
-#define TOK_RANGLE 268
-#define TOK_STAR 269
-#define TOK_AMPERSAND 270
-#define TOK_COMMA 271
-#define TOK_EQUALS 272
-#define TOK_COLON 273
-#define TOK_CLASS 274
-#define TOK_PUBLIC 275
-#define TOK_PRIVATE 276
-#define TOK_PROTECTED 277
-#define TOK_VERBATIM 278
-#define TOK_IMPL_VERBATIM 279
-#define TOK_XML_VERBATIM 280
-#define TOK_CTOR 281
-#define TOK_DTOR 282
-#define TOK_PURE_VIRTUAL 283
-#define TOK_CUSTOM 284
-#define TOK_OPTION 285
-#define TOK_NEW 286
-#define TOK_ENUM 287
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
+  enum yytokentype
+  {
+    TOK_NAME = 258,
+    TOK_INTLIT = 259,
+    TOK_EMBEDDED_CODE = 260,
+    TOK_LBRACE = 261,
+    TOK_RBRACE = 262,
+    TOK_SEMICOLON = 263,
+    TOK_ARROW = 264,
+    TOK_LPAREN = 265,
+    TOK_RPAREN = 266,
+    TOK_LANGLE = 267,
+    TOK_RANGLE = 268,
+    TOK_STAR = 269,
+    TOK_AMPERSAND = 270,
+    TOK_COMMA = 271,
+    TOK_EQUALS = 272,
+    TOK_COLON = 273,
+    TOK_CLASS = 274,
+    TOK_PUBLIC = 275,
+    TOK_PRIVATE = 276,
+    TOK_PROTECTED = 277,
+    TOK_VERBATIM = 278,
+    TOK_IMPL_VERBATIM = 279,
+    TOK_XML_VERBATIM = 280,
+    TOK_CTOR = 281,
+    TOK_DTOR = 282,
+    TOK_PURE_VIRTUAL = 283,
+    TOK_CUSTOM = 284,
+    TOK_OPTION = 285,
+    TOK_NEW = 286,
+    TOK_ENUM = 287
+  };

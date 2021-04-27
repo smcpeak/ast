@@ -18,12 +18,20 @@
 // permit having other parser's codes in the same program
 #define yyparse agrampar_yyparse
 
+// Arrange for the generated parser to invoke the right lexer.
+#define yylex(lvalp) agrampar_yylex(lvalp, parseParam)
+#define yyerror(param, msg) agrampar_yyerror(msg, param)
+
 %}
 
 
 /* ================== bison declarations =================== */
 // don't use globals
-%pure_parser
+%pure-parser
+
+/* The yyparse function shall accept this 'parseParam' parameter
+ * so it is available in rules. */
+%parse-param {ASTParseParams *parseParam}
 
 
 /* ===================== tokens ============================ */
@@ -114,7 +122,7 @@
 /* start symbol */
 /* yields ASTSpecFile, though really $$ isn't used.. */
 StartSymbol: Input
-               { $$ = *((ASTSpecFile**)parseParam) = new ASTSpecFile($1); }
+               { $$ = parseParam->treeTop = new ASTSpecFile($1); }
            ;
 
 /* sequence of toplevel forms */

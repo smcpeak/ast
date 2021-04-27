@@ -54,23 +54,20 @@ config.status: configure.pl $(SMBASE)/sm_config.pm
 
 
 # ---------------------- intermediate files -------------------
-# for bison-1.28:
-  # unfortunately, the way bison.simple declares YYSTYPE precludes a proper
-  # declaration of yylex(), unless I modify it as below; the 'grep' is so
-  # I have a .h file without the union, since the union refers to types
-  # whose declarations I'd like to avoid spreading everywhere
-# for bison-1.875:
-  # g++ doesn't like __attribute__((__unused__))
+# Run bison.  I am currently using bison-3.0.4.
 agrampar.tab.cc agrampar.tab.h agrampar.codes.h: agrampar.y
 	bison -d -v agrampar.y
-	mv -f agrampar.tab.c tmp
-	sed -e 's/typedef union {/typedef union YYSTYPE {/' \
-	    -e 's/__attribute__ ((__unused__))//' \
-	  < tmp > agrampar.tab.cc
-	mv -f agrampar.tab.h tmp
-	sed -e 's/typedef union {/typedef union YYSTYPE {/' < tmp > agrampar.tab.h
-	rm tmp
-	grep '# *define' agrampar.tab.h > agrampar.codes.h
+	@#
+	@# I will be compiling the output as C++.
+	@#
+	mv -f agrampar.tab.c agrampar.tab.cc
+	@#
+	@# This extracts the declaration of "enum yytokentype" and
+	@# puts it into agrampar.codes.h.  That way I can use the
+	@# token codes in the lexer without also having to declare
+	@# everything that is in the YYSTYPE union.
+	@#
+	sed -n -e '/enum yytokentype/,/};/p' < agrampar.tab.h > agrampar.codes.h
 
 agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
 
