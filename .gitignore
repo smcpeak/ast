@@ -1,8 +1,10 @@
 # .gitignore
 
+.vscode
 Makefile
 *.o
 *.d
+*.exe
 *.output
 astgen
 ccsstr
