@@ -60,7 +60,7 @@ public:
 
 public:
   TF_verbatim(string _code)
-    : code(_code) 
+    : code(_code)
   {}
   virtual ~TF_verbatim() {}
 
@@ -88,7 +88,7 @@ public:
   enum { TYPE_TAG = ASTCLASS };
 
   virtual void debugPrint(ostream &os, int indent) const;
-  
+
   public: bool hasChildren() const { return ctors.isNotEmpty(); }
 };
 
@@ -125,7 +125,7 @@ public:
   ~ASTCtor() {}
 
   void debugPrint(ostream &os, int indent) const;
-  
+
   public: string kindName() const;
 };
 

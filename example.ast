@@ -37,7 +37,7 @@ class Node (
 ) {
   public Node *next;
   ctor next=NULL;
-  
+
   public(field) int w = 3;
   public FakeList<Node> *listptr = NULL;
 
@@ -109,7 +109,7 @@ class HasLastArgs(int x)(int w) {
 }
 
 class SomethingElse(int x, int y) {
-  custom substituteClone 
+  custom substituteClone
     { return new SomethingElse(x,y); /*my own clone() code*/ }
 }
 

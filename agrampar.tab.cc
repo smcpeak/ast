@@ -1408,8 +1408,8 @@ yyreduce:
 
   case 10:
 #line 142 "agrampar.y" /* yacc.c:1646  */
-    { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-3].str)); 
-           (yyval.tfClass)->super->args.steal((yyvsp[-2].ctorArgList)); 
+    { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-3].str));
+           (yyval.tfClass)->super->args.steal((yyvsp[-2].ctorArgList));
            (yyval.tfClass)->super->bases.steal((yyvsp[-1].baseClassList)); }
 #line 1415 "agrampar.tab.c" /* yacc.c:1646  */
     break;

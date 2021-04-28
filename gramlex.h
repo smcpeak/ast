@@ -55,7 +55,7 @@ public:      // types
     virtual void reportWarning(rostring msg);
   };
   friend class AltReportError;
-  
+
 public:      // data
   // exposed so a user-provided 'embedded' can use it
   AltReportError altReporter;
@@ -90,7 +90,7 @@ private:     // data
   bool allowInit;                  // true if embedded can have an initializer
 
   int prevState;                   // so /**/ doesn't change start state
-  
+
   int prevToken;                   // last token code yielded (ugly hack)
 
 public:      // data
@@ -114,17 +114,17 @@ private:     // funcs
   GrammarLexer(GrammarLexer const &);
 
   // called to advance the column count
-  void advCol(int n) 
+  void advCol(int n)
     { fileState.loc = sourceLocManager->advCol(fileState.loc, n); }
 
   // called when a newline is encountered
   void newLine()
     { fileState.loc = sourceLocManager->advLine(fileState.loc); }
-  
+
   // adds a string with only the specified # of chars; writes (but
   // then restores) a null terminator if necessary, so 'str' isn't const
   StringRef addString(char *str, int len) const;
-                                        
+
   // nominally true if 'ch' equals 'embedFinish', but with a niggle
   bool embedFinishMatches(char ch) const;
 
@@ -166,11 +166,11 @@ public:      // funcs
   }
 
   // info about location of current token
-  char const *curFname() const 
+  char const *curFname() const
     { return sourceLocManager->getFile(tokenStartLoc); }
-  int curLine() const 
+  int curLine() const
     { return sourceLocManager->getLine(tokenStartLoc); }
-  int curCol() const 
+  int curCol() const
     { return sourceLocManager->getCol(tokenStartLoc); }
   SourceLoc curLoc() const { return tokenStartLoc; }
   string curLocStr() const;    // string with file/line/col
@@ -188,7 +188,7 @@ public:      // funcs
   void recursivelyProcess(rostring fname, istream * /*owner*/ source);
   void popRecursiveFile();
   bool hasPendingFiles() const;
-  
+
   // ReportError funcs
   virtual void reportError(rostring msg);
   virtual void reportWarning(rostring msg);

@@ -155,12 +155,12 @@ SLWHITE   [ \t]
     // redesign the verbatim-field syntax at some point to eliminate
     // this problem, but since I don't know what a good syntax might
     // be, I'll leave things alone for now.
-    
+
     // better not have used a paren..
     if (yytext[yyleng-1] == '(') {
       // I'm tempted to make a smart-ass error message... resisting...... *phew*!
       err("don't put a paren after a base class access control keyword");
-      
+
       // now I'm tempted to change the error reporting so that all
       // error messages are prefixed with "(SNL donatella versaci
       // voice) you crazy bitch!"  hmm.. maybe too much sugar today?

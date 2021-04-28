@@ -27,7 +27,7 @@ string FileLocation::toString() const
 
 
 void FileLocation::advance(char const *text, int length)
-{ 
+{
   // can't advance an invalid location
   xassert(validLoc());
 
@@ -63,7 +63,7 @@ SourceFile::~SourceFile()
 // ------------------- SourceLocation --------------------
 void SourceLocation::xfer(Flatten &flat)
 {
-  if (flat.writing()) { 
+  if (flat.writing()) {
     char *str = file? file->filename.pchar() : NULL;
     flat.xferCharString(str);
   }
@@ -85,7 +85,7 @@ void SourceLocation::xfer(Flatten &flat)
 
 
 char const *SourceLocation::fname() const
-{ 
+{
   if (file) {
     return file->filename;
   }

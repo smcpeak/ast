@@ -27,11 +27,11 @@ class ToplevelForm {
               ASTList<ASTClass> ctors) {
        public bool hasChildren() const { return ctors.isNotEmpty(); };
      }
-   
+
   // a generic option: first word specifies the kind of option, and
   // additional words (if any) are arguments
   -> TF_option(string name, ASTList<string> args);
-  
+
   // generic custom/verbatim code
   -> TF_custom(CustomCode cust);
 

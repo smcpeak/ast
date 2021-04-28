@@ -3,7 +3,7 @@
 
 #ifndef LOCSTR_H
 #define LOCSTR_H
-                                          
+
 #include "sm-iostream.h" // ostream
 #include <string.h>      // strlen
 
@@ -51,7 +51,7 @@ public:    // funcs
   // when the string table isn't available
   bool isNull() const { return str == NULL; }
   bool isNonNull() const { return !isNull(); }
-  
+
   bool validLoc() const { return loc != SL_UNKNOWN; }
 };
 

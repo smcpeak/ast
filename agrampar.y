@@ -139,8 +139,8 @@ Input: /* empty */           { $$ = new ASTList<ToplevelForm>; }
 /* a class is a nonterminal in the abstract grammar */
 /* yields TF_class */
 Class: NewOpt "class" TOK_NAME CtorArgsOpt BaseClassesOpt ClassBody
-         { ($$=$6)->super->name = unbox($3); 
-           $$->super->args.steal($4); 
+         { ($$=$6)->super->name = unbox($3);
+           $$->super->args.steal($4);
            $$->super->bases.steal($5); }
      | NewOpt "class" TOK_NAME CtorArgs CtorArgs BaseClassesOpt ClassBody
          { ($$=$7)->super->name = unbox($3);
@@ -182,7 +182,7 @@ ClassMembersOpt
       { ($$=$1)->super->decls.append($2); }
   ;
 
-/* empty ctor args can have parens or not, at user's discretion */  
+/* empty ctor args can have parens or not, at user's discretion */
 /* yields ASTList<CtorArg> */
 CtorArgsOpt
   : /* empty */
@@ -305,7 +305,7 @@ Verbatim: "verbatim" Embedded
 Option: "option" TOK_NAME OptionArgs ";"
 	  { $$ = new TF_option(unbox($2), $3); }
       ;
-      
+
 /* yields ASTList<string> */
 OptionArgs: /*empty*/
               { $$ = new ASTList<string>; }

@@ -108,7 +108,7 @@ int main()
   test2();
   test3();
   test4();
-  
+
   printf("%d Foos leaked\n", Foo::count);
   return Foo::count;
 }

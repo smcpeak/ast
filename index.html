@@ -52,8 +52,8 @@ but I extended them in several ways:
 <ul>
 <li>You can have fields that are present in all variants; the 'name'
     field of class B, above, is an example.
-<li>You can have fields that are not initialized by arguments to the 
-    constructor, but instead have a default value, and behave like mutable 
+<li>You can have fields that are not initialized by arguments to the
+    constructor, but instead have a default value, and behave like mutable
     annotations.  The 'x' field of class B is an example.
 <li>The fields that <em>are</em> set in the constructor can have default
     values, using C++'s usual mechanism, so it's possible to add a field
@@ -154,7 +154,7 @@ Interface for reporting errors and warnings.
 
 <li><a href="strtable.h">strtable.h</a>,
     <a href="strtable.cc">strtable.cc</a>:
-StringTable, a global table of immutable strings.  Duplicate strings 
+StringTable, a global table of immutable strings.  Duplicate strings
 are mapped to the same entry, allowing pointer comparisons to suffice
 for string equality tests.
 

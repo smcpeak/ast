@@ -110,7 +110,7 @@ GrammarLexer::~GrammarLexer()
   }
 
   // now delete the original istream source
-  // 
+  //
   // 10/09/04: This used to say "fileState.source != cin", but that
   // invokes cin.operator void*(), which always returns 0 or -1 in
   // gcc-2.95.3's library.  I believe I intended to compare addresses,
@@ -133,7 +133,7 @@ int GrammarLexer::yylexInc()
 {
   // get raw token
   int code = yylex();
-  
+
   // save this code for next time; part of what makes this hack
   // problematic is that this assignment is only performed if the
   // client calls 'yylexInc'..
@@ -269,7 +269,7 @@ void GrammarLexer::errorIllegalCharacter(char ch)
 void GrammarLexer::recursivelyProcess(rostring fname, istream *source)
 {
   trace("lex") << "recursively processing " << fname << endl;
-                       
+
   // grab current buffer; this is necessary because when we
   // tried to grab it in the ctor it was NULL
   fileState.bufstate = yy_current_buffer;
@@ -292,7 +292,7 @@ void GrammarLexer::recursivelyProcess(rostring fname, istream *source)
 
 void GrammarLexer::popRecursiveFile()
 {
-  trace("lex") << "done processing " <<     
+  trace("lex") << "done processing " <<
     sourceLocManager->getFile(fileState.loc) << endl;
 
   // among other things, this prevents us from accidentally deleting
@@ -308,7 +308,7 @@ void GrammarLexer::popRecursiveFile()
   FileState *st = fileStack.removeAt(0);
   fileState = *st;
   delete st;
-  
+
   // point flex at the new (old) buffer
   yy_switch_to_buffer(fileState.bufstate);
 }
@@ -346,14 +346,14 @@ int main(int argc)
            << ": " << lexer.curFuncBody()
            << endl;
     }
-    
+
     else if (code == TOK_INCLUDE) {
       // if I use yylexInc above, this is never reached
       cout << "include at " << lexer.curLocStr()
            << ": filename is `" << lexer.includeFileName.pcharc()
            << "'\n";
     }
-    
+
     else {
       cout << "token at " << lexer.curLocStr()
            << ": code=" << code

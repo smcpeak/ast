@@ -162,12 +162,12 @@ string CCSubstrate::getDeclName() const
   // just before the first '(' is the function's name
   char const *start = text.c_str();
   char const *p = start;
-  
+
   // find first '('
   while (*p && *p!='(') { p++; }
   if (!*p) {
     xformat("missing '('");
-  }             
+  }
   if (p == start) {
     xformat("missing name");
   }
@@ -179,13 +179,13 @@ string CCSubstrate::getDeclName() const
     xformat("missing name");
   }
   char const *nameEnd = p+1;    // char just past last
-  
+
   // move backward through the name
-  while (p>=start && 
+  while (p>=start &&
          (isalnum(*p) || *p=='_'))
     { p--; }
   p++;    // move back to most recent legal char
-  
+
   // done
   return substring(p, nameEnd-p);
 }

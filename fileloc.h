@@ -122,7 +122,7 @@ inline string toString(SourceLocation const &loc)
 class SourceFileList {
 private:     // data
   ObjList<SourceFile> files;
-  
+
 public:
   SourceFileList();
   ~SourceFileList();
@@ -140,7 +140,7 @@ public:
 extern SourceFileList sourceFileList;
 
 
-// macro for obtaining a source location that points at the 
+// macro for obtaining a source location that points at the
 // point in the source code where this macro is invoked
 #define HERE_SOURCELOCATION                        \
   SourceLocation(FileLocation(__LINE__, 1),        \
