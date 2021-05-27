@@ -16,6 +16,7 @@ ext1.cc
 ext1.h
 *.a
 agramlex.yy.cc
+agramlex.yy.h
 testcout
 
 # EOF

@@ -6,28 +6,22 @@ all: ccsstr astgen libast.a example.o ext1.o
 
 
 # directories of other software
-SMBASE := @SMBASE@
+SMBASE    := @SMBASE@
 LIBSMBASE := $(SMBASE)/libsmbase.a
 
-FLEXDIR := ../flex
-RUNFLEX := $(FLEXDIR)/flex
-FLEXINC := $(FLEXDIR)
+SMFLEXDIR := ../smflex
+SMFLEX    := $(SMFLEXDIR)/smflex
 
 
 # external tools
 PERL := @PERL@
 
 
-# TODO: agramlex.yy.cc apparently has backing up, which should
-# ideally be removed; add -nobackup to the run-flex.pl command
-# line to see this
-
-
 # C++ compiler, etc.
 CXX := $(CXX)
 
 # flags for the C and C++ compilers (and preprocessor)
-CCFLAGS := @CCFLAGS@ -I$(SMBASE) -I$(FLEXINC)
+CCFLAGS := @CCFLAGS@ -I$(SMBASE)
 
 # flags for the linker
 LDFLAGS := -g -Wall $(LIBSMBASE)
@@ -55,6 +49,8 @@ config.status: configure.pl $(SMBASE)/sm_config.pm
 
 # ---------------------- intermediate files -------------------
 # Run bison.  I am currently using bison-3.0.4.
+#
+# TODO: Are rules with multiple targets safe?
 agrampar.tab.cc agrampar.tab.h agrampar.codes.h: agrampar.y
 	bison -d -v agrampar.y
 	@#
@@ -71,9 +67,12 @@ agrampar.tab.cc agrampar.tab.h agrampar.codes.h: agrampar.y
 
 agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
 
-# Use $(RUNFLEX) to fix some C++ issues in the Flex output.
-agramlex.yy.cc: gramlex.h agramlex.lex agrampar.codes.h
-	$(RUNFLEX) -o$@ agramlex.lex
+agramlex.yy.cc: agramlex.lex
+	$(SMFLEX) -o$@ agramlex.lex
+
+# Tell 'make' that it has to run smflex to get agramlex.yy.h.
+agramlex.yy.h: agramlex.yy.cc
+	@# Nothing needed.
 
 
 # ------------------------- ccsstr ---------------------
@@ -104,6 +103,9 @@ ASTGEN_OBJS := \
 # line because ast.hand.cc #includes it
 astgen: $(ASTGEN_OBJS) ast.ast.cc $(LIBSMBASE)
 	$(CXX) -o astgen $(ASTGEN_OBJS) $(LDFLAGS)
+
+# Dependencies on generated headers.
+gramlex.o: agramlex.yy.h
 
 
 # ---------------------- run astgen ----------------------

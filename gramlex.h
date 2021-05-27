@@ -7,16 +7,7 @@
 #define __GRAMLEX_H
 
 
-// This included file is part of the Flex distribution.  It is
-// installed in /usr/include on my Linux machine.  By including it, we
-// get the declaration of the yyFlexLexer class.  Note that the file
-// that flex generates, gramlex.yy.cc, also #includes this file.
-// Perhaps also worth mentioning: I'm developing this with flex 2.5.4.
-//
-// update: This approach was too problematic.  I've taken to distributing
-// FlexLexer.h myself.
-#include "sm_flexlexer.h"     // yyFlexLexer
-
+#include "agramlex.yy.h"      // yyFlexLexer
 #include "sm-iostream.h"      // istream
 
 // token code definitions
@@ -65,7 +56,7 @@ private:     // data
   struct FileState {
     SourceLoc loc;                 // location in the file
     istream *source;               // (owner?) source stream
-    yy_buffer_state *bufstate;     // (owner?) flex's internal buffer state
+    yy_buffer_state_t *bufstate;   // (owner?) flex's internal buffer state
 
   public:
     FileState(rostring filename, istream *source);
@@ -121,9 +112,8 @@ private:     // funcs
   void newLine()
     { fileState.loc = sourceLocManager->advLine(fileState.loc); }
 
-  // adds a string with only the specified # of chars; writes (but
-  // then restores) a null terminator if necessary, so 'str' isn't const
-  StringRef addString(char *str, int len) const;
+  // adds a string with only the specified # of chars
+  StringRef addString(char const *str, int len) const;
 
   // nominally true if 'ch' equals 'embedFinish', but with a niggle
   bool embedFinishMatches(char ch) const;
@@ -142,7 +132,7 @@ public:      // funcs
 
   // get current token as a string
   StringRef curToken() const;
-  int curLen() const { return const_cast<GrammarLexer*>(this)->YYLeng(); }
+  int curLen() const { return this->yym_leng(); }
 
   // current token's embedded text
   StringRef curFuncBody() const;
@@ -152,7 +142,7 @@ public:      // funcs
   // read the next token and return its code; returns TOK_EOF for end of file;
   // this function is defined in flex's output source code; this one
   // *does* return TOK_INCLUDE
-  virtual int yylex();
+  int yym_lex();
 
   // similar to yylex, but process TOK_INCLUDE internally
   int yylexInc();

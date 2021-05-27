@@ -2,6 +2,8 @@
  * lexical analyzer for my AST input format
  */
 
+%smflex 100
+
 /* ----------------- C definitions -------------------- */
 %{
 
@@ -17,16 +19,13 @@
 
 // for maintaining column count
 #define TOKEN_START  tokenStartLoc = fileState.loc /* user ; */
-#define UPD_COL      advCol(yyleng) /* user ; */
+#define UPD_COL      advCol(YY_LENG) /* user ; */
 #define TOK_UPD_COL  TOKEN_START; UPD_COL  /* user ; */
 
 %}
 
 
 /* -------------------- flex options ------------------ */
-/* no wrapping is needed; setting this means we don't have to link with libfl.a */
-%option noyywrap
-
 /* don't use the default-echo rules */
 %option nodefault
 
@@ -85,14 +84,14 @@ SLWHITE   [ \t]
   /* C-style comments */
   TOKEN_START;
   UPD_COL;
-  BEGIN(C_COMMENT);
+  YY_SET_START_CONDITION(C_COMMENT);
 }
 
 <C_COMMENT>{
   "*/" {
     /* end of comment */
     UPD_COL;
-    BEGIN(INITIAL);
+    YY_SET_START_CONDITION(INITIAL);
   }
 
   . {
@@ -105,7 +104,7 @@ SLWHITE   [ \t]
   }
 
   <<EOF>> {
-    UPD_COL;      // <<EOF>> yyleng is 1!
+    UPD_COL;      // <<EOF>> YY_LENG is 1!
     errorUnterminatedComment();
     return TOK_EOF;
   }
@@ -115,7 +114,7 @@ SLWHITE   [ \t]
 "//".*"\n" {
   /* C++-style comment -- eat it */
   TOKEN_START;
-  advCol(yyleng-1);   // don't count the newline
+  advCol(YY_LENG-1);  // don't count the newline
   newLine();          // get it here
 }
 
@@ -157,7 +156,7 @@ SLWHITE   [ \t]
     // be, I'll leave things alone for now.
 
     // better not have used a paren..
-    if (yytext[yyleng-1] == '(') {
+    if (YY_TEXT[YY_LENG-1] == '(') {
       // I'm tempted to make a smart-ass error message... resisting...... *phew*!
       err("don't put a paren after a base class access control keyword");
 
@@ -170,27 +169,27 @@ SLWHITE   [ \t]
     // the keyword introduces a verbatim section
 
     // is a paren included?
-    if (yytext[yyleng-1] == '(') {
+    if (YY_TEXT[YY_LENG-1] == '(') {
       // don't drop into embedded just yet; wait for the ')'
       embedStart = ')';
-      yyless(yyleng-1);
+      YY_LESS_TEXT(YY_LENG-1);
       advCol(-1);
     }
     else {
-      BEGIN(EMBED);
+      YY_SET_START_CONDITION(EMBED);
     }
 
     embedded->reset();
     embedFinish = ';';
-    allowInit = yytext[0]=='p';
+    allowInit = YY_TEXT[0]=='p';
     embedMode = TOK_EMBEDDED_CODE;
   }
 
-  return yytext[0]=='c'?   TOK_CTOR :
-         yytext[0]=='d'?   TOK_DTOR :
-         yytext[2] == 'b'? TOK_PUBLIC :
-         yytext[2] == 'o'? TOK_PROTECTED :
-         yytext[2] == 'i'? TOK_PRIVATE :
+  return YY_TEXT[0]=='c'?   TOK_CTOR :
+         YY_TEXT[0]=='d'?   TOK_DTOR :
+         YY_TEXT[2] == 'b'? TOK_PUBLIC :
+         YY_TEXT[2] == 'o'? TOK_PROTECTED :
+         YY_TEXT[2] == 'i'? TOK_PRIVATE :
              /*[2] == 'r'*/TOK_PURE_VIRTUAL ;
 }
 
@@ -204,7 +203,7 @@ SLWHITE   [ \t]
 
   embedded->reset();
   embedMode = TOK_EMBEDDED_CODE;
-  switch (yytext[0]) {
+  switch (YY_TEXT[0]) {
   default: xfailure("can't happen");
   case 'v': return TOK_VERBATIM;
   case 'i': return TOK_IMPL_VERBATIM;
@@ -227,10 +226,10 @@ SLWHITE   [ \t]
   /* punctuation that can start embedded code */
 ("{"|")") {
   TOK_UPD_COL;
-  if (yytext[0] == embedStart) {
-    BEGIN(EMBED);
+  if (YY_TEXT[0] == embedStart) {
+    YY_SET_START_CONDITION(EMBED);
   }
-  return yytext[0]=='{'? TOK_LBRACE : TOK_RPAREN;
+  return YY_TEXT[0]=='{'? TOK_LBRACE : TOK_RPAREN;
 }
 
 
@@ -240,12 +239,12 @@ SLWHITE   [ \t]
   /* no special significance to lexer */
   [^;}=\n]+ {
     UPD_COL;
-    embedded->handle(yytext, yyleng, embedFinish);
+    embedded->handle(YY_TEXT, YY_LENG, embedFinish);
   }
 
   "\n" {
     newLine();
-    embedded->handle(yytext, yyleng, embedFinish);
+    embedded->handle(YY_TEXT, YY_LENG, embedFinish);
   }
 
   /* possibly closing delimiter */
@@ -254,14 +253,14 @@ SLWHITE   [ \t]
 
     // we're done if we're at a zero nesting level and the
     // delimiter matches ...
-    if (embedded->zeroNesting() && embedFinishMatches(yytext[0])) {
+    if (embedded->zeroNesting() && embedFinishMatches(YY_TEXT[0])) {
       // done
-      BEGIN(INITIAL);
+      YY_SET_START_CONDITION(INITIAL);
 
-      if (yytext[0] == '=') {
+      if (YY_TEXT[0] == '=') {
         // switch to a special mode that will handle the '=' and
         // jump right back into embedded mode
-        BEGIN(INITVAL);
+        YY_SET_START_CONDITION(INITVAL);
       }
       else {
         // turn off embedded detection
@@ -269,7 +268,7 @@ SLWHITE   [ \t]
       }
 
       // put back delimeter so parser will see it
-      yyless(yyleng-1);
+      YY_LESS_TEXT(YY_LENG-1);
       advCol(-1);
 
       // in the abstract grammar we don't have embedded expressions
@@ -283,7 +282,7 @@ SLWHITE   [ \t]
     }
     else {
       // embedded delimeter, mostly ignore it
-      embedded->handle(yytext, yyleng, embedFinish);
+      embedded->handle(YY_TEXT, YY_LENG, embedFinish);
     }
   }
 }
@@ -293,7 +292,7 @@ SLWHITE   [ \t]
   "=" {
     // yield the '=', switch back into embedded
     TOK_UPD_COL;
-    BEGIN(EMBED);
+    YY_SET_START_CONDITION(EMBED);
     embedded->reset();
     allowInit = false;
     return TOK_EQUALS;
@@ -307,7 +306,7 @@ SLWHITE   [ \t]
 
   /* -------- name literal --------- */
 {LETTER}({LETTER}|{DIGIT})* {
-  // get text from yytext and yyleng
+  // get text from YY_TEXT and YY_LENG
   TOK_UPD_COL;
   return TOK_NAME;
 }
@@ -321,7 +320,7 @@ SLWHITE   [ \t]
   /* --------- illegal ------------- */
 {ANY} {
   TOK_UPD_COL;
-  errorIllegalCharacter(yytext[0]);
+  errorIllegalCharacter(YY_TEXT[0]);
 }
 
 

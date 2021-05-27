@@ -9,19 +9,6 @@
 #include "sm-fstream.h"  // cout, ifstream
 
 
-// workaround for flex-2.5.31
-#ifdef FLEX_STD    // detect later versions of flex
-  // copied from flex's output
-  #define YY_CURRENT_BUFFER ( (yy_buffer_stack) \
-                            ? (yy_buffer_stack)[(yy_buffer_stack_top)] \
-                            : NULL)
-
-  // the 'yy_current_buffer' field was replaced by the buffer stack
-  // alluded to above
-  #define yy_current_buffer YY_CURRENT_BUFFER
-#endif // FLEX_STD
-
-
 // ----------------- GrammarLexer::AltReportError ---------------
 void GrammarLexer::AltReportError::reportError(rostring msg)
 {
@@ -96,7 +83,7 @@ GrammarLexer::GrammarLexer(isEmbedTok test, StringTable &strtbl,
   // grab initial buffer object so we can restore it after
   // processing an include file (turns out this doesn't work
   // because it's NULL now; see recursivelyProcess())
-  fileState.bufstate = yy_current_buffer;
+  fileState.bufstate = yym_current_buffer();
 }
 
 GrammarLexer::~GrammarLexer()
@@ -132,7 +119,7 @@ GrammarLexer::~GrammarLexer()
 int GrammarLexer::yylexInc()
 {
   // get raw token
-  int code = yylex();
+  int code = yym_lex();
 
   // save this code for next time; part of what makes this hack
   // problematic is that this assignment is only performed if the
@@ -182,11 +169,14 @@ int GrammarLexer::yylexInc()
 
 StringRef GrammarLexer::curToken() const
 {
-  return addString(yytext, yyleng);
+  return addString(yym_text(), yym_leng());
 }
 
-StringRef GrammarLexer::addString(char *str, int len) const
+StringRef GrammarLexer::addString(char const *str_, int len) const
 {
+  // I promise to undo any changes I make here.
+  char *str = const_cast<char*>(str_);
+
   // write a null terminator temporarily
   char wasThere = str[len];
   if (wasThere) {
@@ -272,7 +262,7 @@ void GrammarLexer::recursivelyProcess(rostring fname, istream *source)
 
   // grab current buffer; this is necessary because when we
   // tried to grab it in the ctor it was NULL
-  fileState.bufstate = yy_current_buffer;
+  fileState.bufstate = yym_current_buffer();
   xassert(fileState.bufstate);
 
   // push current state
@@ -283,10 +273,10 @@ void GrammarLexer::recursivelyProcess(rostring fname, istream *source)
 
   // storing this in 'bufstate' is redundant because of the
   // assignment above, but no big deal
-  fileState.bufstate = yy_create_buffer(source, lexBufferSize);
+  fileState.bufstate = yym_create_buffer(source, lexBufferSize);
 
   // switch underlying lexer over to new file
-  yy_switch_to_buffer(fileState.bufstate);
+  yym_switch_to_buffer(fileState.bufstate);
 }
 
 
@@ -301,7 +291,7 @@ void GrammarLexer::popRecursiveFile()
   xassert(hasPendingFiles());
 
   // close down stuff associated with current file
-  yy_delete_buffer(fileState.bufstate);
+  yym_delete_buffer(fileState.bufstate);
   delete fileState.source;
 
   // pop stack
@@ -310,7 +300,7 @@ void GrammarLexer::popRecursiveFile()
   delete st;
 
   // point flex at the new (old) buffer
-  yy_switch_to_buffer(fileState.bufstate);
+  yym_switch_to_buffer(fileState.bufstate);
 }
 
 
