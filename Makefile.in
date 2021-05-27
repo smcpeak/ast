@@ -50,29 +50,30 @@ config.status: configure.pl $(SMBASE)/sm_config.pm
 # ---------------------- intermediate files -------------------
 # Run bison.  I am currently using bison-3.0.4.
 #
-# TODO: Are rules with multiple targets safe?
-agrampar.tab.cc agrampar.tab.h agrampar.codes.h: agrampar.y
-	bison -d -v agrampar.y
+# This uses a pattern rule instead of a normal rule because pattern
+# rules with multiple targets mean that a single rule creates multiple
+# files, whereas a normal rule with multiple targets is shorthand for
+# multiple independent rules, which breaks with parallel make.
+#
+# There is also the "&:" separator, but that was only added in GNU
+# Make 4.3 (2020-01-19), which is too recent for me to depend on.
+%.tab.cc %.tab.h %.codes.h: %.y
+	bison -d -v $*.y
 	@#
 	@# I will be compiling the output as C++.
 	@#
-	mv -f agrampar.tab.c agrampar.tab.cc
+	mv -f $*.tab.c $*.tab.cc
 	@#
 	@# This extracts the declaration of "enum yytokentype" and
 	@# puts it into agrampar.codes.h.  That way I can use the
 	@# token codes in the lexer without also having to declare
 	@# everything that is in the YYSTYPE union.
 	@#
-	sed -n -e '/enum yytokentype/,/};/p' < agrampar.tab.h > agrampar.codes.h
+	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
 
-agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
-
-agramlex.yy.cc: agramlex.lex
-	$(SMFLEX) -o$@ agramlex.lex
-
-# Tell 'make' that it has to run smflex to get agramlex.yy.h.
-agramlex.yy.h: agramlex.yy.cc
-	@# Nothing needed.
+# Run smflex.
+%.yy.cc %.yy.h: %.lex
+	$(SMFLEX) -o$*.yy.cc $*.lex
 
 
 # ------------------------- ccsstr ---------------------
@@ -105,6 +106,7 @@ astgen: $(ASTGEN_OBJS) ast.ast.cc $(LIBSMBASE)
 	$(CXX) -o astgen $(ASTGEN_OBJS) $(LDFLAGS)
 
 # Dependencies on generated headers.
+agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
 gramlex.o: agramlex.yy.h
 
 
@@ -172,8 +174,8 @@ clean:
 	rm -f *.o tmp *.d gmon.out
 	rm -f agrampar astgen ccsstr towner exampletest libast.a
 	rm -f agrampar.output
-	rm -f example.{h.cc} ext1.{h,cc}
-	rm -f agramlex.yy.cc
+	rm -f example.{h,cc} ext1.{h,cc}
+	rm -f agramlex.yy.{h,cc}
 
 # return to pristine checked-out state
 distclean: clean
