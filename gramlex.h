@@ -7,7 +7,13 @@
 #define __GRAMLEX_H
 
 
-#include "agramlex.yy.h"      // yyFlexLexer
+// Due to the funky way I am sharing this file between ast and elkhound,
+// it does not know which generated header to include, so that must be
+// done by the includer of this file.
+#ifndef yyFlexLexer_CLASS_DEFINED
+#  error "Either agramlex.yy.h or gramlex.yy.h must be included first."
+#endif
+
 #include "sm-iostream.h"      // istream
 
 // token code definitions

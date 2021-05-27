@@ -1,7 +1,9 @@
 // gramlex.cc            see license.txt for copyright and terms of use
 // code for gramlex.h
 
+#include "agramlex.yy.h" // needed by gramlex.h
 #include "gramlex.h"     // this module
+
 #include "trace.h"       // debugging trace()
 #include "ccsstr.h"      // CCSubstrate
 #include "ckheap.h"      // checkHeap

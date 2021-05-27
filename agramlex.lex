@@ -35,6 +35,8 @@
 /* and I will define the class */
 %option yyclass="GrammarLexer"
 
+/* This intentionally shares a prefix with ../elkhound/gramlex.lex. */
+
 
 /* ------------------- definitions -------------------- */
 /* any character, including newline */
