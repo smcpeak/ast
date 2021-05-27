@@ -32,6 +32,9 @@ AR     := ar
 RANLIB := ranlib
 
 
+# Get rid of (some...) built-in rules.
+.SUFFIXES:
+
 # compile .cc to .o
 %.o: %.cc
 	$(CXX) -c -o $@ $< $(CCFLAGS)
@@ -72,6 +75,11 @@ config.status: configure.pl $(SMBASE)/sm_config.pm
 	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
 
 # Run smflex.
+#
+# TODO: I want to make $(SMFLEX) a dependency here, but when I do that,
+# the rule stops working.  The problem is related to the .exe extension
+# on Windows.  One thing I do not understand is why the exact same thing
+# works in smflex/test.
 %.yy.cc %.yy.h: %.lex
 	$(SMFLEX) -o$*.yy.cc $*.lex
 
