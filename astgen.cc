@@ -13,7 +13,6 @@
 #include "strtokp.h"       // StrtokParse
 #include "exc.h"           // xfatal
 #include "strdict.h"       // StringDict
-#include "ofstreamts.h"    // ofstreamTS
 
 #include <string.h>        // strncmp
 #include "sm-fstream.h"    // ofstream
@@ -106,7 +105,7 @@ protected:        // data
   string srcFname;                  // name of source file
   ObjList<string> const &modules;   // extension modules
   string destFname;                 // name of output file
-  ofstreamTS out;                   // output stream
+  ofstream out;                     // output stream
   ASTSpecFile const &file;          // AST specification
 
 public:           // funcs
@@ -127,7 +126,7 @@ Gen::Gen(rostring srcfn, ObjList<string> const &mods,
   : srcFname(srcfn),
     modules(mods),
     destFname(destfn),
-    out(toCStr(destfn)),
+    out(toCStr(destfn), ios::binary),
     file(f)
 {
   if (!out) {
@@ -982,19 +981,19 @@ public:
 class XmlParserGen {
   StringSet attributeNames;     // names of attributes of AST nodes
 
-  ofstreamTS tokensOut;
-  ofstreamTS parser0_decls;
-  ofstreamTS parser1_defs;
-  ofstreamTS parser2_ctorCalls;
-  ofstreamTS parser3_registerCalls;
+  ofstream tokensOut;
+  ofstream parser0_decls;
+  ofstream parser1_defs;
+  ofstream parser2_ctorCalls;
+  ofstream parser3_registerCalls;
 
   public:
   XmlParserGen(string &xmlParserName)
     : tokensOut(stringc << xmlParserName << "_ast.gen.tokens")
-    , parser0_decls(stringc << xmlParserName << "_ast_reader_0decl.gen.h")
-    , parser1_defs (stringc << xmlParserName << "_ast_reader_1defn.gen.cc")
-    , parser2_ctorCalls    (stringc << xmlParserName << "_ast_reader_2ctrc.gen.cc")
-    , parser3_registerCalls(stringc << xmlParserName << "_ast_reader_3regc.gen.cc")
+    , parser0_decls(stringc << xmlParserName << "_ast_reader_0decl.gen.h", ios::binary)
+    , parser1_defs (stringc << xmlParserName << "_ast_reader_1defn.gen.cc", ios::binary)
+    , parser2_ctorCalls    (stringc << xmlParserName << "_ast_reader_2ctrc.gen.cc", ios::binary)
+    , parser3_registerCalls(stringc << xmlParserName << "_ast_reader_3regc.gen.cc", ios::binary)
   {}
 
   private:
