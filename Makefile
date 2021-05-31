@@ -231,10 +231,4 @@ toolclean: clean
 	rm -f agrampar.tab.cc
 	rm -f agrampar.codes.h
 
-# test for owner
-#
-# TODO: This target is broken.  What happened to owner.h?
-towner.exe: owner.h towner.o
-	$(CXX) -o $@ $(CXXFLAGS) towner.o $(LDFLAGS)
-
 # EOF
