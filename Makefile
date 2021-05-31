@@ -2,7 +2,7 @@
 # see license.txt for copyright and terms of use
 
 # main targets
-all: ccsstr astgen libast.a example.o ext1.o
+all: ccsstr.exe astgen.exe libast.a example.o ext1.o
 
 
 # ------------------------- Configuration --------------------------
@@ -125,7 +125,7 @@ CCSSTR_OBJS := \
   embedded.o
 # No need to include .d files here because ASTGEN_OBJS contains CCSSTR_OBJS.
 
-ccsstr: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
+ccsstr.exe: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) -DTEST_CCSSTR $(LDFLAGS) ccsstr.cc $(CCSSTR_OBJS) $(LIBS)
 
 
@@ -146,8 +146,8 @@ ASTGEN_OBJS := \
 
 # ast.ast.cc is a dependency here but not explicitly in the command
 # line because ast.hand.cc #includes it
-astgen: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
-	$(CXX) -o astgen $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
+astgen.exe: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
 
 # Dependencies on generated headers.
 agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
@@ -156,18 +156,18 @@ gramlex.o: agramlex.yy.h
 
 # ---------------------- run astgen ----------------------
 # simple ast spec file
-example.cc: astgen example.ast
-	./astgen example.ast
+example.cc: astgen.exe example.ast
+	./astgen.exe example.ast
 
-exampletest: exampletest.o example.o asthelp.o locstr.o $(LIBS)
+exampletest.exe: exampletest.o example.o asthelp.o locstr.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
 # simple extension
-ext1.cc: astgen example.ast ext1.ast
-	./astgen -oext1 example.ast ext1.ast
+ext1.cc: astgen.exe example.ast ext1.ast
+	./astgen.exe -oext1 example.ast ext1.ast
 
 # If you want to regenerate astgen's own ast file, you do
-#   ./astgen -oast.ast ast.ast
+#   ./astgen.exe -oast.ast ast.ast
 #
 # This rule is *not* in the Makefile because if you do it
 # without thinking you can break the self-bootstrapping
@@ -201,8 +201,8 @@ gendoc:
 gendoc/configure.txt: configure
 	./configure --help >$@
 
-gendoc/demo.h gendoc/demo.cc: demo.ast astgen
-	./astgen -ogendoc/demo demo.ast
+gendoc/demo.h gendoc/demo.cc: demo.ast astgen.exe
+	./astgen.exe -ogendoc/demo demo.ast
 
 .PHONY: doc
 doc: gendoc gendoc/configure.txt gendoc/demo.h
@@ -210,13 +210,12 @@ doc: gendoc gendoc/configure.txt gendoc/demo.h
 
 
 # ------------------------ misc ---------------------
-check: ccsstr
-	./ccsstr
+check: ccsstr.exe
+	./ccsstr.exe
 
 # delete outputs of compiler, linker
 clean:
-	rm -f *.o tmp *.d gmon.out
-	rm -f agrampar astgen ccsstr towner exampletest libast.a
+	rm -f *.o *.a *.exe *.d tmp gmon.out
 	rm -f agrampar.output
 	rm -f example.{h,cc} ext1.{h,cc}
 	rm -f agramlex.yy.{h,cc}
@@ -235,7 +234,7 @@ toolclean: clean
 # test for owner
 #
 # TODO: This target is broken.  What happened to owner.h?
-towner: owner.h towner.o
-	$(CXX) -o towner $(CXXFLAGS) towner.o $(LDFLAGS)
+towner.exe: owner.h towner.o
+	$(CXX) -o $@ $(CXXFLAGS) towner.o $(LDFLAGS)
 
 # EOF
