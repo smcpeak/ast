@@ -1,15 +1,13 @@
 # .gitignore
 
 .vscode
-Makefile
 *.o
 *.d
 *.exe
 *.output
 astgen
 ccsstr
-config.status
-config.summary
+config.mk
 example.cc
 example.h
 ext1.cc
@@ -18,5 +16,6 @@ ext1.h
 agramlex.yy.cc
 agramlex.yy.h
 testcout
+personal.mk
 
 # EOF

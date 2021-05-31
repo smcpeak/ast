@@ -1,53 +1,88 @@
-# Makefile.in for ast
+# ast/Makefile
 # see license.txt for copyright and terms of use
 
 # main targets
 all: ccsstr astgen libast.a example.o ext1.o
 
 
+# ------------------------- Configuration --------------------------
 # directories of other software
-SMBASE    := @SMBASE@
-LIBSMBASE := $(SMBASE)/libsmbase.a
+SMBASE    = ../smbase
+LIBSMBASE = $(SMBASE)/libsmbase.a
 
-SMFLEXDIR := ../smflex
-SMFLEX    := $(SMFLEXDIR)/smflex
+SMFLEXDIR = ../smflex
+SMFLEX    = $(SMFLEXDIR)/smflex
 
+# C++ compiler.
+CXX = g++
+
+# Flags to control generation of debug info.
+DEBUG_FLAGS = -g
+
+# Flags to enable dependency generation of .d files.
+GENDEPS_FLAGS = -MMD
+
+# Flags to control optimization.
+OPTIMIZATION_FLAGS = -O2
+
+# Flags to control compiler warnings.
+WARNING_FLAGS =
+
+# Flags for C++ standard to use.
+CXX_STD_FLAGS = -std=c++11
+
+# Preprocessing flags.
+CPPFLAGS = -I$(SMBASE)
+
+# Flags for the C++ compiler and preprocessor.
+#
+# Note: $(GENDEPS_FLAGS) are not included because these flags are used
+# for linking too, and if that used $(GENDEPS_FLAGS) then the .d files
+# for .o files would be overwritten with info for .exe files.
+CXXFLAGS = $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS) $(WARNING_FLAGS) $(CXX_STD_FLAGS) $(CPPFLAGS)
+
+# Libraries to link with when creating test executables.
+LIBS = $(LIBSMBASE)
+
+# Flags to add to a link command *in addition* to either $(CFLAGS) or
+# $(CXXFLAGS), depending on whether C++ modules are included.
+LDFLAGS =
 
 # external tools
-PERL := @PERL@
+PERL   = perl
+AR     = ar
+RANLIB = ranlib
 
 
-# C++ compiler, etc.
-CXX := $(CXX)
-
-# flags for the C and C++ compilers (and preprocessor)
-CCFLAGS := @CCFLAGS@ -I$(SMBASE)
-
-# flags for the linker
-LDFLAGS := -g -Wall $(LIBSMBASE)
-
-
-# some other tools
-AR     := ar
-RANLIB := ranlib
+# ---- Automatic Configuration ----
+# Pull in settings from ./configure.  They override the defaults above,
+# and are in turn overridden by personal.mk, below.
+ifeq ($(wildcard config.mk),)
+  $(error The file 'config.mk' does not exist.  Run './configure' before 'make'.)
+endif
+include config.mk
 
 
+# ---- Customization ----
+# Allow customization of the above variables in a separate file.  Just
+# create personal.mk with desired settings.
+#
+# Common things to set during development:
+#
+#   WERROR = -Werror
+#   WARNING_FLAGS = -Wall $(WERROR)
+#   OPTIMIZATION_FLAGS =
+#
+-include personal.mk
+
+
+# ----------------------------- Rules ------------------------------
 # Get rid of (some...) built-in rules.
 .SUFFIXES:
 
-# compile .cc to .o
+# Compile .cc to .o, also generating dependency files.
 %.o: %.cc
-	$(CXX) -c -o $@ $< $(CCFLAGS)
-	@perl $(SMBASE)/depend.pl -o $@ $< $(CCFLAGS) > $*.d
-
-
-# remake the generated Makefile if its inputs have changed
-Makefile: Makefile.in config.status
-	./config.status
-
-# reconfigure if the configure script has changed
-config.status: configure.pl $(SMBASE)/sm_config.pm
-	./config.status -reconfigure
+	$(CXX) -c -o $@ $(GENDEPS_FLAGS) $(CXXFLAGS) $<
 
 
 # ---------------------- intermediate files -------------------
@@ -88,9 +123,10 @@ config.status: configure.pl $(SMBASE)/sm_config.pm
 CCSSTR_OBJS := \
   reporterr.o \
   embedded.o
+# No need to include .d files here because ASTGEN_OBJS contains CCSSTR_OBJS.
 
-ccsstr: ccsstr.cc ccsstr.h $(CCSSTR_OBJS)
-	$(CXX) -o $@ -DTEST_CCSSTR $(CCFLAGS) ccsstr.cc $(CCSSTR_OBJS) $(LDFLAGS)
+ccsstr: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) -DTEST_CCSSTR $(LDFLAGS) ccsstr.cc $(CCSSTR_OBJS) $(LIBS)
 
 
 # ------------------------- astgen ---------------------
@@ -110,8 +146,8 @@ ASTGEN_OBJS := \
 
 # ast.ast.cc is a dependency here but not explicitly in the command
 # line because ast.hand.cc #includes it
-astgen: $(ASTGEN_OBJS) ast.ast.cc $(LIBSMBASE)
-	$(CXX) -o astgen $(ASTGEN_OBJS) $(LDFLAGS)
+astgen: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
+	$(CXX) -o astgen $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
 
 # Dependencies on generated headers.
 agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
@@ -123,8 +159,8 @@ gramlex.o: agramlex.yy.h
 example.cc: astgen example.ast
 	./astgen example.ast
 
-exampletest: exampletest.o example.o asthelp.o locstr.o $(LIBSMBASE)
-	$(CXX) -o $@ $^
+exampletest: exampletest.o example.o asthelp.o locstr.o $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
 # simple extension
 ext1.cc: astgen example.ast ext1.ast
@@ -187,7 +223,7 @@ clean:
 
 # return to pristine checked-out state
 distclean: clean
-	rm -f Makefile config.status config.summary
+	rm -f config.mk
 	rm -rf gendoc
 
 # 'clean', plus remove distributed outputs of bison
@@ -197,5 +233,9 @@ toolclean: clean
 	rm -f agrampar.codes.h
 
 # test for owner
+#
+# TODO: This target is broken.  What happened to owner.h?
 towner: owner.h towner.o
-	$(CXX) -o towner towner.o $(LDFLAGS)
+	$(CXX) -o towner $(CXXFLAGS) towner.o $(LDFLAGS)
+
+# EOF
