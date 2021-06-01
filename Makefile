@@ -223,8 +223,8 @@ check: ccsstr.exe
 clean:
 	rm -f *.o *.a *.exe *.d tmp gmon.out
 	rm -f agrampar.output
-	rm -f example.{h,cc} ext1.{h,cc}
-	rm -f agramlex.yy.{h,cc}
+	rm -f example.h example.cc ext1.h ext1.cc
+	rm -f agramlex.yy.h agramlex.yy.cc
 
 # return to pristine checked-out state
 distclean: clean
