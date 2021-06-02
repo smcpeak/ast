@@ -220,7 +220,7 @@ include extradep.mk
 check: validate-extradep
 
 .PHONY: validate-extradep
-validate-extradep:
+validate-extradep: all
 	$(PYTHON3) $(SMBASE)/find-extra-deps.py $(EXTRADEPS_ARGS) >extradep.tmp
 	@echo diff extradep.mk extradep.tmp
 	@if diff extradep.mk extradep.tmp; then true; else \
