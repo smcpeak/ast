@@ -155,10 +155,6 @@ ASTGEN_OBJS := \
 astgen.exe: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
 
-# Dependencies on generated headers.
-agrampar.tab.o: ast.hand.h ast.ast.h agrampar.h
-gramlex.o: agramlex.yy.h
-
 
 # ---------------------- run astgen ----------------------
 # simple ast spec file
@@ -198,6 +194,40 @@ LIB_OBJS := \
 libast.a: $(LIB_OBJS)
 	$(AR) -r $@ $(LIB_OBJS)
 	-$(RANLIB) $@
+
+
+# ----------------- extra dependencies -----------------
+# These dependencies ensure that automatically-generated code is
+# created in time to be used by other build processes which need it.
+
+# Arguments to find-extra-deps.py.
+EXTRADEPS_ARGS :=
+
+# These files are checked in but I want them included.
+EXTRADEPS_ARGS += --include agrampar.codes.h
+EXTRADEPS_ARGS += --include agrampar.tab.h
+EXTRADEPS_ARGS += --include ast.ast.h
+
+# Raw dependencies to scan.
+EXTRADEPS_ARGS += *.d
+
+.PHONY: remake-extradep
+remake-extradep:
+	$(PYTHON3) $(SMBASE)/find-extra-deps.py $(EXTRADEPS_ARGS) >extradep.mk
+
+include extradep.mk
+
+check: validate-extradep
+
+.PHONY: validate-extradep
+validate-extradep:
+	$(PYTHON3) $(SMBASE)/find-extra-deps.py $(EXTRADEPS_ARGS) >extradep.tmp
+	@echo diff extradep.mk extradep.tmp
+	@if diff extradep.mk extradep.tmp; then true; else \
+	  echo "extradep.mk needs updating; run 'make remake-extradep'"; \
+	  exit 2; \
+	fi
+	rm extradep.tmp
 
 
 # ------------------ documentation ------------------
