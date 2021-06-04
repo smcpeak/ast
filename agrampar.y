@@ -27,7 +27,7 @@
 
 /* ================== bison declarations =================== */
 // don't use globals
-%pure-parser
+%define api.pure
 
 /* The yyparse function shall accept this 'parseParam' parameter
  * so it is available in rules. */
