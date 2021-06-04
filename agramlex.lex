@@ -195,7 +195,7 @@ SLWHITE   [ \t]
              /*[2] == 'r'*/TOK_PURE_VIRTUAL ;
 }
 
-("verbatim"|"impl_verbatim"|"xml_verbatim") {
+("verbatim"|"impl_verbatim") {
   TOK_UPD_COL;
 
   // need to see one more token before we begin embedded processing
@@ -209,7 +209,6 @@ SLWHITE   [ \t]
   default: xfailure("can't happen");
   case 'v': return TOK_VERBATIM;
   case 'i': return TOK_IMPL_VERBATIM;
-  case 'x': return TOK_XML_VERBATIM;
   }
 }
 

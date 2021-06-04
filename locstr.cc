@@ -67,16 +67,4 @@ string toString(LocString const &s)
 }
 
 
-string toXml(LocString op)
-{
-  xunimp("XML serialization of LocString");
-  return "";
-}
-
-void fromXml(LocString &out, rostring str)
-{
-  xunimp("XML serialization of LocString");
-}
-
-
 // EOF

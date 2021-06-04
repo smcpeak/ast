@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@
 
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
+
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_AGRAMPAR_TAB_H_INCLUDED
 # define YY_YY_AGRAMPAR_TAB_H_INCLUDED
@@ -67,23 +71,21 @@ extern int yydebug;
     TOK_PROTECTED = 277,
     TOK_VERBATIM = 278,
     TOK_IMPL_VERBATIM = 279,
-    TOK_XML_VERBATIM = 280,
-    TOK_CTOR = 281,
-    TOK_DTOR = 282,
-    TOK_PURE_VIRTUAL = 283,
-    TOK_CUSTOM = 284,
-    TOK_OPTION = 285,
-    TOK_NEW = 286,
-    TOK_ENUM = 287
+    TOK_CTOR = 280,
+    TOK_DTOR = 281,
+    TOK_PURE_VIRTUAL = 282,
+    TOK_CUSTOM = 283,
+    TOK_OPTION = 284,
+    TOK_NEW = 285,
+    TOK_ENUM = 286
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-#line 77 "agrampar.y" /* yacc.c:1909  */
+#line 76 "agrampar.y"
 
   ASTSpecFile *file;
   ASTList<ToplevelForm> *formList;
@@ -104,9 +106,9 @@ union YYSTYPE
   BaseClass *baseClass;
   CustomCode *customCode;
 
-#line 108 "agrampar.tab.h" /* yacc.c:1909  */
-};
+#line 110 "agrampar.tab.h"
 
+};
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

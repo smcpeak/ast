@@ -28,16 +28,5 @@ int main() {
 
   Super *s4 = new Sub2(4, 104);
 
-  // **** render it into xml
-  cout << "**************** first" << endl;
-  nl0->xmlPrint(cout,0);
-  cout << "**************** second" << endl;
-  al0->xmlPrint(cout,0);
-  cout << "**************** third" << endl;
-  s3->xmlPrint(cout,0);
-  cout << "**************** fourth" << endl;
-  s4->xmlPrint(cout,0);
-  cout << "**************** done" << endl;
-
   return 0;
 }

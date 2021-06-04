@@ -145,7 +145,6 @@ ASTGEN_OBJS := \
   embedded.o \
   ast.hand.o \
   asthelp.o \
-  xmlhelp.o \
   agrampar.o  \
   astgen.o
 -include $(ASTGEN_OBJS:.o=.d)
@@ -187,7 +186,6 @@ LIB_OBJS := \
   reporterr.o \
   embedded.o \
   asthelp.o \
-  xmlhelp.o \
   locstr.o
 -include $(ASTGEN_OBJS:.o=.d)
 
