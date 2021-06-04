@@ -4,16 +4,13 @@
 *.a
 *.d
 *.exe
+*.gen.*
 *.o
 *.output
 .vscode
 agramlex.yy.cc
 agramlex.yy.h
 config.mk
-example.cc
-example.h
-ext1.cc
-ext1.h
 personal.mk
 
 # EOF

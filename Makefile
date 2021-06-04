@@ -2,7 +2,7 @@
 # see license.txt for copyright and terms of use
 
 # main targets
-all: ccsstr.exe astgen.exe libast.a example.o ext1.o
+all: ccsstr.exe astgen.exe libast.a example.ast.gen.o ext1.ast.gen.o
 
 
 # ------------------------- Configuration --------------------------
@@ -159,16 +159,29 @@ astgen.exe: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
 
 
 # ---------------------- run astgen ----------------------
-# simple ast spec file
-example.cc: astgen.exe example.ast
-	./astgen.exe example.ast
+# Rule to generate code from an AST specification.
+%.ast.gen.h %.ast.gen.cc: astgen.exe %.ast
+	./astgen.exe -o$*.ast.gen $*.ast
 
+
+# TODO: Remove this.
 exampletest.exe: exampletest.o example.o asthelp.o locstr.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
-# simple extension
-ext1.cc: astgen.exe example.ast ext1.ast
-	./astgen.exe -oext1 example.ast ext1.ast
+
+# Demonstrate a simple extension.
+#
+# This rule is not quite right because it does not mention
+# ext1.ast.gen.h.
+ext1.ast.gen.cc: astgen.exe example.ast ext1.ast
+	./astgen.exe -oext1.ast.gen example.ast ext1.ast
+
+# Crude, only partly correct hack to insert ext1.ast.gen.h into the
+# dependency chain.
+ext1.ast.gen.h: ext1.ast.gen.cc
+	test -f $<
+	test -f $@
+
 
 # If you want to regenerate astgen's own ast file, you do
 #   ./astgen.exe -oast.ast ast.ast
@@ -261,9 +274,8 @@ check: ccsstr.exe fakelist-test.exe
 
 # delete outputs of compiler, linker
 clean:
-	rm -f *.o *.a *.exe *.d tmp gmon.out
+	rm -f *.o *.a *.exe *.d *.gen.* tmp gmon.out
 	rm -f agrampar.output
-	rm -f example.h example.cc ext1.h ext1.cc
 	rm -f agramlex.yy.h agramlex.yy.cc
 
 # return to pristine checked-out state
