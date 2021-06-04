@@ -1,21 +1,21 @@
 // agrampar.cc            see license.txt for copyright and terms of use
 // code for agrampar.h
 
-#include "agrampar.h"        // this module
-#include "agrampar.tab.h"    // YYSTYPE union
+#include "agrampar.h"                  // this module
+#include "agrampar.tab.h"              // YYSTYPE union
 
 #include "agramlex.lex.gen.h"          // needed by gramlex.h
-#include "gramlex.h"         // GrammarLexer
+#include "gramlex.h"                   // GrammarLexer
 
-#include "exc.h"             // xformat
-#include "trace.h"           // tracing debugging functions
-#include "owner.h"           // Owner
-#include "strutil.h"         // trimWhitespace
-#include "strtable.h"        // StringTable
+#include "exc.h"                       // xformat
+#include "trace.h"                     // tracing debugging functions
+#include "owner.h"                     // Owner
+#include "strutil.h"                   // trimWhitespace
+#include "strtable.h"                  // StringTable
 
-#include <string.h>          // strncmp
-#include <ctype.h>           // isalnum
-#include "sm-fstream.h"      // ifstream
+#include <string.h>                    // strncmp
+#include <ctype.h>                     // isalnum
+#include "sm-fstream.h"                // ifstream
 
 
 string unbox(string *s)

@@ -2,13 +2,13 @@
 // code for gramlex.h
 
 #include "agramlex.lex.gen.h"          // needed by gramlex.h
-#include "gramlex.h"     // this module
+#include "gramlex.h"                   // this module
 
-#include "trace.h"       // debugging trace()
-#include "ccsstr.h"      // CCSubstrate
-#include "ckheap.h"      // checkHeap
+#include "trace.h"                     // debugging trace()
+#include "ccsstr.h"                    // CCSubstrate
+#include "ckheap.h"                    // checkHeap
 
-#include "sm-fstream.h"  // cout, ifstream
+#include "sm-fstream.h"                // cout, ifstream
 
 
 // ----------------- GrammarLexer::AltReportError ---------------
