@@ -52,7 +52,10 @@ public:
 
   // simple selectors
   int count() const;
+
+  // TODO: This has undefined behavior, and breaks with GCC -O2.
   bool isEmpty() const                  { return this == NULL; }
+
   bool isNotEmpty() const               { return !isEmpty(); }
 
   // "car" in Lisp terminology
