@@ -129,9 +129,9 @@ include config.mk
 
 
 # ------------------------- ccsstr ---------------------
-CCSSTR_OBJS := \
-  reporterr.o \
-  embedded.o
+CCSSTR_OBJS :=
+CCSSTR_OBJS += reporterr.o
+CCSSTR_OBJS += embedded.o
 # No need to include .d files here because ASTGEN_OBJS contains CCSSTR_OBJS.
 
 ccsstr.exe: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
@@ -139,17 +139,17 @@ ccsstr.exe: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
 
 
 # ------------------------- astgen ---------------------
-ASTGEN_OBJS := \
-  gramlex.o \
-  agrampar.tab.o \
-  ccsstr.o \
-  agramlex.yy.o \
-  reporterr.o \
-  embedded.o \
-  ast.hand.o \
-  asthelp.o \
-  agrampar.o  \
-  astgen.o
+ASTGEN_OBJS :=
+ASTGEN_OBJS += gramlex.o
+ASTGEN_OBJS += agrampar.tab.o
+ASTGEN_OBJS += ccsstr.o
+ASTGEN_OBJS += agramlex.yy.o
+ASTGEN_OBJS += reporterr.o
+ASTGEN_OBJS += embedded.o
+ASTGEN_OBJS += ast.hand.o
+ASTGEN_OBJS += asthelp.o
+ASTGEN_OBJS += agrampar.o
+ASTGEN_OBJS += astgen.o
 -include $(ASTGEN_OBJS:.o=.d)
 
 # ast.ast.cc is a dependency here but not explicitly in the command
@@ -183,13 +183,13 @@ ext1.cc: astgen.exe example.ast ext1.ast
 # this library is the set of support modules required for
 # using astgen-generated code, or are simply useful generally
 # but don't belong in smbase
-LIB_OBJS := \
-  gramlex.o \
-  ccsstr.o \
-  reporterr.o \
-  embedded.o \
-  asthelp.o \
-  locstr.o
+LIB_OBJS :=
+LIB_OBJS += gramlex.o
+LIB_OBJS += ccsstr.o
+LIB_OBJS += reporterr.o
+LIB_OBJS += embedded.o
+LIB_OBJS += asthelp.o
+LIB_OBJS += locstr.o
 -include $(ASTGEN_OBJS:.o=.d)
 
 libast.a: $(LIB_OBJS)
