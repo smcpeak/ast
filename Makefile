@@ -2,7 +2,7 @@
 # see license.txt for copyright and terms of use
 
 # main targets
-all: ccsstr.exe astgen.exe libast.a example.ast.gen.o ext1.ast.gen.o
+all: astgen.exe libast.a
 
 
 # ------------------------- Configuration --------------------------
@@ -126,17 +126,6 @@ include config.mk
 	$(SMFLEX) -o$*.lex.gen.cc $*.lex
 
 
-# ------------------------- ccsstr ---------------------
-# TODO: Make this work like the other $(TESTS).
-
-CCSSTR_OBJS :=
-CCSSTR_OBJS += reporterr.o
-CCSSTR_OBJS += embedded.o
-
-ccsstr.exe: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
-	$(CXX) -o $@ $(CXXFLAGS) -DTEST_CCSSTR $(LDFLAGS) ccsstr.cc $(CCSSTR_OBJS) $(LIBS)
-
-
 # ------------------------- astgen ---------------------
 ASTGEN_OBJS :=
 ASTGEN_OBJS += gramlex.o
@@ -210,6 +199,10 @@ TESTS :=
 # matters, but I cannot directly control that in a Makefile when using a
 # base pattern rule and subsequent auxiliary dependencies.
 
+TESTS += ccsstr-test.exe
+ccsstr-test.exe: ccsstr-test.o libast.a $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
 TESTS += fakelist-test.exe
 fakelist-test.exe: fakelist-test.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
@@ -282,10 +275,6 @@ doc: gendoc gendoc/configure.txt gendoc/demo.h
 
 
 # ------------------------ misc ---------------------
-check: ccsstr.exe fakelist-test.exe
-	./ccsstr.exe
-	./fakelist-test.exe
-
 # delete outputs of compiler, linker
 clean:
 	rm -f *.o *.a *.exe *.d *.gen.* *.passed gmon.out
