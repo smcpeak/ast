@@ -8,8 +8,6 @@
 *.o
 *.output
 .vscode
-agramlex.yy.cc
-agramlex.yy.h
 config.mk
 personal.mk
 

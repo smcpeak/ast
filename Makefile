@@ -119,8 +119,8 @@ include config.mk
 	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
 
 # Run smflex.
-%.yy.cc %.yy.h: %.lex $(SMFLEX)
-	$(SMFLEX) -o$*.yy.cc $*.lex
+%.lex.gen.cc %.lex.gen.h: %.lex $(SMFLEX)
+	$(SMFLEX) -o$*.lex.gen.cc $*.lex
 
 
 # ------------------------- ccsstr ---------------------
@@ -138,7 +138,7 @@ ASTGEN_OBJS :=
 ASTGEN_OBJS += gramlex.o
 ASTGEN_OBJS += agrampar.tab.o
 ASTGEN_OBJS += ccsstr.o
-ASTGEN_OBJS += agramlex.yy.o
+ASTGEN_OBJS += agramlex.lex.gen.o
 ASTGEN_OBJS += reporterr.o
 ASTGEN_OBJS += embedded.o
 ASTGEN_OBJS += ast.hand.o
@@ -266,7 +266,6 @@ check: ccsstr.exe fakelist-test.exe
 clean:
 	rm -f *.o *.a *.exe *.d *.gen.* tmp gmon.out
 	rm -f agrampar.output
-	rm -f agramlex.yy.h agramlex.yy.cc
 
 # return to pristine checked-out state
 distclean: clean

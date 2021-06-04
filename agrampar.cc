@@ -4,7 +4,7 @@
 #include "agrampar.h"        // this module
 #include "agrampar.tab.h"    // YYSTYPE union
 
-#include "agramlex.yy.h"     // needed by gramlex.h
+#include "agramlex.lex.gen.h"          // needed by gramlex.h
 #include "gramlex.h"         // GrammarLexer
 
 #include "exc.h"             // xformat
