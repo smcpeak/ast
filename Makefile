@@ -127,6 +127,8 @@ include config.mk
 
 
 # ------------------------- ccsstr ---------------------
+# TODO: Make this work like the other $(TESTS).
+
 CCSSTR_OBJS :=
 CCSSTR_OBJS += reporterr.o
 CCSSTR_OBJS += embedded.o
@@ -200,10 +202,34 @@ libast.a: $(LIB_OBJS)
 	-$(RANLIB) $@
 
 
-# -------------------- fakelist-test -------------------
-all: fakelist-test.exe
+# -------------------- test programs -------------------
+TESTS :=
+
+# Unfortunately, I can't easily abstract these into a single pattern
+# rule because the order of link dependencies on the $(CXX) command line
+# matters, but I cannot directly control that in a Makefile when using a
+# base pattern rule and subsequent auxiliary dependencies.
+
+TESTS += fakelist-test.exe
 fakelist-test.exe: fakelist-test.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
+TESTS += example-test.exe
+example-test.exe: example-test.o example-methods.o example.ast.gen.o libast.a $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
+all: $(TESTS)
+
+
+# Run one test.
+%-test.passed: %-test.exe
+	./$<
+	touch $@
+
+# Run all tests.
+run-tests: $(TESTS:.exe=.passed)
+
+check: run-tests
 
 
 # ----------------- extra dependencies -----------------
@@ -262,7 +288,7 @@ check: ccsstr.exe fakelist-test.exe
 
 # delete outputs of compiler, linker
 clean:
-	rm -f *.o *.a *.exe *.d *.gen.* tmp gmon.out
+	rm -f *.o *.a *.exe *.d *.gen.* *.passed gmon.out
 	rm -f agrampar.output
 
 # return to pristine checked-out state

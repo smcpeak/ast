@@ -7,6 +7,7 @@
 *.gen.*
 *.o
 *.output
+*.passed
 .vscode
 config.mk
 personal.mk
