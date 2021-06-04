@@ -93,6 +93,9 @@ include config.mk
 %.o: %.cc
 	$(CXX) -c -o $@ $(GENDEPS_FLAGS) $(CXXFLAGS) $<
 
+# Pull in all of the automatic dependencies.
+-include $(wildcard *.d)
+
 
 # ---------------------- intermediate files -------------------
 # Run bison.  I am currently using bison-3.0.4.
@@ -127,7 +130,6 @@ include config.mk
 CCSSTR_OBJS :=
 CCSSTR_OBJS += reporterr.o
 CCSSTR_OBJS += embedded.o
-# No need to include .d files here because ASTGEN_OBJS contains CCSSTR_OBJS.
 
 ccsstr.exe: ccsstr.cc ccsstr.h $(CCSSTR_OBJS) $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) -DTEST_CCSSTR $(LDFLAGS) ccsstr.cc $(CCSSTR_OBJS) $(LIBS)
@@ -145,7 +147,6 @@ ASTGEN_OBJS += ast.hand.o
 ASTGEN_OBJS += asthelp.o
 ASTGEN_OBJS += agrampar.o
 ASTGEN_OBJS += astgen.o
--include $(ASTGEN_OBJS:.o=.d)
 
 # ast.ast.cc is a dependency here but not explicitly in the command
 # line because ast.hand.cc #includes it
@@ -193,7 +194,6 @@ LIB_OBJS += reporterr.o
 LIB_OBJS += embedded.o
 LIB_OBJS += asthelp.o
 LIB_OBJS += locstr.o
--include $(ASTGEN_OBJS:.o=.d)
 
 libast.a: $(LIB_OBJS)
 	$(AR) -r $@ $(LIB_OBJS)
@@ -204,8 +204,6 @@ libast.a: $(LIB_OBJS)
 all: fakelist-test.exe
 fakelist-test.exe: fakelist-test.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
-
--include fakelist-test.d
 
 
 # ----------------- extra dependencies -----------------
