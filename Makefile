@@ -164,11 +164,6 @@ astgen.exe: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
 	./astgen.exe -o$*.ast.gen $*.ast
 
 
-# TODO: Remove this.
-exampletest.exe: exampletest.o example.o asthelp.o locstr.o $(LIBS)
-	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
-
-
 # Demonstrate a simple extension.
 #
 # This rule is not quite right because it does not mention
