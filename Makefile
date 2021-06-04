@@ -119,12 +119,7 @@ include config.mk
 	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
 
 # Run smflex.
-#
-# TODO: I want to make $(SMFLEX) a dependency here, but when I do that,
-# the rule stops working.  The problem is related to the .exe extension
-# on Windows.  One thing I do not understand is why the exact same thing
-# works in smflex/test.
-%.yy.cc %.yy.h: %.lex
+%.yy.cc %.yy.h: %.lex $(SMFLEX)
 	$(SMFLEX) -o$*.yy.cc $*.lex
 
 
