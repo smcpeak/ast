@@ -4,6 +4,11 @@
 #ifndef FAKELIST_H
 #define FAKELIST_H
 
+#include "xassert.h"                   // xassert
+
+#include <stddef.h>                    // NULL
+
+
 // idea: define a templatized class such that a pointer to
 // this class appears to present access to a list of the
 // underlying T objects; but in fact, the pointer is actually

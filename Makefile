@@ -23,7 +23,10 @@ DEBUG_FLAGS = -g
 GENDEPS_FLAGS = -MMD
 
 # Flags to control optimization.
-OPTIMIZATION_FLAGS = -O2
+#
+# TODO: FakeList is broken when using -O2.  Fix it, then re-enable
+# default optimization here.
+OPTIMIZATION_FLAGS =
 
 # Flags to control compiler warnings.
 WARNING_FLAGS =
@@ -194,6 +197,14 @@ libast.a: $(LIB_OBJS)
 	-$(RANLIB) $@
 
 
+# -------------------- fakelist-test -------------------
+all: fakelist-test.exe
+fakelist-test.exe: fakelist-test.o $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
+-include fakelist-test.d
+
+
 # ----------------- extra dependencies -----------------
 # These dependencies ensure that automatically-generated code is
 # created in time to be used by other build processes which need it.
@@ -244,8 +255,9 @@ doc: gendoc gendoc/configure.txt gendoc/demo.h
 
 
 # ------------------------ misc ---------------------
-check: ccsstr.exe
+check: ccsstr.exe fakelist-test.exe
 	./ccsstr.exe
+	./fakelist-test.exe
 
 # delete outputs of compiler, linker
 clean:
