@@ -23,10 +23,7 @@ DEBUG_FLAGS = -g
 GENDEPS_FLAGS = -MMD
 
 # Flags to control optimization.
-#
-# TODO: FakeList is broken when using -O2.  Fix it, then re-enable
-# default optimization here.
-OPTIMIZATION_FLAGS =
+OPTIMIZATION_FLAGS = -O2
 
 # Flags to control compiler warnings.
 WARNING_FLAGS =
