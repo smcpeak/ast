@@ -5,8 +5,6 @@
 
 #include <iostream>                    // std::cout
 
-#include <assert.h>                    // assert
-
 using namespace std;
 
 
@@ -49,18 +47,20 @@ void printList(FakeList<Node> *list)
 
 int main()
 {
+  // These tests are pretty light.  example-test.cc has a bit more.
+
   FakeList<Node> *list = FakeList<Node>::emptyList();
   printList(list);
-  assert(list->isEmpty());
+  xassert(fl_isEmpty(list));
 
   Node *n1 = new Node(1);
-  list = list->prepend(n1);
+  list = fl_prepend(list, n1);
   printList(list);
-  assert(list->isNotEmpty());
+  xassert(fl_isNotEmpty(list));
 
-  list->deallocNodes();
+  fl_deallocNodes(list);
 
-  assert(Node::s_nodeCount == 0);
+  xassert(Node::s_nodeCount == 0);
 
   cout << "fakelist-test passed\n";
   return 0;

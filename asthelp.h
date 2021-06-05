@@ -310,12 +310,12 @@ FakeList<T> * /*owner*/ cloneFakeList(FakeList<T> const *src)
   }
 
   // clone first element
-  T *head = src->firstC()->clone();
+  T *head = fl_firstC(src)->clone();
   xassert(head->next == NULL);     // it had better not copy the list tail itself!
 
   // attach to result of cloning the tail
-  FakeList<T> *tail = cloneFakeList(src->butFirstC());
-  return tail->prepend(head);
+  FakeList<T> *tail = cloneFakeList(fl_butFirstC(src));
+  return fl_prepend(tail, head);
 }
 
 
