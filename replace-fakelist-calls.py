@@ -66,49 +66,36 @@ def call_main():
 # --------------- END: boilerplate --------------
 
 
-# Method call with 0 arguments.
-methodCall0RE = re.compile(
-  # 1. Receiver object.
-  r"([^ ()]+)->" +
+# Method call that looks like a FakeList call.
+methodCallRE = re.compile(
+  # 1. Receiver object.  Aside from non-space, non-exclam, non-paren
+  # characters, tolerate a single pair of balanced parens with no parens
+  # inside.
+  r"((?:[^! ()]|\([^ ()]*\))+)->" +
 
   # 2. Method name.
-  r"(isEmpty|isNotEmpty|first|firstC|butFirst|butFirstC|count|deallocNodes|reverse)" +
+  r"(isEmpty|isNotEmpty|first|firstC|butFirst|butFirstC|count|" +
+   r"deallocNodes|reverse|prepend|nthC|nth)" +
 
-  # Method call parentheses.
-  r"\(\)"
+  # 3. Arguments in parentheses.
+  r"\(([^)]*)\)"
 )
 
-# Replacement for 'methodCall0RE'.
-def methodCall0Repl(m):
-  receiver = m.group(1)
-  method = m.group(2)
-  return f"fl_{method}({receiver})"
-
-
-# Method call with 1 argument.
-methodCall1RE = re.compile(
-  # 1. Receiver object.
-  r"([^ ()]+)->" +
-
-  # 2. Method name.
-  r"(prepend|nthC|nth)" +
-
-  # 3. Arguments.
-  r"\(([^)]+)\)"
-)
-
-# Replacement for 'methodCall1RE'.
-def methodCall1Repl(m):
+# Replacement for 'methodCallRE'.
+def methodCallRepl(m):
   receiver = m.group(1)
   method = m.group(2)
   args = m.group(3)
-  return f"fl_{method}({receiver}, {args})"
+
+  if args == "":
+    return f"fl_{method}({receiver})"
+  else:
+    return f"fl_{method}({receiver}, {args})"
 
 
 # Perform all required substitutions on 'line'.
 def fixLine(line):
-  line = methodCall0RE.sub(methodCall0Repl, line)
-  line = methodCall1RE.sub(methodCall1Repl, line)
+  line = methodCallRE.sub(methodCallRepl, line)
   return line
 
 
@@ -130,6 +117,12 @@ def unitTests():
 
   testOne("l->nth(3)->isMethod(); foo(list->first())",
           "fl_nth(l, 3)->isMethod(); foo(fl_first(list))")
+
+  testOne("Variable *srcVar = srcTDecl->asTD_decl()->d->decllist->first()->var;",
+          "Variable *srcVar = fl_first(srcTDecl->asTD_decl()->d->decllist)->var;")
+
+  testOne("  bool argsProvided = !srcArgs->isEmpty();",
+          "  bool argsProvided = !fl_isEmpty(srcArgs);")
 
 
 def main():
