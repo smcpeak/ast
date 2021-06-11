@@ -4,7 +4,7 @@
 #ifndef AGRAMPAR_H
 #define AGRAMPAR_H
 
-#include "ast.hand.h"       // AST node class declarations
+#include "ast.ast.h"        // AST node class declarations
 #include "str.h"            // string
 
 class GrammarLexer;

@@ -131,14 +131,12 @@ ASTGEN_OBJS += ccsstr.o
 ASTGEN_OBJS += agramlex.lex.gen.o
 ASTGEN_OBJS += reporterr.o
 ASTGEN_OBJS += embedded.o
-ASTGEN_OBJS += ast.hand.o
+ASTGEN_OBJS += ast.ast.o
 ASTGEN_OBJS += asthelp.o
 ASTGEN_OBJS += agrampar.o
 ASTGEN_OBJS += astgen.o
 
-# ast.ast.cc is a dependency here but not explicitly in the command
-# line because ast.hand.cc #includes it
-astgen.exe: $(ASTGEN_OBJS) ast.ast.cc $(LIBS)
+astgen.exe: $(ASTGEN_OBJS) $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
 
 
