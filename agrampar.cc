@@ -32,7 +32,7 @@ string *box(char const *s)
 
 string *appendStr(string *left, string *right)
 {
-  string *ret = new string(*left & *right);
+  string *ret = new string(*left + *right);
   delete left;
   delete right;
   return ret;

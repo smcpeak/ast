@@ -2290,13 +2290,13 @@ void entry(int argc, char **argv)
   // get all of the list classes
   getListClasses();
 
-  string hdrFname = base & ".h";
+  string hdrFname = base + ".h";
   HGen hg(srcFname, modules, hdrFname, *ast);
   cout << "writing " << hdrFname << "...\n";
   hg.emitFile();
 
   // generated the c++ code
-  string codeFname = base & ".cc";
+  string codeFname = base + ".cc";
   CGen cg(srcFname, modules, codeFname, *ast, hdrFname);
   cout << "writing " << codeFname << "...\n";
   cg.emitFile();
