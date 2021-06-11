@@ -3,6 +3,7 @@
 
 # main targets
 all: astgen.exe libast.a
+.PHONY: all
 
 
 # ------------------------- Configuration --------------------------
