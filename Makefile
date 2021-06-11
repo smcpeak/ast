@@ -162,13 +162,18 @@ ext1.ast.gen.h: ext1.ast.gen.cc
 	test -f $@
 
 
-# If you want to regenerate astgen's own ast file, you do
-#   ./astgen.exe -oast.ast ast.ast
-#
-# This rule is *not* in the Makefile because if you do it
-# without thinking you can break the self-bootstrapping
-# (and be forced to restore your ast.ast.{cc,h} from the
-# distribution tarball or from CVS).
+ifeq ($(MAINTAINER_MODE),1)
+# Rule to regenerate ast.ast.{h,cc}.  This is not enabled by default
+# because 'git' checks files out with semi-random timestamps, which
+# breaks bootstrapping.
+ast.ast.cc: ast.ast
+	./astgen.exe -oast.ast ast.ast
+
+# Hack to get the .h into the dependency chain.
+ast.ast.h: ast.ast.cc
+	test -f $<
+	test -f $@
+endif
 
 
 # ------------------------ libast.a -------------------
