@@ -1763,6 +1763,8 @@ void HGen::emitMVisitorInterface()
 
     out << "  virtual bool visit" << c->super->name << "("
         <<   c->super->name << " *&obj);\n"
+        << "  virtual void postvisit" << c->super->name << "("
+        <<   c->super->name << " *&obj);\n"
         << "  void mtraverse(" << c->super->name << " *&obj);\n"
         ;
   }
@@ -1792,6 +1794,11 @@ void CGen::emitMVisitorImplementation()
 
     out << "bool " << mvisitorName << "::visit" << c->super->name << "("
         <<   c->super->name << " *&obj) { return true; }\n"
+        << "\n"
+        ;
+
+    out << "void " << mvisitorName << "::postvisit" << c->super->name << "("
+        <<   c->super->name << " *&obj) {}\n"
         << "\n"
         ;
 
@@ -1836,6 +1843,9 @@ void CGen::emitMVisitorImplementation()
       out << "    default:;\n"       // silence warning
           << "  }\n";
     }
+
+    // Invoke post-order visitor function.
+    out << "  postvisit" << c->super->name << "(obj);\n";
 
     out << "}\n"
         << "\n"

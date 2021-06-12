@@ -41,11 +41,11 @@ static void testNodeList()
 
 class TestMVisitor : public ExampleMVisitor {
 public:
-  bool visitSuper(Super *&obj) override;
+  void postvisitSuper(Super *&obj) override;
   bool visitNode(Node *&node) override;
 };
 
-bool TestMVisitor::visitSuper(Super *&obj)
+void TestMVisitor::postvisitSuper(Super *&obj)
 {
   cout << "visiting Super: x=" << obj->x << '\n';
 
@@ -66,7 +66,6 @@ bool TestMVisitor::visitSuper(Super *&obj)
 
     ASTENDCASED
   }
-  return true;
 }
 
 
