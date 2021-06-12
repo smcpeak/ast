@@ -1,0 +1,67 @@
+---- stdout ----
+---- testNode ----
+tree = Node:
+  x = 1
+  y = 2
+  w = 3
+---- testNodeList ----
+tree = NodeList:
+  list:
+    list[0] = Node:
+      x = 1
+      y = 2
+      w = 3
+    list[1] = Node:
+      x = 4
+      y = 5
+      w = 3
+    list[2] = Node:
+      x = 7
+      y = 8
+      w = 3
+---- testMVisitor ----
+before = Sub3:
+  x = 1
+  s1 = Sub1:
+    x = 7
+    y = 2
+  s2 = Sub2:
+    x = 8
+    z = 9
+visiting Super: x=1
+visiting Super: x=5
+visiting Super: x=8
+after = Sub3:
+  x = 1
+  s1 = Sub2:
+    x = 5
+    z = 3
+  s2 = Sub2:
+    x = 6
+    z = 4
+before = NodeList:
+  list:
+    list[0] = Node:
+      x = 1
+      y = 2
+      w = 3
+    list[1] = Node:
+      x = 3
+      y = 4
+      w = 3
+visiting Node: x=1 y=2
+visiting Node: x=3 y=4
+after = NodeList:
+  list:
+    list[0] = Node:
+      x = 2
+      y = 3
+      w = 3
+    list[1] = Node:
+      x = 4
+      y = 5
+      w = 3
+example-test passed
+---- stderr ----
+---- exit status ----
+Exit 0

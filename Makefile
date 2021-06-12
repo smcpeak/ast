@@ -50,9 +50,9 @@ LIBS = $(LIBSMBASE)
 LDFLAGS =
 
 # external tools
-PERL   = perl
-AR     = ar
-RANLIB = ranlib
+PYTHON3 = python3
+AR      = ar
+RANLIB  = ranlib
 
 
 # ---- Automatic Configuration ----
@@ -215,15 +215,30 @@ example-test.exe: example-test.o example-methods.o example.ast.gen.o libast.a $(
 all: $(TESTS)
 
 
+# Create an empty expect file if needed.
+%-test.expect:
+	touch $@
+
 # Run one test.
-%-test.passed: %-test.exe
-	./$<
+out/%-test.passed: %-test.exe %-test.expect
+	@mkdir -p out
+	$(PYTHON3) $(SMBASE)/run-compare-expect.py \
+	  --actual out/$*-test.actual \
+	  --expect $*-test.expect \
+	  ./$<
 	touch $@
 
 # Run all tests.
-run-tests: $(TESTS:.exe=.passed)
+.PHONY: run-tests
+PASSED_FILES := $(patsubst %-test.exe,out/%-test.passed,$(TESTS))
+run-tests: $(PASSED_FILES)
 
+.PHONY: check
 check: run-tests
+
+.PHONY: test-clean
+test-clean:
+	rm -rf out
 
 
 # ----------------- extra dependencies -----------------
@@ -277,8 +292,8 @@ doc: gendoc gendoc/configure.txt gendoc/demo.h
 
 # ------------------------ misc ---------------------
 # delete outputs of compiler, linker
-clean:
-	rm -f *.o *.a *.exe *.d *.gen.* *.passed gmon.out
+clean: test-clean
+	rm -f *.o *.a *.exe *.d *.gen.* gmon.out
 	rm -f agrampar.output
 
 # return to pristine checked-out state

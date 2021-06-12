@@ -1,0 +1,7 @@
+---- stdout ----
+list:
+list: 1
+fakelist-test passed
+---- stderr ----
+---- exit status ----
+Exit 0
