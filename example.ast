@@ -35,7 +35,6 @@ class Node (
   public FakeList<Node> *listptr = NULL;
 
   custom traverse { next->traverse(vis); }
-  custom mtraverse { mtraverse(obj->next); }
 }
 
 class NodeList (
