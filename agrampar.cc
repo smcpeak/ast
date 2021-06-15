@@ -178,7 +178,7 @@ ASTSpecFile *readAbstractGrammar(char const *fname)
 // ----------------------- test code -----------------------
 #ifdef TEST_AGRAMPAR
 
-#include "test.h"    // ARGS_MAIN
+#include "sm-test.h" // ARGS_MAIN
 
 void entry(int argc, char **argv)
 {

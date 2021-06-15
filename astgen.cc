@@ -2,7 +2,7 @@
 // program to generate C++ code from an AST specification
 
 #include "agrampar.h"      // readAbstractGrammar
-#include "test.h"          // ARGS_MAIN
+#include "sm-test.h"       // ARGS_MAIN
 #include "trace.h"         // TRACE_ARGS
 #include "owner.h"         // Owner
 #include "ckheap.h"        // checkHeap
