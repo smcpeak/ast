@@ -365,7 +365,7 @@ private:        // funcs
   void emitCtorDefn(ASTClass const &cls, ASTClass const *parent);
   void passParentCtorArgs(int &ct, ASTList<CtorArg> const &args);
   void initializeMyCtorArgs(int &ct, ASTList<CtorArg> const &args);
-  void emitCommonFuncs(rostring virt);
+  void emitCommonFuncs(rostring virt, rostring over);
   void emitUserDecls(ASTList<Annotation> const &decls);
   void emitCtor(ASTClass const &ctor, ASTClass const &parent);
 
@@ -581,7 +581,7 @@ void HGen::emitTFClass(TF_class const &cls)
   }
   out << "\n";
 
-  emitCommonFuncs(virt);
+  emitCommonFuncs(virt, "" /*over*/);
 
   if (wantGDB) {
     out << "  void gdb() const;\n\n";
@@ -775,15 +775,18 @@ void HGen::initializeMyCtorArgs(int &ct, ASTList<CtorArg> const &args)
 }
 
 // emit functions that are declared in every tree node
-void HGen::emitCommonFuncs(rostring virt)
+void HGen::emitCommonFuncs(rostring virt, rostring over)
 {
   // declare the functions they all have
   out << "  " << virt
-      << "void debugPrint(ostream &os, int indent, char const *subtreeName = \"tree\") const;\n";
+      << "void debugPrint(ostream &os, int indent, "
+         "char const *subtreeName = \"tree\") const"
+      << over << ";\n";
 
   if (wantVisitor()) {
     // visitor traversal entry point
-    out << "  " << virt << "void traverse(" << visitorName << " &vis);\n";
+    out << "  " << virt << "void traverse(" << visitorName
+        << " &vis)" << over << ";\n";
   }
 
   out << "\n";
@@ -843,21 +846,21 @@ void HGen::emitCtor(ASTClass const &ctor, ASTClass const &parent)
   out << "\n";
 
   // type tag
-  out << "  virtual Kind kind() const { return " << ctor.classKindName() << "; }\n";
+  out << "  virtual Kind kind() const override { return " << ctor.classKindName() << "; }\n";
   out << "  enum { TYPE_TAG = " << ctor.classKindName() << " };\n";
   out << "\n";
 
   // common functions
-  emitCommonFuncs("virtual ");
+  emitCommonFuncs("virtual ", " override");
 
   // clone function (take advantage of covariant return types)
   if (!nocvr) {
     // normal case
-    out << "  virtual " << ctor.name << " *clone() const;\n";
+    out << "  virtual " << ctor.name << " *clone() const override;\n";
   }
   else {
     // msvc hack case
-    out << "  virtual " << parent.name << "* nocvr_clone() const;\n";
+    out << "  virtual " << parent.name << "* nocvr_clone() const override;\n";
     out << "  " << ctor.name << "* clone() const\n"
         << "    { return static_cast<" << ctor.name << "*>(nocvr_clone()); }\n";
   }
@@ -871,11 +874,11 @@ void HGen::emitCtor(ASTClass const &ctor, ASTClass const &parent)
     if (!decl) continue;
 
     if (decl->access() == AC_PUREVIRT) {
-      out << "  public: virtual " << decl->code << ";\n";
+      out << "  public: virtual " << decl->code << " override;\n";
     }
     else if (decl->amod->hasMod("virtual")) {
       out << "  " << toString(decl->access())
-          << ": virtual " << decl->code << ";\n";
+          << ": virtual " << decl->code << " override;\n";
     }
   }
 
@@ -1627,18 +1630,18 @@ void HGen::emitDVisitorInterface()
   SFOREACH_OBJLIST(TF_class, allClasses, iter) {
     TF_class const *c = iter.data();
     out << "  virtual bool visit" << c->super->name << "("
-        <<   c->super->name << " *obj);\n"
+        <<   c->super->name << " *obj) override;\n"
         << "  virtual void postvisit" << c->super->name << "("
-        <<   c->super->name << " *obj);\n";
+        <<   c->super->name << " *obj) override;\n";
   }
 
   out << "\n  // List 'classes'\n";
   FOREACH_ASTLIST(ListClass, listClasses, iter) {
     ListClass const *cls = iter.data();
     out << "  virtual bool visitList_" << cls->classAndMemberName
-        << "(" << cls->kindName() << "<" << cls->elementClassName << ">*);\n";
+        << "(" << cls->kindName() << "<" << cls->elementClassName << ">*) override;\n";
     out << "  virtual void postvisitList_" << cls->classAndMemberName
-        << "(" << cls->kindName() << "<" << cls->elementClassName << ">*);\n";
+        << "(" << cls->kindName() << "<" << cls->elementClassName << ">*) override;\n";
   }
 
   StringSet listItemClassesSet; // set of list item classes printed so far
@@ -1647,9 +1650,9 @@ void HGen::emitDVisitorInterface()
     xassert(!listItemClassesSet.contains(cls->classAndMemberName)); // should not repeat
     listItemClassesSet.add(cls->classAndMemberName);
     out << "  virtual bool visitListItem_" << cls->classAndMemberName
-        << "(" << cls->elementClassName << "*);\n";
+        << "(" << cls->elementClassName << "*) override;\n";
     out << "  virtual void postvisitListItem_" << cls->classAndMemberName
-        << "(" << cls->elementClassName << "*);\n";
+        << "(" << cls->elementClassName << "*) override;\n";
   }
 
   // we are done

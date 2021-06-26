@@ -26,8 +26,8 @@ public:
 public:
   virtual ~SilentReportError() {}
   SilentReportError();
-  virtual void reportError(rostring str);
-  virtual void reportWarning(rostring str);
+  void reportError(rostring str) override;
+  void reportWarning(rostring str) override;
 };
 
 extern SilentReportError silentReportError;
@@ -37,8 +37,8 @@ extern SilentReportError silentReportError;
 class SimpleReportError : public SilentReportError {
 public:
   virtual ~SimpleReportError() {}
-  virtual void reportError(rostring str);
-  virtual void reportWarning(rostring str);
+  void reportError(rostring str) override;
+  void reportWarning(rostring str) override;
 };
 
 extern SimpleReportError simpleReportError;

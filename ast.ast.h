@@ -90,12 +90,12 @@ public:      // funcs
   }
   virtual ~TF_verbatim();
 
-  virtual Kind kind() const { return TF_VERBATIM; }
+  virtual Kind kind() const override { return TF_VERBATIM; }
   enum { TYPE_TAG = TF_VERBATIM };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_verbatim *clone() const;
+  virtual TF_verbatim *clone() const override;
 
 };
 
@@ -108,12 +108,12 @@ public:      // funcs
   }
   virtual ~TF_impl_verbatim();
 
-  virtual Kind kind() const { return TF_IMPL_VERBATIM; }
+  virtual Kind kind() const override { return TF_IMPL_VERBATIM; }
   enum { TYPE_TAG = TF_IMPL_VERBATIM };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_impl_verbatim *clone() const;
+  virtual TF_impl_verbatim *clone() const override;
 
 };
 
@@ -127,12 +127,12 @@ public:      // funcs
   }
   virtual ~TF_class();
 
-  virtual Kind kind() const { return TF_CLASS; }
+  virtual Kind kind() const override { return TF_CLASS; }
   enum { TYPE_TAG = TF_CLASS };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_class *clone() const;
+  virtual TF_class *clone() const override;
 
   public:  bool hasChildren() const { return ctors.isNotEmpty(); };
 };
@@ -147,12 +147,12 @@ public:      // funcs
   }
   virtual ~TF_option();
 
-  virtual Kind kind() const { return TF_OPTION; }
+  virtual Kind kind() const override { return TF_OPTION; }
   enum { TYPE_TAG = TF_OPTION };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_option *clone() const;
+  virtual TF_option *clone() const override;
 
 };
 
@@ -165,12 +165,12 @@ public:      // funcs
   }
   virtual ~TF_custom();
 
-  virtual Kind kind() const { return TF_CUSTOM; }
+  virtual Kind kind() const override { return TF_CUSTOM; }
   enum { TYPE_TAG = TF_CUSTOM };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_custom *clone() const;
+  virtual TF_custom *clone() const override;
 
 };
 
@@ -184,12 +184,12 @@ public:      // funcs
   }
   virtual ~TF_enum();
 
-  virtual Kind kind() const { return TF_ENUM; }
+  virtual Kind kind() const override { return TF_ENUM; }
   enum { TYPE_TAG = TF_ENUM };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual TF_enum *clone() const;
+  virtual TF_enum *clone() const override;
 
 };
 
@@ -297,12 +297,12 @@ public:      // funcs
   }
   virtual ~UserDecl();
 
-  virtual Kind kind() const { return USERDECL; }
+  virtual Kind kind() const override { return USERDECL; }
   enum { TYPE_TAG = USERDECL };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual UserDecl *clone() const;
+  virtual UserDecl *clone() const override;
 
   public:  AccessCtl access() const { return amod->acc; };
 };
@@ -318,12 +318,12 @@ public:      // funcs
   }
   virtual ~CustomCode();
 
-  virtual Kind kind() const { return CUSTOMCODE; }
+  virtual Kind kind() const override { return CUSTOMCODE; }
   enum { TYPE_TAG = CUSTOMCODE };
 
-  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const;
+  virtual void debugPrint(ostream &os, int indent, char const *subtreeName = "tree") const override;
 
-  virtual CustomCode *clone() const;
+  virtual CustomCode *clone() const override;
 
   public:  bool used;
 };

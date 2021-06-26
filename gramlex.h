@@ -48,8 +48,8 @@ public:      // types
   public:
     AltReportError(GrammarLexer &L) : lexer(L) {}
 
-    virtual void reportError(rostring msg);
-    virtual void reportWarning(rostring msg);
+    virtual void reportError(rostring msg) override;
+    virtual void reportWarning(rostring msg) override;
   };
   friend class AltReportError;
 
@@ -186,8 +186,8 @@ public:      // funcs
   bool hasPendingFiles() const;
 
   // ReportError funcs
-  virtual void reportError(rostring msg);
-  virtual void reportWarning(rostring msg);
+  virtual void reportError(rostring msg) override;
+  virtual void reportWarning(rostring msg) override;
 };
 
 

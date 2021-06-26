@@ -32,11 +32,11 @@ public:
 
   // EmbeddedLang entry points (see embedded.h for description
   // of each function)
-  virtual void reset(int initNest = 0);
-  virtual void handle(char const *str, int len, char finalDelim);
-  virtual bool zeroNesting() const;
-  virtual string getFuncBody() const;
-  virtual string getDeclName() const;
+  virtual void reset(int initNest = 0) override;
+  virtual void handle(char const *str, int len, char finalDelim) override;
+  virtual bool zeroNesting() const override;
+  virtual string getFuncBody() const override;
+  virtual string getDeclName() const override;
 };
 
 #endif // CCSSTR_H
