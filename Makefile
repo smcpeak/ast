@@ -29,6 +29,9 @@ OPTIMIZATION_FLAGS = -O2
 # Flags to control compiler warnings.
 WARNING_FLAGS =
 
+# Warning flags for C++ specifically.
+CXX_WARNING_FLAGS =
+
 # Flags for C++ standard to use.
 CXX_STD_FLAGS = -std=c++11
 
@@ -40,7 +43,7 @@ CPPFLAGS = -I$(SMBASE)
 # Note: $(GENDEPS_FLAGS) are not included because these flags are used
 # for linking too, and if that used $(GENDEPS_FLAGS) then the .d files
 # for .o files would be overwritten with info for .exe files.
-CXXFLAGS = $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS) $(WARNING_FLAGS) $(CXX_STD_FLAGS) $(CPPFLAGS)
+CXXFLAGS = $(DEBUG_FLAGS) $(OPTIMIZATION_FLAGS) $(WARNING_FLAGS) $(CXX_WARNING_FLAGS) $(CXX_STD_FLAGS) $(CPPFLAGS)
 
 # Libraries to link with when creating test executables.
 LIBS = $(LIBSMBASE)
@@ -73,6 +76,7 @@ include config.mk
 #   WERROR = -Werror
 #   WARNING_FLAGS = -Wall $(WERROR)
 #   OPTIMIZATION_FLAGS =
+#   CXX_WARNING_FLAGS = -Wsuggest-override
 #
 -include personal.mk
 
