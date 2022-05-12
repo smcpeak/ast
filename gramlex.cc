@@ -6,7 +6,6 @@
 
 #include "trace.h"                     // debugging trace()
 #include "ccsstr.h"                    // CCSubstrate
-#include "ckheap.h"                    // checkHeap
 
 #include "sm-fstream.h"                // cout, ifstream
 
@@ -108,10 +107,7 @@ GrammarLexer::~GrammarLexer()
   // at one point Elsa (erroneously) choked on this construction.)
   if (fileState.source &&
       fileState.source != &cin) {
-    //checkHeap();
-    //checkHeapNode(fileState.source);   // this is wrong b/c of virtual inheritance..
     delete fileState.source;
-    //checkHeap();
   }
 
   delete embedded;

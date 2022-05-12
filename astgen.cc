@@ -5,7 +5,6 @@
 #include "sm-test.h"       // ARGS_MAIN
 #include "trace.h"         // TRACE_ARGS
 #include "owner.h"         // Owner
-#include "ckheap.h"        // checkHeap
 #include "strutil.h"       // replace, translate, localTimeString
 #include "sobjlist.h"      // SObjList
 #include "stringset.h"     // StringSet
@@ -2191,7 +2190,6 @@ void grabOptionName(rostring opname, string &oparg, TF_option const *op)
 void entry(int argc, char **argv)
 {
   TRACE_ARGS();
-  checkHeap();
   SourceLocManager mgr;
 
   if (argc < 2) {
