@@ -161,9 +161,10 @@ extern int yydebug;
     TOK_DTOR = 281,
     TOK_PURE_VIRTUAL = 282,
     TOK_CUSTOM = 283,
-    TOK_OPTION = 284,
-    TOK_NEW = 285,
-    TOK_ENUM = 286
+    TOK_DEFINE_CUSTOM = 284,
+    TOK_OPTION = 285,
+    TOK_NEW = 286,
+    TOK_ENUM = 287
   };
 #endif
 
@@ -171,7 +172,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 76 "agrampar.y"
+#line 77 "agrampar.y"
 
   ASTSpecFile *file;
   ASTList<ToplevelForm> *formList;
@@ -192,7 +193,7 @@ union YYSTYPE
   BaseClass *baseClass;
   CustomCode *customCode;
 
-#line 196 "agrampar.tab.c"
+#line 197 "agrampar.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -510,19 +511,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   111
+#define YYLAST   114
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  32
+#define YYNTOKENS  33
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  30
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  72
+#define YYNRULES  73
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  114
+#define YYNSTATES  115
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   286
+#define YYMAXUTOK   287
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -562,21 +563,21 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31
+      25,    26,    27,    28,    29,    30,    31,    32
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   123,   123,   129,   130,   131,   132,   133,   134,   135,
-     140,   144,   152,   153,   165,   167,   175,   176,   178,   180,
-     188,   189,   195,   197,   202,   209,   214,   216,   222,   223,
-     224,   225,   226,   227,   228,   232,   234,   241,   242,   248,
-     250,   252,   258,   264,   266,   272,   273,   274,   275,   276,
-     277,   281,   283,   288,   290,   295,   297,   302,   308,   309,
-     314,   316,   321,   323,   328,   334,   335,   340,   342,   348,
-     349,   350,   354
+       0,   124,   124,   130,   131,   132,   133,   134,   135,   136,
+     141,   145,   153,   154,   166,   168,   176,   177,   179,   181,
+     189,   190,   196,   198,   203,   210,   215,   217,   223,   224,
+     225,   226,   227,   228,   229,   233,   235,   242,   243,   249,
+     251,   253,   259,   265,   267,   273,   274,   275,   276,   277,
+     278,   279,   283,   285,   290,   292,   297,   299,   304,   310,
+     311,   316,   318,   323,   325,   330,   336,   337,   342,   344,
+     350,   351,   352,   356
 };
 #endif
 
@@ -590,13 +591,14 @@ static const char *const yytname[] =
   "\")\"", "\"<\"", "\">\"", "\"*\"", "\"&\"", "\",\"", "\"=\"", "\":\"",
   "\"class\"", "\"public\"", "\"private\"", "\"protected\"",
   "\"verbatim\"", "\"impl_verbatim\"", "\"ctor\"", "\"dtor\"",
-  "\"pure_virtual\"", "\"custom\"", "\"option\"", "\"new\"", "\"enum\"",
-  "$accept", "StartSymbol", "Input", "Class", "NewOpt", "ClassBody",
-  "ClassMembersOpt", "CtorArgsOpt", "CtorArgs", "CtorArgList", "Arg",
-  "ArgWord", "ArgList", "CtorMembersOpt", "Annotation", "CustomCode",
-  "Embedded", "Public", "AccessMod", "StringList", "Verbatim", "Option",
-  "OptionArgs", "Enum", "EnumeratorSeq", "Enumerator", "BaseClassesOpt",
-  "BaseClassSeq", "BaseAccess", "BaseClass", YY_NULLPTR
+  "\"pure_virtual\"", "\"custom\"", "\"define_custom\"", "\"option\"",
+  "\"new\"", "\"enum\"", "$accept", "StartSymbol", "Input", "Class",
+  "NewOpt", "ClassBody", "ClassMembersOpt", "CtorArgsOpt", "CtorArgs",
+  "CtorArgList", "Arg", "ArgWord", "ArgList", "CtorMembersOpt",
+  "Annotation", "CustomCode", "Embedded", "Public", "AccessMod",
+  "StringList", "Verbatim", "Option", "OptionArgs", "Enum",
+  "EnumeratorSeq", "Enumerator", "BaseClassesOpt", "BaseClassSeq",
+  "BaseAccess", "BaseClass", YY_NULLPTR
 };
 #endif
 
@@ -608,7 +610,7 @@ static const yytype_int16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286
+     285,   286,   287
 };
 # endif
 
@@ -626,18 +628,18 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -54,    12,     1,   -54,   -54,    13,    13,    23,    40,   -54,
-      41,   -54,    66,   -54,   -54,   -54,   -54,    81,    85,   -54,
-     -54,    13,   -54,    65,    88,   -54,    86,   -54,     3,    89,
-      84,   -54,   -54,   -54,   -54,    -2,   -54,    46,    77,    84,
-     -54,    52,   -54,   -54,   -54,    69,   -54,   -54,   -54,   -54,
-      -3,    69,   -54,    48,    56,    77,   -54,   -54,    63,    83,
-     -54,    69,   -54,   -54,   -54,   -54,    82,    94,   -54,   -54,
-     -54,   -54,    56,    69,   -54,    69,    48,   -54,    14,   -54,
-     -54,   -54,   -54,    96,   -54,   -54,   -54,   -54,   -54,   -54,
-     -54,   -54,    90,    32,    84,    98,    -1,   -54,    77,   -54,
-     -54,     6,    97,    68,   -54,   100,    99,   -54,   -54,   -54,
-     -54,    26,   -54,   -54
+     -54,     9,    -5,   -54,   -54,    90,    90,    14,    44,   -54,
+      52,   -54,    37,   -54,   -54,   -54,   -54,    16,    53,   -54,
+     -54,    90,   -54,    57,    63,   -54,    70,   -54,     5,    81,
+      76,   -54,   -54,   -54,   -54,     0,   -54,    50,    73,    76,
+     -54,     3,   -54,   -54,   -54,    75,   -54,   -54,   -54,   -54,
+      20,    75,   -54,    60,    68,    73,   -54,   -54,    56,    80,
+     -54,    75,   -54,   -54,   -54,   -54,    83,    97,   -54,   -54,
+     -54,   -54,    68,    75,   -54,    75,    60,   -54,    13,   -54,
+     -54,   -54,   -54,    98,   -54,   -54,   -54,   -54,   -54,   -54,
+     -54,   -54,   -54,    93,    92,    76,    99,     4,   -54,    73,
+     -54,   -54,    21,   100,    77,   -54,   101,   102,   -54,   -54,
+     -54,   -54,    23,   -54,   -54
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -646,32 +648,32 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        3,     0,     2,     1,     9,     0,     0,     0,     0,    13,
-       0,     4,     0,     8,     5,     6,     7,     0,     0,    55,
-      56,     0,    58,     0,     0,    43,     0,    42,     0,     0,
-      20,    44,    59,    57,    64,     0,    62,     0,    65,    21,
-      60,     0,    28,    29,    22,     0,    31,    32,    33,    34,
-       0,    24,    26,     0,     0,    65,    61,    63,    35,     0,
-      23,     0,    27,    69,    70,    71,    66,     0,    67,    16,
-      15,    10,     0,     0,    30,    25,     0,    72,     0,    11,
-      36,    68,    14,     0,    45,    46,    47,    48,    49,    50,
-      19,    41,    51,     0,    20,     0,     0,    39,    65,    21,
-      53,     0,     0,     0,    52,     0,     0,    37,    17,    54,
-      40,     0,    18,    38
+       0,     4,     0,     8,     5,     6,     7,     0,     0,    56,
+      57,     0,    59,     0,     0,    43,     0,    42,     0,     0,
+      20,    44,    60,    58,    65,     0,    63,     0,    66,    21,
+      61,     0,    28,    29,    22,     0,    31,    32,    33,    34,
+       0,    24,    26,     0,     0,    66,    62,    64,    35,     0,
+      23,     0,    27,    70,    71,    72,    67,     0,    68,    16,
+      15,    10,     0,     0,    30,    25,     0,    73,     0,    11,
+      36,    69,    14,     0,    45,    46,    47,    48,    49,    50,
+      51,    19,    41,    52,     0,    20,     0,     0,    39,    66,
+      21,    54,     0,     0,     0,    53,     0,     0,    37,    17,
+      55,    40,     0,    18,    38
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -54,   -54,   -54,   -54,   -54,    33,   -54,    10,   -38,   -54,
-     -33,   -48,    35,   -54,    -5,   107,    -6,   -54,   -54,   -54,
-     -54,   -54,   -54,   -54,   -54,    70,   -53,   -54,   -54,    34
+     -54,   -54,   -54,   -54,   -54,    34,   -54,    12,   -38,   -54,
+     -32,   -47,    35,   -54,    -3,   109,    -6,   -54,   -54,   -54,
+     -54,   -54,   -54,   -54,   -54,    71,   -53,   -54,   -54,    38
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
       -1,     1,     2,    11,    12,    71,    78,    38,    39,    50,
-      58,    52,    59,   111,    90,    91,    19,    92,    93,   101,
+      58,    52,    59,   112,    91,    92,    19,    93,    94,   102,
       14,    15,    28,    16,    35,    36,    54,    66,    67,    68
 };
 
@@ -680,65 +682,65 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      20,    55,    72,    62,    51,    40,    32,    25,    60,     4,
-      62,    33,     3,    61,    41,    27,   102,   104,    17,    18,
-     -12,    82,   105,    83,     5,     6,    21,    62,    75,     7,
-       8,     9,    10,   112,    84,    85,    86,    96,    18,    87,
-      88,    89,     7,    22,    23,   103,    84,    85,    86,    42,
-      43,    87,    88,    89,     7,    34,    99,    44,    45,    56,
-      46,    47,    69,    48,    70,    49,    42,    43,    63,    64,
-      65,    29,    42,    43,   107,    45,   108,    46,    47,    73,
-      48,    45,    49,    46,    47,    24,    48,    97,    49,    25,
-      26,    30,    34,    31,    37,    53,    74,    77,    76,    94,
-      95,   100,   106,   109,    98,    79,   113,   110,    80,    13,
-      81,    57
+      20,    55,    72,     4,    62,    51,    34,    40,    32,     3,
+      56,    62,    25,    33,   -12,    27,    41,    21,     5,     6,
+      82,   103,    83,     7,    25,     8,     9,    10,    62,    75,
+     113,    60,   105,    84,    85,    86,    61,   106,    87,    88,
+      89,     7,    90,    84,    85,    86,   104,    22,    87,    88,
+      89,     7,    90,    42,    43,    23,    24,   100,    26,    42,
+      43,    44,    45,    29,    46,    47,    30,    48,    45,    49,
+      46,    47,    73,    48,    69,    49,    70,    31,    42,    43,
+      63,    64,    65,   108,    34,   109,    37,    45,    98,    46,
+      47,    53,    48,    74,    49,    17,    18,    97,    18,    76,
+      77,    95,   101,    96,   110,   107,    79,    99,    80,   114,
+     111,    13,    57,     0,    81
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,    39,    55,    51,    37,     7,     3,     8,    11,     8,
-      58,     8,     0,    16,    16,    21,    17,    11,     5,     6,
-      19,     7,    16,     9,    23,    24,     3,    75,    61,    28,
-      29,    30,    31,     7,    20,    21,    22,     5,     6,    25,
-      26,    27,    28,     3,     3,    98,    20,    21,    22,     3,
-       4,    25,    26,    27,    28,     3,    94,    11,    12,     7,
-      14,    15,     6,    17,     8,    19,     3,     4,    20,    21,
-      22,     6,     3,     4,     6,    12,     8,    14,    15,    16,
-      17,    12,    19,    14,    15,    19,    17,    93,    19,     8,
-       5,     3,     3,     7,    10,    18,    13,     3,    16,     3,
-      10,     3,     5,     3,    94,    72,   111,     8,    73,     2,
-      76,    41
+       6,    39,    55,     8,    51,    37,     3,     7,     3,     0,
+       7,    58,     8,     8,    19,    21,    16,     3,    23,    24,
+       7,    17,     9,    28,     8,    30,    31,    32,    75,    61,
+       7,    11,    11,    20,    21,    22,    16,    16,    25,    26,
+      27,    28,    29,    20,    21,    22,    99,     3,    25,    26,
+      27,    28,    29,     3,     4,     3,    19,    95,     5,     3,
+       4,    11,    12,     6,    14,    15,     3,    17,    12,    19,
+      14,    15,    16,    17,     6,    19,     8,     7,     3,     4,
+      20,    21,    22,     6,     3,     8,    10,    12,    94,    14,
+      15,    18,    17,    13,    19,     5,     6,     5,     6,    16,
+       3,     3,     3,    10,     3,     5,    72,    95,    73,   112,
+       8,     2,    41,    -1,    76
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    33,    34,     0,     8,    23,    24,    28,    29,    30,
-      31,    35,    36,    47,    52,    53,    55,     5,     6,    48,
-      48,     3,     3,     3,    19,     8,     5,    48,    54,     6,
-       3,     7,     3,     8,     3,    56,    57,    10,    39,    40,
+       0,    34,    35,     0,     8,    23,    24,    28,    30,    31,
+      32,    36,    37,    48,    53,    54,    56,     5,     6,    49,
+      49,     3,     3,     3,    19,     8,     5,    49,    55,     6,
+       3,     7,     3,     8,     3,    57,    58,    10,    40,    41,
        7,    16,     3,     4,    11,    12,    14,    15,    17,    19,
-      41,    42,    43,    18,    58,    40,     7,    57,    42,    44,
-      11,    16,    43,    20,    21,    22,    59,    60,    61,     6,
-       8,    37,    58,    16,    13,    42,    16,     3,    38,    37,
-      44,    61,     7,     9,    20,    21,    22,    25,    26,    27,
-      46,    47,    49,    50,     3,    10,     5,    48,    39,    40,
-       3,    51,    17,    58,    11,    16,     5,     6,     8,     3,
-       8,    45,     7,    46
+      42,    43,    44,    18,    59,    41,     7,    58,    43,    45,
+      11,    16,    44,    20,    21,    22,    60,    61,    62,     6,
+       8,    38,    59,    16,    13,    43,    16,     3,    39,    38,
+      45,    62,     7,     9,    20,    21,    22,    25,    26,    27,
+      29,    47,    48,    50,    51,     3,    10,     5,    49,    40,
+      41,     3,    52,    17,    59,    11,    16,     5,     6,     8,
+       3,     8,    46,     7,    47
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    32,    33,    34,    34,    34,    34,    34,    34,    34,
-      35,    35,    36,    36,    37,    37,    38,    38,    38,    38,
-      39,    39,    40,    40,    41,    41,    42,    42,    43,    43,
-      43,    43,    43,    43,    43,    44,    44,    45,    45,    46,
-      46,    46,    47,    48,    48,    49,    49,    49,    49,    49,
-      49,    50,    50,    51,    51,    52,    52,    53,    54,    54,
-      55,    55,    56,    56,    57,    58,    58,    59,    59,    60,
-      60,    60,    61
+       0,    33,    34,    35,    35,    35,    35,    35,    35,    35,
+      36,    36,    37,    37,    38,    38,    39,    39,    39,    39,
+      40,    40,    41,    41,    42,    42,    43,    43,    44,    44,
+      44,    44,    44,    44,    44,    45,    45,    46,    46,    47,
+      47,    47,    48,    49,    49,    50,    50,    50,    50,    50,
+      50,    50,    51,    51,    52,    52,    53,    53,    54,    55,
+      55,    56,    56,    57,    57,    58,    59,    59,    60,    60,
+      61,    61,    61,    62
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -749,9 +751,9 @@ static const yytype_int8 yyr2[] =
        0,     1,     2,     3,     1,     3,     1,     2,     1,     1,
        3,     1,     1,     1,     1,     1,     3,     0,     2,     2,
        5,     1,     3,     2,     3,     1,     1,     1,     1,     1,
-       1,     1,     4,     1,     3,     2,     2,     4,     0,     2,
-       5,     6,     1,     3,     1,     0,     2,     1,     3,     1,
-       1,     1,     2
+       1,     1,     1,     4,     1,     3,     2,     2,     4,     0,
+       2,     5,     6,     1,     3,     1,     0,     2,     1,     3,
+       1,     1,     1,     2
 };
 
 
@@ -1453,443 +1455,449 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 124 "agrampar.y"
+#line 125 "agrampar.y"
                { (yyval.file) = parseParam->treeTop = new ASTSpecFile((yyvsp[0].formList)); }
-#line 1459 "agrampar.tab.c"
+#line 1461 "agrampar.tab.c"
     break;
 
   case 3:
-#line 129 "agrampar.y"
+#line 130 "agrampar.y"
                              { (yyval.formList) = new ASTList<ToplevelForm>; }
-#line 1465 "agrampar.tab.c"
+#line 1467 "agrampar.tab.c"
     break;
 
   case 4:
-#line 130 "agrampar.y"
+#line 131 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfClass)); }
-#line 1471 "agrampar.tab.c"
+#line 1473 "agrampar.tab.c"
     break;
 
   case 5:
-#line 131 "agrampar.y"
+#line 132 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].verbatim)); }
-#line 1477 "agrampar.tab.c"
+#line 1479 "agrampar.tab.c"
     break;
 
   case 6:
-#line 132 "agrampar.y"
+#line 133 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfOption)); }
-#line 1483 "agrampar.tab.c"
+#line 1485 "agrampar.tab.c"
     break;
 
   case 7:
-#line 133 "agrampar.y"
+#line 134 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfEnum)); }
-#line 1489 "agrampar.tab.c"
+#line 1491 "agrampar.tab.c"
     break;
 
   case 8:
-#line 134 "agrampar.y"
+#line 135 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append(new TF_custom((yyvsp[0].customCode))); }
-#line 1495 "agrampar.tab.c"
+#line 1497 "agrampar.tab.c"
     break;
 
   case 9:
-#line 135 "agrampar.y"
+#line 136 "agrampar.y"
                              { (yyval.formList)=(yyvsp[-1].formList); }
-#line 1501 "agrampar.tab.c"
+#line 1503 "agrampar.tab.c"
     break;
 
   case 10:
-#line 141 "agrampar.y"
+#line 142 "agrampar.y"
          { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-3].str));
            (yyval.tfClass)->super->args.steal((yyvsp[-2].ctorArgList));
            (yyval.tfClass)->super->bases.steal((yyvsp[-1].baseClassList)); }
-#line 1509 "agrampar.tab.c"
+#line 1511 "agrampar.tab.c"
     break;
 
   case 11:
-#line 145 "agrampar.y"
+#line 146 "agrampar.y"
          { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-4].str));
            (yyval.tfClass)->super->args.steal((yyvsp[-3].ctorArgList));
            (yyval.tfClass)->super->lastArgs.steal((yyvsp[-2].ctorArgList));
            (yyval.tfClass)->super->bases.steal((yyvsp[-1].baseClassList)); }
-#line 1518 "agrampar.tab.c"
+#line 1520 "agrampar.tab.c"
     break;
 
   case 12:
-#line 152 "agrampar.y"
+#line 153 "agrampar.y"
                              {}
-#line 1524 "agrampar.tab.c"
+#line 1526 "agrampar.tab.c"
     break;
 
   case 13:
-#line 153 "agrampar.y"
+#line 154 "agrampar.y"
                              {}
-#line 1530 "agrampar.tab.c"
+#line 1532 "agrampar.tab.c"
     break;
 
   case 14:
-#line 166 "agrampar.y"
+#line 167 "agrampar.y"
              { (yyval.tfClass)=(yyvsp[-1].tfClass); }
-#line 1536 "agrampar.tab.c"
+#line 1538 "agrampar.tab.c"
     break;
 
   case 15:
-#line 168 "agrampar.y"
+#line 169 "agrampar.y"
              { (yyval.tfClass) = new TF_class(new ASTClass("(placeholder)", NULL, NULL, NULL, NULL), NULL); }
-#line 1542 "agrampar.tab.c"
+#line 1544 "agrampar.tab.c"
     break;
 
   case 16:
-#line 175 "agrampar.y"
+#line 176 "agrampar.y"
       { (yyval.tfClass) = new TF_class(new ASTClass("(placeholder)", NULL, NULL, NULL, NULL), NULL); }
-#line 1548 "agrampar.tab.c"
+#line 1550 "agrampar.tab.c"
     break;
 
   case 17:
-#line 177 "agrampar.y"
+#line 178 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-5].tfClass))->ctors.append(new ASTClass(unbox((yyvsp[-3].str)), (yyvsp[-2].ctorArgList), NULL, (yyvsp[-1].baseClassList), NULL)); }
-#line 1554 "agrampar.tab.c"
+#line 1556 "agrampar.tab.c"
     break;
 
   case 18:
-#line 179 "agrampar.y"
+#line 180 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-7].tfClass))->ctors.append(new ASTClass(unbox((yyvsp[-5].str)), (yyvsp[-4].ctorArgList), NULL, (yyvsp[-3].baseClassList), (yyvsp[-1].userDeclList))); }
-#line 1560 "agrampar.tab.c"
+#line 1562 "agrampar.tab.c"
     break;
 
   case 19:
-#line 181 "agrampar.y"
+#line 182 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-1].tfClass))->super->decls.append((yyvsp[0].annotation)); }
-#line 1566 "agrampar.tab.c"
+#line 1568 "agrampar.tab.c"
     break;
 
   case 20:
-#line 188 "agrampar.y"
+#line 189 "agrampar.y"
       { (yyval.ctorArgList) = new ASTList<CtorArg>; }
-#line 1572 "agrampar.tab.c"
+#line 1574 "agrampar.tab.c"
     break;
 
   case 21:
-#line 190 "agrampar.y"
+#line 191 "agrampar.y"
       { (yyval.ctorArgList) = (yyvsp[0].ctorArgList); }
-#line 1578 "agrampar.tab.c"
+#line 1580 "agrampar.tab.c"
     break;
 
   case 22:
-#line 196 "agrampar.y"
+#line 197 "agrampar.y"
       { (yyval.ctorArgList) = new ASTList<CtorArg>; }
-#line 1584 "agrampar.tab.c"
+#line 1586 "agrampar.tab.c"
     break;
 
   case 23:
-#line 198 "agrampar.y"
+#line 199 "agrampar.y"
       { (yyval.ctorArgList) = (yyvsp[-1].ctorArgList); }
-#line 1590 "agrampar.tab.c"
+#line 1592 "agrampar.tab.c"
     break;
 
   case 24:
-#line 203 "agrampar.y"
+#line 204 "agrampar.y"
                { (yyval.ctorArgList) = new ASTList<CtorArg>;
                  {
                    string tmp = unbox((yyvsp[0].str));
                    (yyval.ctorArgList)->append(parseCtorArg(tmp));
                  }
                }
-#line 1601 "agrampar.tab.c"
+#line 1603 "agrampar.tab.c"
     break;
 
   case 25:
-#line 210 "agrampar.y"
+#line 211 "agrampar.y"
                { ((yyval.ctorArgList)=(yyvsp[-2].ctorArgList))->append(parseCtorArg(unbox((yyvsp[0].str)))); }
-#line 1607 "agrampar.tab.c"
+#line 1609 "agrampar.tab.c"
     break;
 
   case 26:
-#line 215 "agrampar.y"
+#line 216 "agrampar.y"
        { (yyval.str) = (yyvsp[0].str); }
-#line 1613 "agrampar.tab.c"
+#line 1615 "agrampar.tab.c"
     break;
 
   case 27:
-#line 217 "agrampar.y"
+#line 218 "agrampar.y"
        { (yyval.str) = appendStr((yyvsp[-1].str), (yyvsp[0].str)); }
-#line 1619 "agrampar.tab.c"
+#line 1621 "agrampar.tab.c"
     break;
 
   case 28:
-#line 222 "agrampar.y"
+#line 223 "agrampar.y"
                      { (yyval.str) = appendStr((yyvsp[0].str), box(" ")); }
-#line 1625 "agrampar.tab.c"
+#line 1627 "agrampar.tab.c"
     break;
 
   case 29:
-#line 223 "agrampar.y"
+#line 224 "agrampar.y"
                      { (yyval.str) = appendStr((yyvsp[0].str), box(" ")); }
-#line 1631 "agrampar.tab.c"
+#line 1633 "agrampar.tab.c"
     break;
 
   case 30:
-#line 224 "agrampar.y"
+#line 225 "agrampar.y"
                      { (yyval.str) = appendStr(box("<"), appendStr((yyvsp[-1].str), box(">"))); }
-#line 1637 "agrampar.tab.c"
+#line 1639 "agrampar.tab.c"
     break;
 
   case 31:
-#line 225 "agrampar.y"
+#line 226 "agrampar.y"
                      { (yyval.str) = box("*"); }
-#line 1643 "agrampar.tab.c"
+#line 1645 "agrampar.tab.c"
     break;
 
   case 32:
-#line 226 "agrampar.y"
+#line 227 "agrampar.y"
                      { (yyval.str) = box("&"); }
-#line 1649 "agrampar.tab.c"
+#line 1651 "agrampar.tab.c"
     break;
 
   case 33:
-#line 227 "agrampar.y"
+#line 228 "agrampar.y"
                      { (yyval.str) = box("="); }
-#line 1655 "agrampar.tab.c"
+#line 1657 "agrampar.tab.c"
     break;
 
   case 34:
-#line 228 "agrampar.y"
+#line 229 "agrampar.y"
                      { (yyval.str) = box("class "); }
-#line 1661 "agrampar.tab.c"
+#line 1663 "agrampar.tab.c"
     break;
 
   case 35:
-#line 233 "agrampar.y"
+#line 234 "agrampar.y"
            { (yyval.str) = (yyvsp[0].str); }
-#line 1667 "agrampar.tab.c"
+#line 1669 "agrampar.tab.c"
     break;
 
   case 36:
-#line 235 "agrampar.y"
+#line 236 "agrampar.y"
            { (yyval.str) = appendStr((yyvsp[-2].str), appendStr(box(","), (yyvsp[0].str))); }
-#line 1673 "agrampar.tab.c"
+#line 1675 "agrampar.tab.c"
     break;
 
   case 37:
-#line 241 "agrampar.y"
+#line 242 "agrampar.y"
       { (yyval.userDeclList) = new ASTList<Annotation>; }
-#line 1679 "agrampar.tab.c"
+#line 1681 "agrampar.tab.c"
     break;
 
   case 38:
-#line 243 "agrampar.y"
+#line 244 "agrampar.y"
       { ((yyval.userDeclList)=(yyvsp[-1].userDeclList))->append((yyvsp[0].annotation)); }
-#line 1685 "agrampar.tab.c"
+#line 1687 "agrampar.tab.c"
     break;
 
   case 39:
-#line 249 "agrampar.y"
+#line 250 "agrampar.y"
       { (yyval.annotation) = new UserDecl((yyvsp[-1].accessMod), unbox((yyvsp[0].str)), ""); }
-#line 1691 "agrampar.tab.c"
+#line 1693 "agrampar.tab.c"
     break;
 
   case 40:
-#line 251 "agrampar.y"
+#line 252 "agrampar.y"
       { (yyval.annotation) = new UserDecl((yyvsp[-4].accessMod), unbox((yyvsp[-3].str)), unbox((yyvsp[-1].str))); }
-#line 1697 "agrampar.tab.c"
+#line 1699 "agrampar.tab.c"
     break;
 
   case 41:
-#line 253 "agrampar.y"
+#line 254 "agrampar.y"
       { (yyval.annotation) = (yyvsp[0].customCode); }
-#line 1703 "agrampar.tab.c"
+#line 1705 "agrampar.tab.c"
     break;
 
   case 42:
-#line 259 "agrampar.y"
+#line 260 "agrampar.y"
       { (yyval.customCode) = new CustomCode(unbox((yyvsp[-1].str)), unbox((yyvsp[0].str))); }
-#line 1709 "agrampar.tab.c"
+#line 1711 "agrampar.tab.c"
     break;
 
   case 43:
-#line 265 "agrampar.y"
+#line 266 "agrampar.y"
       { (yyval.str) = (yyvsp[-1].str); }
-#line 1715 "agrampar.tab.c"
+#line 1717 "agrampar.tab.c"
     break;
 
   case 44:
-#line 267 "agrampar.y"
+#line 268 "agrampar.y"
       { (yyval.str) = (yyvsp[-1].str); }
-#line 1721 "agrampar.tab.c"
+#line 1723 "agrampar.tab.c"
     break;
 
   case 45:
-#line 272 "agrampar.y"
+#line 273 "agrampar.y"
                     { (yyval.accessCtl) = AC_PUBLIC; }
-#line 1727 "agrampar.tab.c"
+#line 1729 "agrampar.tab.c"
     break;
 
   case 46:
-#line 273 "agrampar.y"
+#line 274 "agrampar.y"
                     { (yyval.accessCtl) = AC_PRIVATE; }
-#line 1733 "agrampar.tab.c"
+#line 1735 "agrampar.tab.c"
     break;
 
   case 47:
-#line 274 "agrampar.y"
+#line 275 "agrampar.y"
                     { (yyval.accessCtl) = AC_PROTECTED; }
-#line 1739 "agrampar.tab.c"
+#line 1741 "agrampar.tab.c"
     break;
 
   case 48:
-#line 275 "agrampar.y"
+#line 276 "agrampar.y"
                     { (yyval.accessCtl) = AC_CTOR; }
-#line 1745 "agrampar.tab.c"
+#line 1747 "agrampar.tab.c"
     break;
 
   case 49:
-#line 276 "agrampar.y"
+#line 277 "agrampar.y"
                     { (yyval.accessCtl) = AC_DTOR; }
-#line 1751 "agrampar.tab.c"
+#line 1753 "agrampar.tab.c"
     break;
 
   case 50:
-#line 277 "agrampar.y"
+#line 278 "agrampar.y"
                     { (yyval.accessCtl) = AC_PUREVIRT; }
-#line 1757 "agrampar.tab.c"
+#line 1759 "agrampar.tab.c"
     break;
 
   case 51:
-#line 282 "agrampar.y"
-             { (yyval.accessMod) = new AccessMod((yyvsp[0].accessCtl), NULL); }
-#line 1763 "agrampar.tab.c"
+#line 279 "agrampar.y"
+                    { (yyval.accessCtl) = AC_DEFINE_CUSTOM; }
+#line 1765 "agrampar.tab.c"
     break;
 
   case 52:
 #line 284 "agrampar.y"
-             { (yyval.accessMod) = new AccessMod((yyvsp[-3].accessCtl), (yyvsp[-1].stringList)); }
-#line 1769 "agrampar.tab.c"
+             { (yyval.accessMod) = new AccessMod((yyvsp[0].accessCtl), NULL); }
+#line 1771 "agrampar.tab.c"
     break;
 
   case 53:
-#line 289 "agrampar.y"
-              { (yyval.stringList) = new ASTList<string>((yyvsp[0].str)); }
-#line 1775 "agrampar.tab.c"
+#line 286 "agrampar.y"
+             { (yyval.accessMod) = new AccessMod((yyvsp[-3].accessCtl), (yyvsp[-1].stringList)); }
+#line 1777 "agrampar.tab.c"
     break;
 
   case 54:
 #line 291 "agrampar.y"
-              { ((yyval.stringList)=(yyvsp[-2].stringList))->append((yyvsp[0].str)); }
-#line 1781 "agrampar.tab.c"
+              { (yyval.stringList) = new ASTList<string>((yyvsp[0].str)); }
+#line 1783 "agrampar.tab.c"
     break;
 
   case 55:
-#line 296 "agrampar.y"
-            { (yyval.verbatim) = new TF_verbatim(unbox((yyvsp[0].str))); }
-#line 1787 "agrampar.tab.c"
+#line 293 "agrampar.y"
+              { ((yyval.stringList)=(yyvsp[-2].stringList))->append((yyvsp[0].str)); }
+#line 1789 "agrampar.tab.c"
     break;
 
   case 56:
 #line 298 "agrampar.y"
-            { (yyval.verbatim) = new TF_impl_verbatim(unbox((yyvsp[0].str))); }
-#line 1793 "agrampar.tab.c"
+            { (yyval.verbatim) = new TF_verbatim(unbox((yyvsp[0].str))); }
+#line 1795 "agrampar.tab.c"
     break;
 
   case 57:
-#line 303 "agrampar.y"
-          { (yyval.tfOption) = new TF_option(unbox((yyvsp[-2].str)), (yyvsp[-1].stringList)); }
-#line 1799 "agrampar.tab.c"
+#line 300 "agrampar.y"
+            { (yyval.verbatim) = new TF_impl_verbatim(unbox((yyvsp[0].str))); }
+#line 1801 "agrampar.tab.c"
     break;
 
   case 58:
-#line 308 "agrampar.y"
-              { (yyval.stringList) = new ASTList<string>; }
-#line 1805 "agrampar.tab.c"
+#line 305 "agrampar.y"
+          { (yyval.tfOption) = new TF_option(unbox((yyvsp[-2].str)), (yyvsp[-1].stringList)); }
+#line 1807 "agrampar.tab.c"
     break;
 
   case 59:
 #line 310 "agrampar.y"
-              { ((yyval.stringList)=(yyvsp[-1].stringList))->append((yyvsp[0].str)); }
-#line 1811 "agrampar.tab.c"
+              { (yyval.stringList) = new ASTList<string>; }
+#line 1813 "agrampar.tab.c"
     break;
 
   case 60:
-#line 315 "agrampar.y"
-        { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-3].str)), (yyvsp[-1].enumeratorList)); }
-#line 1817 "agrampar.tab.c"
+#line 312 "agrampar.y"
+              { ((yyval.stringList)=(yyvsp[-1].stringList))->append((yyvsp[0].str)); }
+#line 1819 "agrampar.tab.c"
     break;
 
   case 61:
 #line 317 "agrampar.y"
-        { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-4].str)), (yyvsp[-2].enumeratorList)); }
-#line 1823 "agrampar.tab.c"
+        { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-3].str)), (yyvsp[-1].enumeratorList)); }
+#line 1825 "agrampar.tab.c"
     break;
 
   case 62:
-#line 322 "agrampar.y"
-                 { (yyval.enumeratorList) = new ASTList<string>((yyvsp[0].enumerator)); }
-#line 1829 "agrampar.tab.c"
+#line 319 "agrampar.y"
+        { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-4].str)), (yyvsp[-2].enumeratorList)); }
+#line 1831 "agrampar.tab.c"
     break;
 
   case 63:
 #line 324 "agrampar.y"
-                 { ((yyval.enumeratorList)=(yyvsp[-2].enumeratorList))->append((yyvsp[0].enumerator)); }
-#line 1835 "agrampar.tab.c"
+                 { (yyval.enumeratorList) = new ASTList<string>((yyvsp[0].enumerator)); }
+#line 1837 "agrampar.tab.c"
     break;
 
   case 64:
-#line 329 "agrampar.y"
-              { (yyval.enumerator) = (yyvsp[0].str); }
-#line 1841 "agrampar.tab.c"
+#line 326 "agrampar.y"
+                 { ((yyval.enumeratorList)=(yyvsp[-2].enumeratorList))->append((yyvsp[0].enumerator)); }
+#line 1843 "agrampar.tab.c"
     break;
 
   case 65:
-#line 334 "agrampar.y"
-                  { (yyval.baseClassList) = new ASTList<BaseClass>; }
-#line 1847 "agrampar.tab.c"
+#line 331 "agrampar.y"
+              { (yyval.enumerator) = (yyvsp[0].str); }
+#line 1849 "agrampar.tab.c"
     break;
 
   case 66:
 #line 336 "agrampar.y"
-                  { (yyval.baseClassList) = (yyvsp[0].baseClassList); }
-#line 1853 "agrampar.tab.c"
+                  { (yyval.baseClassList) = new ASTList<BaseClass>; }
+#line 1855 "agrampar.tab.c"
     break;
 
   case 67:
-#line 341 "agrampar.y"
-                { (yyval.baseClassList) = new ASTList<BaseClass>((yyvsp[0].baseClass)); }
-#line 1859 "agrampar.tab.c"
+#line 338 "agrampar.y"
+                  { (yyval.baseClassList) = (yyvsp[0].baseClassList); }
+#line 1861 "agrampar.tab.c"
     break;
 
   case 68:
 #line 343 "agrampar.y"
-                { ((yyval.baseClassList)=(yyvsp[-2].baseClassList))->append((yyvsp[0].baseClass)); }
-#line 1865 "agrampar.tab.c"
+                { (yyval.baseClassList) = new ASTList<BaseClass>((yyvsp[0].baseClass)); }
+#line 1867 "agrampar.tab.c"
     break;
 
   case 69:
-#line 348 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PUBLIC; }
-#line 1871 "agrampar.tab.c"
+#line 345 "agrampar.y"
+                { ((yyval.baseClassList)=(yyvsp[-2].baseClassList))->append((yyvsp[0].baseClass)); }
+#line 1873 "agrampar.tab.c"
     break;
 
   case 70:
-#line 349 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PRIVATE; }
-#line 1877 "agrampar.tab.c"
+#line 350 "agrampar.y"
+                    { (yyval.accessCtl) = AC_PUBLIC; }
+#line 1879 "agrampar.tab.c"
     break;
 
   case 71:
-#line 350 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PROTECTED; }
-#line 1883 "agrampar.tab.c"
+#line 351 "agrampar.y"
+                    { (yyval.accessCtl) = AC_PRIVATE; }
+#line 1885 "agrampar.tab.c"
     break;
 
   case 72:
-#line 355 "agrampar.y"
+#line 352 "agrampar.y"
+                    { (yyval.accessCtl) = AC_PROTECTED; }
+#line 1891 "agrampar.tab.c"
+    break;
+
+  case 73:
+#line 357 "agrampar.y"
              { (yyval.baseClass) = new BaseClass((yyvsp[-1].accessCtl), unbox((yyvsp[0].str))); }
-#line 1889 "agrampar.tab.c"
+#line 1897 "agrampar.tab.c"
     break;
 
 
-#line 1893 "agrampar.tab.c"
+#line 1901 "agrampar.tab.c"
 
       default: break;
     }
@@ -2121,7 +2129,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 358 "agrampar.y"
+#line 360 "agrampar.y"
 
 
 /* ----------------- extra C code ------------------- */

@@ -225,6 +225,10 @@ TESTS += example-test.exe
 example-test.exe: example-test.o example-methods.o example.ast.gen.o libast.a $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
+TESTS += ext1-test.exe
+ext1-test.exe: ext1-test.o ext1-methods.o example-methods.o ext1.ast.gen.o libast.a $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
 all: $(TESTS)
 
 

@@ -141,7 +141,7 @@ SLWHITE   [ \t]
 "enum"             TOK_UPD_COL;  return TOK_ENUM;
 
   /* --------- embedded text --------- */
-("public"|"protected"|"private"|"ctor"|"dtor"|"pure_virtual")("(")? {
+("public"|"protected"|"private"|"ctor"|"dtor"|"pure_virtual"|"define_custom")("(")? {
   TOK_UPD_COL;
 
   if (prevToken==TOK_COLON || prevToken==TOK_COMMA) {
@@ -187,12 +187,16 @@ SLWHITE   [ \t]
     embedMode = TOK_EMBEDDED_CODE;
   }
 
+  // Recognize which keyword was used by looking for a unique character
+  // at certain positions.  (This is a bit weird and ad-hoc, but
+  // whatever.)
   return YY_TEXT[0]=='c'?   TOK_CTOR :
+         YY_TEXT[1]== 'e'?  TOK_DEFINE_CUSTOM :
          YY_TEXT[0]=='d'?   TOK_DTOR :
          YY_TEXT[2] == 'b'? TOK_PUBLIC :
          YY_TEXT[2] == 'o'? TOK_PROTECTED :
          YY_TEXT[2] == 'i'? TOK_PRIVATE :
-             /*[2] == 'r'*/TOK_PURE_VIRTUAL ;
+              /*[2] == 'r'*/TOK_PURE_VIRTUAL ;
 }
 
 ("verbatim"|"impl_verbatim") {

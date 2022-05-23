@@ -13,6 +13,9 @@
 #include "exc.h"           // xfatal
 #include "strdict.h"       // StringDict
 
+#include <regex>           // std::regex
+#include <string>          // std::string
+
 #include <string.h>        // strncmp
 #include "sm-fstream.h"    // ofstream
 #include <ctype.h>         // isalnum
@@ -798,33 +801,49 @@ void HGen::emitUserDecls(ASTList<Annotation> const &decls)
     // in the header, we only look at userdecl annotations
     if (iter.data()->kind() == Annotation::USERDECL) {
       UserDecl const &decl = *( iter.data()->asUserDeclC() );
-      if (decl.access() == AC_PUBLIC ||
-          decl.access() == AC_PRIVATE ||
-          decl.access() == AC_PROTECTED) {
-        out << "  " << toString(decl.access()) << ": ";
+      switch (decl.access()) {
+        default:
+          xfailure(stringb(
+            "unhandled UserDecl type: " << toString(decl.access())));
 
-        if (decl.amod->hasMod("virtual")) {
-          out << "virtual ";
-        }
-        out << decl.code;
+        case AC_CTOR:
+        case AC_DTOR:
+          // Nothing done with these here.
+          break;
 
-        if (isFuncDecl(&decl) && !decl.init.empty()) {
-          out << " = " << decl.init;     // the "=0" of a pure virtual function
-        }
-        out << ";";
+        case AC_PUBLIC:
+        case AC_PRIVATE:
+        case AC_PROTECTED:
+          out << "  " << toString(decl.access()) << ": ";
 
-        // emit field flags as comments, to help debug astgen
-        if (decl.amod->mods.count()) {
-          out << "   //";
-          FOREACH_ASTLIST(string, decl.amod->mods, mod) {
-            out << " " << *(mod.data());
+          if (decl.amod->hasMod("virtual")) {
+            out << "virtual ";
           }
-        }
-        out << "\n";
-      }
-      if (decl.access() == AC_PUREVIRT) {
-        // this is the parent class: declare it pure virtual
-        out << "  public: virtual " << decl.code << "=0;\n";
+          out << decl.code;
+
+          if (isFuncDecl(&decl) && !decl.init.empty()) {
+            out << " = " << decl.init;     // the "=0" of a pure virtual function
+          }
+          out << ";";
+
+          // emit field flags as comments, to help debug astgen
+          if (decl.amod->mods.count()) {
+            out << "   //";
+            FOREACH_ASTLIST(string, decl.amod->mods, mod) {
+              out << " " << *(mod.data());
+            }
+          }
+          out << "\n";
+          break;
+
+        case AC_PUREVIRT:
+          // this is the parent class: declare it pure virtual
+          out << "  public: virtual " << decl.code << "=0;\n";
+          break;
+
+        case AC_DEFINE_CUSTOM:
+          out << "  public: " << decl.code << ";\n";
+          break;
       }
     }
   }
@@ -914,6 +933,10 @@ public:
   void emitCloneCtorArg(CtorArg const *arg, int &ct);
   void emitCloneCtorArgs(int &ct, ASTList<CtorArg> const &args);
   void emitCloneCode(ASTClass const *super, ASTClass const *sub);
+
+  void emitUserDefinedCustomHooks(ASTClass const &cls);
+  void emitUserDefinedCustomHook(ASTClass const &cls,
+    string const &hookName, string const &declaration);
 
   void emitVisitorImplementation();
 
@@ -1035,6 +1058,8 @@ void CGen::emitTFClass(TF_class const &cls)
   out << "}\n";
   out << "\n";
 
+  emitUserDefinedCustomHooks(*( cls.super ));
+
   // gdb()
   if (wantGDB) {
     out << "void " << cls.super->name << "::gdb() const\n"
@@ -1089,6 +1114,8 @@ void CGen::emitTFClass(TF_class const &cls)
 
     out << "}\n";
     out << "\n";
+
+    emitUserDefinedCustomHooks(ctor);
 
     // clone for subclasses
     emitCloneCode(cls.super, &ctor);
@@ -1344,6 +1371,66 @@ void CGen::emitCloneCode(ASTClass const *super, ASTClass const *sub)
 
   out << "}\n"
       << "\n";
+}
+
+
+void CGen::emitUserDefinedCustomHooks(ASTClass const &cls)
+{
+  // Loop over the user-defined custom kinds.
+  FOREACH_ASTLIST(Annotation, cls.decls, iter) {
+    Annotation const *ann = iter.data();
+    if (UserDecl const *ud = ann->ifUserDeclC()) {
+      if (ud->access() == AC_DEFINE_CUSTOM) {
+        if (ud->amod->mods.count() != 1) {
+          xfatal(stringb(
+            "define_custom must have exactly one identifier within "
+            "its parentheses"));
+        }
+        string hookName = *( ud->amod->mods.first() );
+        emitUserDefinedCustomHook(cls, hookName, ud->code);
+      }
+    }
+  }
+}
+
+void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
+  string const &hookName, string const &declaration)
+{
+  // Parse the declaration.
+  //
+  //              rettype      method name      params, etc.
+  //              +------+   +------------- +   +---------+
+  std::regex re("^([^(;]+)\\b([a-zA-Z0-9_]+)\\s*(\\([^(;]+)$",
+                std::regex::ECMAScript);
+  std::smatch matches;
+  std::string declaration2(declaration);
+  if (!std::regex_match(declaration2, matches, re)) {
+    xfatal(stringb(
+      "malformed define_custom declaration: " << declaration));
+  }
+
+  string rettype    = trimWhitespace(matches[1].str());
+  string methodName = trimWhitespace(matches[2].str());
+  string parameters = trimWhitespace(matches[3].str());
+
+  out << rettype << ' ' << cls.name << "::" << methodName << parameters << '\n';
+  out << "{\n";
+
+  // Loop over the 'custom' sections, looking for one that has
+  // 'hookName'.
+  FOREACH_ASTLIST(Annotation, cls.decls, iter) {
+    Annotation const *ann = iter.data();
+    if (CustomCode const *cc = ann->ifCustomCodeC()) {
+      if (cc->qualifier == hookName) {
+        out << "  " << trimWhitespace(cc->code) << '\n';
+
+        // TODO: Mark this 'mutable'?
+        const_cast<bool&>(cc->used) = true;
+      }
+    }
+  }
+
+  out << "}\n\n\n";
 }
 
 

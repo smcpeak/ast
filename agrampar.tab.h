@@ -75,9 +75,10 @@ extern int yydebug;
     TOK_DTOR = 281,
     TOK_PURE_VIRTUAL = 282,
     TOK_CUSTOM = 283,
-    TOK_OPTION = 284,
-    TOK_NEW = 285,
-    TOK_ENUM = 286
+    TOK_DEFINE_CUSTOM = 284,
+    TOK_OPTION = 285,
+    TOK_NEW = 286,
+    TOK_ENUM = 287
   };
 #endif
 
@@ -85,7 +86,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 76 "agrampar.y"
+#line 77 "agrampar.y"
 
   ASTSpecFile *file;
   ASTList<ToplevelForm> *formList;
@@ -106,7 +107,7 @@ union YYSTYPE
   BaseClass *baseClass;
   CustomCode *customCode;
 
-#line 110 "agrampar.tab.h"
+#line 111 "agrampar.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

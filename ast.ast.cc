@@ -396,7 +396,8 @@ string toString(AccessCtl acc)
     "protected",
     "ctor",
     "dtor",
-    "pure_virtual"
+    "pure_virtual",
+    "define_custom",
   };
   STATIC_ASSERT(TABLESIZE(arr) == NUM_ACCESSCTLS);
   xassert((unsigned)acc < NUM_ACCESSCTLS);

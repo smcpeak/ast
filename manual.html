@@ -65,8 +65,9 @@ It's probably time for a redesign; but for now it is what it is.
       <li><a class="toc" href="#ctor-arguments">1.3.1 Constructor ("ctor") Arguments</a>
       <li><a class="toc" href="#fields">1.3.2 Fields</a>
       <li><a class="toc" href="#custom-code">1.3.3 Custom Code</a>
-      <li><a class="toc" href="#subclasses">1.3.4 Subclasses</a>
-      <li><a class="toc" href="#last-ctor-parameters">1.3.5 "Last" Ctor Parameters</a>
+      <li><a class="toc" href="#user-defined-custom-code">1.3.4 User-defined custom code kinds</a>
+      <li><a class="toc" href="#subclasses">1.3.5 Subclasses</a>
+      <li><a class="toc" href="#last-ctor-parameters">1.3.6 "Last" Ctor Parameters</a>
     </ul>
     <li><a class="toc" href="#miscellaneous">1.4 Miscellaneous</a>
   </ul>
@@ -270,25 +271,120 @@ The user specifies such code by saying
 
 <p>
 The &lt;kind&gt;, lexically just an identifier, controls where this code
-gets inserted.  The current kinds recognized are:
+gets inserted.  The kinds recognized by default are:
 
 <ul>
-<li><code>debugPrint</code>: Inserted into the 'debugPrint' method after the
+<li><code>debugPrint</code>: Inserted into the <code>debugPrint</code> method after the
     header is printed.
 
-<li><code>preemptDebugPrint</code>: Inserted into 'debugPrint' before anything
+<li><code>preemptDebugPrint</code>: Inserted into <code>debugPrint</code> before anything
     else is printed.
 
-<li><code>clone</code>: Inserted into the 'clone' method.
+<li><code>clone</code>: Inserted into the <code>clone</code> method.
 
-<li><code>traverse</code>: Inserted into the 'traverse' method.
+<li><code>traverse</code>: Inserted into the <code>traverse</code> method.
 </ul>
 
 <p>
-If you specify a &lt;kind&gt; which is not among these, you'll get a
-warning when 'astgen' runs.
+If you specify a &lt;kind&gt; which is not among these, nor a custom
+kind as discussed next, you'll get an error when <code>astgen</code> runs.
 
-<h3 id="subclasses">1.3.4 Subclasses</h3>
+
+<h3 id="user-defined-custom-code">1.3.4 User-defined custom code kinds</h3>
+
+<p>
+In order to allow a base module to define some behavior, and an <a
+href="#extension-modules">extension module</a> to extend that behavior,
+the user can define new &lt;kind&gt;s with the
+<code>define_custom</code> construct:
+
+<pre>
+  define_custom(&lt;new_kind&gt;) &lt;declaration&gt; ;
+</pre>
+
+<p>
+where <code>&lt;new_kind&gt;</code> is an identifier not among those
+listed as recognized by default, and <code>&lt;declaration&gt;</code>
+is the C++ member declaration of a method to define on the class.
+For example:
+
+<pre>
+  define_custom(preprint) void preprint(PrintEnv &amp;env) const;
+</pre>
+
+<p>
+Syntactically, <code>&lt;declaration&gt;</code> must match the following
+regular expression:
+
+<pre>
+      word boundary     only '(' character
+           |                    |
+  ^([^(;]+)\b([a-zA-Z0-9_]+)\s*(\([^(;]+)$
+   +------+  +-------------+   +--------+
+   rettype     method name     params, etc.
+</pre>
+
+<p>
+That is, there must be exactly one left-parenthesis character, and the
+identifier to its immediate left is treated as the method name, with
+text to the left of that (beyond the <code>\b</code> word boundary
+marker) being the return type, and text to the right
+being the parameter list.  (These restrictions exist so
+<code>astgen</code> can separate out the method name, which is needed in
+order to emit a definition that is preceded by the class name as a
+qualifier.)
+
+<p>
+The emitted definition of the method so declared is the concatenation of
+the <code>custom</code> texts, starting with that in the base module
+(if any).  It is declared with <code>public</code> access control.
+
+<p>
+<b>Example</b>: In a base module, we have:
+
+<pre>
+class TypeSpecifier {
+  define_custom(preprint) void preprint(PrintEnv &amp;env) const;
+}
+</pre>
+
+<p>
+Then in an extension module, we have:
+
+<pre>
+class TypeSpecifier {
+  public void preprint_attrSpecList(PrintEnv &amp;env) const;
+  custom preprint { preprint_attrSpecList(env); }
+}
+</pre>
+
+<p>
+When <code>astgen</code> runs with the extension module active, the C++
+header file output will contain:
+
+<pre>
+class TypeSpecifier {
+  public: public void preprint_attrSpecList(PrintEnv &amp;env) const;
+  public: void preprint(PrintEnv &amp;env) const;
+};
+</pre>
+
+<p>
+and the implementation file output will contain:
+
+<pre>
+void TypeSpecifier::preprint(PrintEnv &amp;env) const
+{
+  preprint_attrSpecList(env);
+}
+</pre>
+
+<p>
+In contrast, if the extension module is not active, the body of
+<code>TypeSpecifier::preprint</code> is empty.
+
+
+<h3 id="subclasses">1.3.5 Subclasses</h3>
 
 <p>
 The classes form a two-level hierarchy.  Subclasses are introduced
@@ -324,7 +420,8 @@ The generated header file obtains these functions through the
 <code>DECL_AST_DOWNCASTS</code> macro, defined in
 <a href="asthelp.h">asthelp.h</a>.
 
-<h3 id="last-ctor-parameters">1.3.5 "Last" Ctor Parameters</h3>
+
+<h3 id="last-ctor-parameters">1.3.6 "Last" Ctor Parameters</h3>
 
 <p>
 Occasionally, it is convenient for a ctor parameter to be supplied with
@@ -370,6 +467,7 @@ include:
   dtor
   pure_virtual
   custom
+  define_custom
   option
 </pre>
 

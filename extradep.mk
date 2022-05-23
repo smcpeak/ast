@@ -6,4 +6,6 @@ agrampar.tab.o: ast.ast.h
 astgen.o: ast.ast.h
 example-methods.o: example.ast.gen.h
 example-test.o: example.ast.gen.h
+ext1-methods.o: ext1.ast.gen.h
+ext1-test.o: ext1.ast.gen.h
 gramlex.o: agramlex.lex.gen.h

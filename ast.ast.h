@@ -226,17 +226,18 @@ public:      // funcs
   // class members with the associated access control; ctor and dtor are
   // code to be inserted into the ctor or dtor, respectively
   enum AccessCtl {
-    AC_PUBLIC,      // access
-    AC_PRIVATE,     //   control
-    AC_PROTECTED,   //     keywords
-    AC_CTOR,        // insert into ctor
-    AC_DTOR,        // insert into dtor
-    AC_PUREVIRT,    // declare pure virtual in superclass, and impl in subclass
+    AC_PUBLIC,               // access
+    AC_PRIVATE,              //   control
+    AC_PROTECTED,            //     keywords
+    AC_CTOR,                 // insert into ctor
+    AC_DTOR,                 // insert into dtor
+    AC_PUREVIRT,             // declare pure virtual in superclass, and impl in subclass
+    AC_DEFINE_CUSTOM,        // user-defined 'custom' hook
     NUM_ACCESSCTLS
   };
 
   // map the enum value to a string like "public"
-  string toString(AccessCtl acc);      // defined in ast.cc
+  string toString(AccessCtl acc);      // defined below
 
 // *** DO NOT EDIT ***
 class AccessMod {
