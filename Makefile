@@ -57,6 +57,15 @@ PYTHON3 = python3
 AR      = ar
 RANLIB  = ranlib
 
+# Ensure the directory meant to hold the output file of a recipe exists.
+CREATE_OUTPUT_DIRECTORY = @mkdir -p $(dir $@)
+
+# Script in my scripts repo that validates intra-file HTML links.
+CHECK_INTRAFILE_LINKS = check-intrafile-links
+
+# Script in my scripts repo that runs the 'vnu' HTML syntax checker.
+HTML_VNU_CHECK = html-vnu-check
+
 
 # ---- Automatic Configuration ----
 # Pull in settings from ./configure.  They override the defaults above,
@@ -225,7 +234,7 @@ all: $(TESTS)
 
 # Run one test.
 out/%-test.passed: %-test.exe %-test.expect
-	@mkdir -p out
+	$(CREATE_OUTPUT_DIRECTORY)
 	$(PYTHON3) $(SMBASE)/run-compare-expect.py \
 	  --actual out/$*-test.actual \
 	  --expect $*-test.expect \
@@ -243,6 +252,20 @@ check: run-tests
 .PHONY: test-clean
 test-clean:
 	rm -rf out
+
+
+# --------------- checking for HTML files -----------------
+# Check one HTML file.
+out/%.html.ok: %.html
+	$(CREATE_OUTPUT_DIRECTORY)
+	$(CHECK_INTRAFILE_LINKS) $*.html
+	$(HTML_VNU_CHECK) $*.html
+	touch $@
+
+# Set of HTML validations to perform.  This is not run by 'check'
+# because it relies on two scripts in another repo.
+.PHONY: check-doc
+check-doc: out/manual.html.ok
 
 
 # ----------------- extra dependencies -----------------
@@ -297,7 +320,7 @@ doc: gendoc gendoc/configure.txt gendoc/demo.h
 # ------------------------ misc ---------------------
 # delete outputs of compiler, linker
 clean: test-clean
-	rm -f *.o *.a *.exe *.d *.gen.* gmon.out
+	rm -f *.o *.a *.exe *.d *.gen.* *.bak gmon.out
 	rm -f agrampar.output
 
 # return to pristine checked-out state

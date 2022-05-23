@@ -2,6 +2,7 @@
 # In "env LANG=C sort" order.
 
 *.a
+*.bak
 *.d
 *.exe
 *.gen.*
