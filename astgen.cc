@@ -2158,7 +2158,8 @@ void checkUnusedCustoms(ASTClass const *c)
     if (a->isCustomCode()) {
       CustomCode const *cc = a->asCustomCodeC();
       if (cc->used == false) {
-        cout << "warning: unused custom code `" << cc->qualifier << "'\n";
+        xfatal(stringb(
+          "unused custom code '" << cc->qualifier << "'"));
       }
     }
   }
