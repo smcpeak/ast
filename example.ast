@@ -105,9 +105,9 @@ class SomethingElse(int x, int y) {
     { return new SomethingElse(x,y); /*my own clone() code*/ }
 }
 
-// Example for 'define_custom'.
+// Example for 'define_customizable'.
 class TypeSpecifier {
-  define_custom void preprint(int &env) const;
+  define_customizable void preprint(int &env) const;
 }
 
 // EOF

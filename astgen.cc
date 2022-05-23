@@ -841,7 +841,7 @@ void HGen::emitUserDecls(ASTList<Annotation> const &decls)
           out << "  public: virtual " << decl.code << "=0;\n";
           break;
 
-        case AC_DEFINE_CUSTOM:
+        case AC_DEFINE_CUSTOMIZABLE:
           out << "  public: " << decl.code << ";\n";
           break;
       }
@@ -1380,10 +1380,10 @@ void CGen::emitUserDefinedCustomHooks(ASTClass const &cls)
   FOREACH_ASTLIST(Annotation, cls.decls, iter) {
     Annotation const *ann = iter.data();
     if (UserDecl const *ud = ann->ifUserDeclC()) {
-      if (ud->access() == AC_DEFINE_CUSTOM) {
+      if (ud->access() == AC_DEFINE_CUSTOMIZABLE) {
         if (ud->amod->mods.count() != 0) {
           xfatal(stringb(
-            "define_custom must not be followed by parentheses"));
+            "define_customizable must not be followed by parentheses"));
         }
         emitUserDefinedCustomHook(cls, ud->code);
       }
@@ -1404,7 +1404,7 @@ void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
   std::string declaration2(declaration);
   if (!std::regex_match(declaration2, matches, re)) {
     xfatal(stringb(
-      "malformed define_custom declaration: " << declaration));
+      "malformed define_customizable declaration: " << declaration));
   }
 
   string rettype    = trimWhitespace(matches[1].str());

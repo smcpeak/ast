@@ -41,7 +41,7 @@ new class ANewClass(int foo);
 enum AnEnum { AE_FOUR };
 
 
-// Example of how the extension adds to a 'define_custom' hook.
+// Example of how the extension adds to a 'define_customizable' hook.
 class TypeSpecifier {
   public void preprint_attrSpecList(int &env) const;
   custom preprint { preprint_attrSpecList(env); }

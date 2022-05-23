@@ -75,7 +75,7 @@ extern int yydebug;
     TOK_DTOR = 281,
     TOK_PURE_VIRTUAL = 282,
     TOK_CUSTOM = 283,
-    TOK_DEFINE_CUSTOM = 284,
+    TOK_DEFINE_CUSTOMIZABLE = 284,
     TOK_OPTION = 285,
     TOK_NEW = 286,
     TOK_ENUM = 287

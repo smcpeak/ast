@@ -296,10 +296,10 @@ kind as discussed next, you'll get an error when <code>astgen</code> runs.
 In order to allow a base module to define some behavior, and an <a
 href="#extension-modules">extension module</a> to extend that behavior,
 the user can define new <code>&lt;kind&gt;</code>s with the
-<code>define_custom</code> construct:
+<code>define_customizable</code> construct:
 
 <pre>
-  define_custom &lt;declaration&gt; ;
+  define_customizable &lt;declaration&gt; ;
 </pre>
 
 <p>
@@ -310,7 +310,7 @@ For example:
 
 <pre>
   // Define a new "custom" kind called "preprint".
-  define_custom void preprint(PrintEnv &amp;env) const;
+  define_customizable void preprint(PrintEnv &amp;env) const;
 </pre>
 
 <p>
@@ -348,7 +348,7 @@ the <code>custom</code> texts, starting with that in the base module
 
 <pre>
 class TypeSpecifier {
-  define_custom void preprint(PrintEnv &amp;env) const;
+  define_customizable void preprint(PrintEnv &amp;env) const;
 }
 </pre>
 
@@ -471,7 +471,7 @@ include:
   dtor
   pure_virtual
   custom
-  define_custom
+  define_customizable
   option
 </pre>
 

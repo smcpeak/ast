@@ -161,7 +161,7 @@ extern int yydebug;
     TOK_DTOR = 281,
     TOK_PURE_VIRTUAL = 282,
     TOK_CUSTOM = 283,
-    TOK_DEFINE_CUSTOM = 284,
+    TOK_DEFINE_CUSTOMIZABLE = 284,
     TOK_OPTION = 285,
     TOK_NEW = 286,
     TOK_ENUM = 287
@@ -591,10 +591,10 @@ static const char *const yytname[] =
   "\")\"", "\"<\"", "\">\"", "\"*\"", "\"&\"", "\",\"", "\"=\"", "\":\"",
   "\"class\"", "\"public\"", "\"private\"", "\"protected\"",
   "\"verbatim\"", "\"impl_verbatim\"", "\"ctor\"", "\"dtor\"",
-  "\"pure_virtual\"", "\"custom\"", "\"define_custom\"", "\"option\"",
-  "\"new\"", "\"enum\"", "$accept", "StartSymbol", "Input", "Class",
-  "NewOpt", "ClassBody", "ClassMembersOpt", "CtorArgsOpt", "CtorArgs",
-  "CtorArgList", "Arg", "ArgWord", "ArgList", "CtorMembersOpt",
+  "\"pure_virtual\"", "\"custom\"", "\"define_customizable\"",
+  "\"option\"", "\"new\"", "\"enum\"", "$accept", "StartSymbol", "Input",
+  "Class", "NewOpt", "ClassBody", "ClassMembersOpt", "CtorArgsOpt",
+  "CtorArgs", "CtorArgList", "Arg", "ArgWord", "ArgList", "CtorMembersOpt",
   "Annotation", "CustomCode", "Embedded", "Public", "AccessMod",
   "StringList", "Verbatim", "Option", "OptionArgs", "Enum",
   "EnumeratorSeq", "Enumerator", "BaseClassesOpt", "BaseClassSeq",
@@ -1724,43 +1724,43 @@ yyreduce:
 
   case 45:
 #line 273 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PUBLIC; }
+                             { (yyval.accessCtl) = AC_PUBLIC; }
 #line 1729 "agrampar.tab.c"
     break;
 
   case 46:
 #line 274 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PRIVATE; }
+                             { (yyval.accessCtl) = AC_PRIVATE; }
 #line 1735 "agrampar.tab.c"
     break;
 
   case 47:
 #line 275 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PROTECTED; }
+                             { (yyval.accessCtl) = AC_PROTECTED; }
 #line 1741 "agrampar.tab.c"
     break;
 
   case 48:
 #line 276 "agrampar.y"
-                    { (yyval.accessCtl) = AC_CTOR; }
+                             { (yyval.accessCtl) = AC_CTOR; }
 #line 1747 "agrampar.tab.c"
     break;
 
   case 49:
 #line 277 "agrampar.y"
-                    { (yyval.accessCtl) = AC_DTOR; }
+                             { (yyval.accessCtl) = AC_DTOR; }
 #line 1753 "agrampar.tab.c"
     break;
 
   case 50:
 #line 278 "agrampar.y"
-                    { (yyval.accessCtl) = AC_PUREVIRT; }
+                             { (yyval.accessCtl) = AC_PUREVIRT; }
 #line 1759 "agrampar.tab.c"
     break;
 
   case 51:
 #line 279 "agrampar.y"
-                    { (yyval.accessCtl) = AC_DEFINE_CUSTOM; }
+                             { (yyval.accessCtl) = AC_DEFINE_CUSTOMIZABLE; }
 #line 1765 "agrampar.tab.c"
     break;
 

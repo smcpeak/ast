@@ -232,7 +232,7 @@ public:      // funcs
     AC_CTOR,                 // insert into ctor
     AC_DTOR,                 // insert into dtor
     AC_PUREVIRT,             // declare pure virtual in superclass, and impl in subclass
-    AC_DEFINE_CUSTOM,        // user-defined 'custom' hook
+    AC_DEFINE_CUSTOMIZABLE,  // user-defined 'custom' hook
     NUM_ACCESSCTLS
   };
 

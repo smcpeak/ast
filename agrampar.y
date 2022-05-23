@@ -66,7 +66,7 @@
 %token TOK_DTOR "dtor"
 %token TOK_PURE_VIRTUAL "pure_virtual"
 %token TOK_CUSTOM "custom"
-%token TOK_DEFINE_CUSTOM "define_custom"
+%token TOK_DEFINE_CUSTOMIZABLE "define_customizable"
 %token TOK_OPTION "option"
 %token TOK_NEW "new"
 %token TOK_ENUM "enum"
@@ -270,13 +270,13 @@ Embedded
 
 /* yields AccessCtl */
 Public
-  : "public"        { $$ = AC_PUBLIC; }
-  | "private"       { $$ = AC_PRIVATE; }
-  | "protected"     { $$ = AC_PROTECTED; }
-  | "ctor"          { $$ = AC_CTOR; }
-  | "dtor"          { $$ = AC_DTOR; }
-  | "pure_virtual"  { $$ = AC_PUREVIRT; }
-  | "define_custom" { $$ = AC_DEFINE_CUSTOM; }
+  : "public"                 { $$ = AC_PUBLIC; }
+  | "private"                { $$ = AC_PRIVATE; }
+  | "protected"              { $$ = AC_PROTECTED; }
+  | "ctor"                   { $$ = AC_CTOR; }
+  | "dtor"                   { $$ = AC_DTOR; }
+  | "pure_virtual"           { $$ = AC_PUREVIRT; }
+  | "define_customizable"    { $$ = AC_DEFINE_CUSTOMIZABLE; }
   ;
 
 /* yield AccessMod */

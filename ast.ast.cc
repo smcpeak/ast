@@ -397,7 +397,7 @@ string toString(AccessCtl acc)
     "ctor",
     "dtor",
     "pure_virtual",
-    "define_custom",
+    "define_customizable",
   };
   STATIC_ASSERT(TABLESIZE(arr) == NUM_ACCESSCTLS);
   xassert((unsigned)acc < NUM_ACCESSCTLS);
