@@ -107,7 +107,7 @@ class SomethingElse(int x, int y) {
 
 // Example for 'define_custom'.
 class TypeSpecifier {
-  define_custom(preprint) void preprint(int &env) const;
+  define_custom void preprint(int &env) const;
 }
 
 // EOF

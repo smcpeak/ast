@@ -936,7 +936,7 @@ public:
 
   void emitUserDefinedCustomHooks(ASTClass const &cls);
   void emitUserDefinedCustomHook(ASTClass const &cls,
-    string const &hookName, string const &declaration);
+    string const &declaration);
 
   void emitVisitorImplementation();
 
@@ -1381,20 +1381,18 @@ void CGen::emitUserDefinedCustomHooks(ASTClass const &cls)
     Annotation const *ann = iter.data();
     if (UserDecl const *ud = ann->ifUserDeclC()) {
       if (ud->access() == AC_DEFINE_CUSTOM) {
-        if (ud->amod->mods.count() != 1) {
+        if (ud->amod->mods.count() != 0) {
           xfatal(stringb(
-            "define_custom must have exactly one identifier within "
-            "its parentheses"));
+            "define_custom must not be followed by parentheses"));
         }
-        string hookName = *( ud->amod->mods.first() );
-        emitUserDefinedCustomHook(cls, hookName, ud->code);
+        emitUserDefinedCustomHook(cls, ud->code);
       }
     }
   }
 }
 
 void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
-  string const &hookName, string const &declaration)
+  string const &declaration)
 {
   // Parse the declaration.
   //
@@ -1417,11 +1415,11 @@ void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
   out << "{\n";
 
   // Loop over the 'custom' sections, looking for one that has
-  // 'hookName'.
+  // 'methodName'.
   FOREACH_ASTLIST(Annotation, cls.decls, iter) {
     Annotation const *ann = iter.data();
     if (CustomCode const *cc = ann->ifCustomCodeC()) {
-      if (cc->qualifier == hookName) {
+      if (cc->qualifier == methodName) {
         out << "  " << trimWhitespace(cc->code) << '\n';
 
         // TODO: Mark this 'mutable'?

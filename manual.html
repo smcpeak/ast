@@ -286,7 +286,7 @@ gets inserted.  The kinds recognized by default are:
 </ul>
 
 <p>
-If you specify a &lt;kind&gt; which is not among these, nor a custom
+If you specify a <code>&lt;kind&gt;</code> which is not among these, nor a custom
 kind as discussed next, you'll get an error when <code>astgen</code> runs.
 
 
@@ -295,21 +295,22 @@ kind as discussed next, you'll get an error when <code>astgen</code> runs.
 <p>
 In order to allow a base module to define some behavior, and an <a
 href="#extension-modules">extension module</a> to extend that behavior,
-the user can define new &lt;kind&gt;s with the
+the user can define new <code>&lt;kind&gt;</code>s with the
 <code>define_custom</code> construct:
 
 <pre>
-  define_custom(&lt;new_kind&gt;) &lt;declaration&gt; ;
+  define_custom &lt;declaration&gt; ;
 </pre>
 
 <p>
-where <code>&lt;new_kind&gt;</code> is an identifier not among those
-listed as recognized by default, and <code>&lt;declaration&gt;</code>
-is the C++ member declaration of a method to define on the class.
+where <code>&lt;declaration&gt;</code>
+is the C++ member declaration of a method to define on the class whose
+name is not among the <code>&lt;kind&gt;</code>s recognized by default.
 For example:
 
 <pre>
-  define_custom(preprint) void preprint(PrintEnv &amp;env) const;
+  // Define a new "custom" kind called "preprint".
+  define_custom void preprint(PrintEnv &amp;env) const;
 </pre>
 
 <p>
@@ -329,22 +330,25 @@ That is, there must be exactly one left-parenthesis character, and the
 identifier to its immediate left is treated as the method name, with
 text to the left of that (beyond the <code>\b</code> word boundary
 marker) being the return type, and text to the right
-being the parameter list.  (These restrictions exist so
-<code>astgen</code> can separate out the method name, which is needed in
-order to emit a definition that is preceded by the class name as a
-qualifier.)
+being the parameter list.
+(These restrictions exist so
+<code>astgen</code> can separate out the method name without fully
+parsing C++ syntax.)
+The method name acts as the <code>&lt;kind&gt;</code>
+for a subsequent <code>custom</code> directive.
 
 <p>
 The emitted definition of the method so declared is the concatenation of
 the <code>custom</code> texts, starting with that in the base module
-(if any).  It is declared with <code>public</code> access control.
+(if any).  (Note: That means the only practical return type, for now, is
+<code>void</code>.)  It is declared with <code>public</code> access control.
 
 <p>
 <b>Example</b>: In a base module, we have:
 
 <pre>
 class TypeSpecifier {
-  define_custom(preprint) void preprint(PrintEnv &amp;env) const;
+  define_custom void preprint(PrintEnv &amp;env) const;
 }
 </pre>
 
