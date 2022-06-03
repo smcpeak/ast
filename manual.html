@@ -263,15 +263,23 @@ superclass.
 astgen can insert user-specified code at key points in the code it
 emits.  This is useful for doing some processing with the otherwise
 uninterpreted fields (the fields astgen doesn't know how to process).
-The user specifies such code by saying
+The user specifies such code by saying one of the following:
 
 <pre>
+  ctor /* ...code... */ ;
+  dtor /* ...code... */ ;
   custom &lt;kind&gt; { /* ...code... */ }
 </pre>
 
 <p>
-The &lt;kind&gt;, lexically just an identifier, controls where this code
-gets inserted.  The kinds recognized by default are:
+In the first two forms, the code is inserted into the constructor and
+destructor, respectively.  It is terminated by the first semicolon that
+is not contained inside balanced parentheses, brackets, or braces.
+
+<p>
+In the third form, the &lt;kind&gt;, lexically just an identifier, controls where the code
+gets inserted.  The code must begin with left-brace, and ends with the
+right-brace that balances it.  The kinds recognized by default are:
 
 <ul>
 <li><code>debugPrint</code>: Inserted into the <code>debugPrint</code> method after the
