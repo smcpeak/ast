@@ -100,7 +100,7 @@
 %type <tfClass> Class ClassBody ClassMembersOpt
 %type <ctorArgList> CtorArgsOpt CtorArgs CtorArgList
 %type <userDeclList> CtorMembersOpt
-%type <str> Arg ArgWord Embedded ArgList
+%type <str> Arg ArgWord ArgList
 %type <accessCtl> Public
 %type <accessMod> AccessMod
 %type <verbatim> Verbatim
@@ -246,7 +246,7 @@ CtorMembersOpt
 
 /* yields Annotation */
 Annotation
-  : AccessMod Embedded
+  : AccessMod TOK_EMBEDDED_CODE ";"
       { $$ = new UserDecl($1, unbox($2), ""); }
   | AccessMod TOK_EMBEDDED_CODE "=" TOK_EMBEDDED_CODE ";"
       { $$ = new UserDecl($1, unbox($2), unbox($4)); }
@@ -256,16 +256,8 @@ Annotation
 
 /* yields CustomCode */
 CustomCode
-  : "custom" TOK_NAME Embedded
-      { $$ = new CustomCode(unbox($2), unbox($3)); }
-  ;
-
-/* yields string */
-Embedded
-  : TOK_EMBEDDED_CODE ";"
-      { $$ = $1; }
-  | "{" TOK_EMBEDDED_CODE "}"
-      { $$ = $2; }
+  : "custom" TOK_NAME "{" TOK_EMBEDDED_CODE "}"
+      { $$ = new CustomCode(unbox($2), unbox($4)); }
   ;
 
 /* yields AccessCtl */
@@ -294,10 +286,10 @@ StringList: TOK_NAME
           ;
 
 /* yields TF_verbatim */
-Verbatim: "verbatim" Embedded
-            { $$ = new TF_verbatim(unbox($2)); }
-        | "impl_verbatim" Embedded
-            { $$ = new TF_impl_verbatim(unbox($2)); }
+Verbatim: "verbatim" "{" TOK_EMBEDDED_CODE "}"
+            { $$ = new TF_verbatim(unbox($3)); }
+        | "impl_verbatim" "{" TOK_EMBEDDED_CODE "}"
+            { $$ = new TF_impl_verbatim(unbox($3)); }
         ;
 
 /* yields TF_option */
