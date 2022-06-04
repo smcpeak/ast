@@ -11,6 +11,8 @@
 
 #include "sm-iostream.h" // ostream
 
+#include <vector>        // std::vector
+
 // ----------------- downcasts --------------------
 // the 'if' variants return NULL if the type isn't what's expected;
 // the 'as' variants throw an exception in that case
@@ -249,6 +251,29 @@ void debugPrintFakeList(FakeList<T> const *list, char const *name,
 
 // note that we never make FakeLists of strings, since of course
 // strings do not have a 'next' pointer
+
+
+#define PRINT_POINTER_VECTOR(vec) \
+  debugPrintPointerVector(vec, #vec, os, indent)     /* user ; */
+
+template <class T>
+void debugPrintPointerVector(std::vector<T*> const &vec, char const *name,
+                             ostream &os, int indent)
+{
+  ind(os, indent) << name << ":\n";
+  int ct=0;
+  {
+    for (T const *t : vec) {
+      string label = stringb(name << "[" << ct++ << "]");
+      if (t) {
+        t->debugPrint(os, indent+2, label.c_str());
+      }
+      else {
+        ind(os, indent) << label << " is null\n";
+      }
+    }
+  }
+}
 
 
 #define PRINT_SUBTREE(tree)                     \
