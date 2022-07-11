@@ -12,7 +12,14 @@ SMBASE    = ../smbase
 LIBSMBASE = $(SMBASE)/libsmbase.a
 
 SMFLEXDIR = ../smflex
-SMFLEX    = $(SMFLEXDIR)/smflex
+
+# smflex produces an .exe on Windows, so check for that first.
+SMFLEX    = $(wildcard $(SMFLEXDIR)/smflex.exe)
+ifeq ($(SMFLEX),)
+# Then try without the extension.
+SMFLEX    = $(wildcard $(SMFLEXDIR)/smflex)
+endif
+
 
 # C++ compiler.
 CXX = g++
@@ -88,6 +95,13 @@ include config.mk
 #   CXX_WARNING_FLAGS = -Wsuggest-override
 #
 -include personal.mk
+
+
+# Check this after config.mk and personal.mk have had a chance to fix
+# it.
+ifeq ($(SMFLEX),)
+$(error The smflex program is expected to be in $(SMFLEXDIR).)
+endif
 
 
 # ----------------------------- Rules ------------------------------
