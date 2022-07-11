@@ -2293,7 +2293,7 @@ void entry(int argc, char **argv)
   char const *basename = NULL;      // nothing set
 
   argv++;
-  while (argv[0][0] == '-') {
+  while (argv[0] != nullptr && argv[0][0] == '-') {
     if (argv[0][1] == 'b' ||        // 'b' is for compatibility
         argv[0][1] == 'o') {
       if (argv[0][2]) {
