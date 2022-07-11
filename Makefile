@@ -123,6 +123,7 @@ endif
 
 
 # ---------------------- intermediate files -------------------
+ifeq ($(MAINTAINER_MODE),1)
 # Run bison.  I am currently using bison-3.0.4.
 #
 # This uses a pattern rule instead of a normal rule because pattern
@@ -132,6 +133,10 @@ endif
 #
 # There is also the "&:" separator, but that was only added in GNU
 # Make 4.3 (2020-01-19), which is too recent for me to depend on.
+#
+# This rule is not enabled by default because the output files are
+# checked in to git, but git checks them out with semi-random time
+# stamps.
 %.tab.cc %.tab.h %.codes.h: %.y
 	bison -d -v $*.y
 	@#
@@ -145,6 +150,7 @@ endif
 	@# everything that is in the YYSTYPE union.
 	@#
 	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
+endif # MAINTAINER_MODE
 
 # Run smflex.
 %.lex.gen.cc %.lex.gen.h: %.lex $(SMFLEX)
