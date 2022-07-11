@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,8 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_AGRAMPAR_TAB_H_INCLUDED
 # define YY_YY_AGRAMPAR_TAB_H_INCLUDED
@@ -44,42 +45,47 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_NAME = 258,
-    TOK_INTLIT = 259,
-    TOK_EMBEDDED_CODE = 260,
-    TOK_LBRACE = 261,
-    TOK_RBRACE = 262,
-    TOK_SEMICOLON = 263,
-    TOK_ARROW = 264,
-    TOK_LPAREN = 265,
-    TOK_RPAREN = 266,
-    TOK_LANGLE = 267,
-    TOK_RANGLE = 268,
-    TOK_STAR = 269,
-    TOK_AMPERSAND = 270,
-    TOK_COMMA = 271,
-    TOK_EQUALS = 272,
-    TOK_COLON = 273,
-    TOK_CLASS = 274,
-    TOK_PUBLIC = 275,
-    TOK_PRIVATE = 276,
-    TOK_PROTECTED = 277,
-    TOK_VERBATIM = 278,
-    TOK_IMPL_VERBATIM = 279,
-    TOK_CTOR = 280,
-    TOK_DTOR = 281,
-    TOK_PURE_VIRTUAL = 282,
-    TOK_CUSTOM = 283,
-    TOK_DEFINE_CUSTOMIZABLE = 284,
-    TOK_OPTION = 285,
-    TOK_NEW = 286,
-    TOK_ENUM = 287
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    TOK_NAME = 258,                /* TOK_NAME  */
+    TOK_INTLIT = 259,              /* TOK_INTLIT  */
+    TOK_EMBEDDED_CODE = 260,       /* TOK_EMBEDDED_CODE  */
+    TOK_LBRACE = 261,              /* "{"  */
+    TOK_RBRACE = 262,              /* "}"  */
+    TOK_SEMICOLON = 263,           /* ";"  */
+    TOK_ARROW = 264,               /* "->"  */
+    TOK_LPAREN = 265,              /* "("  */
+    TOK_RPAREN = 266,              /* ")"  */
+    TOK_LANGLE = 267,              /* "<"  */
+    TOK_RANGLE = 268,              /* ">"  */
+    TOK_STAR = 269,                /* "*"  */
+    TOK_AMPERSAND = 270,           /* "&"  */
+    TOK_COMMA = 271,               /* ","  */
+    TOK_EQUALS = 272,              /* "="  */
+    TOK_COLON = 273,               /* ":"  */
+    TOK_CLASS = 274,               /* "class"  */
+    TOK_PUBLIC = 275,              /* "public"  */
+    TOK_PRIVATE = 276,             /* "private"  */
+    TOK_PROTECTED = 277,           /* "protected"  */
+    TOK_VERBATIM = 278,            /* "verbatim"  */
+    TOK_IMPL_VERBATIM = 279,       /* "impl_verbatim"  */
+    TOK_CTOR = 280,                /* "ctor"  */
+    TOK_DTOR = 281,                /* "dtor"  */
+    TOK_PURE_VIRTUAL = 282,        /* "pure_virtual"  */
+    TOK_CUSTOM = 283,              /* "custom"  */
+    TOK_DEFINE_CUSTOMIZABLE = 284, /* "define_customizable"  */
+    TOK_OPTION = 285,              /* "option"  */
+    TOK_NEW = 286,                 /* "new"  */
+    TOK_ENUM = 287                 /* "enum"  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
@@ -107,7 +113,7 @@ union YYSTYPE
   BaseClass *baseClass;
   CustomCode *customCode;
 
-#line 111 "agrampar.tab.h"
+#line 117 "agrampar.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -117,6 +123,8 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
+
 int yyparse (ASTParseParams *parseParam);
+
 
 #endif /* !YY_YY_AGRAMPAR_TAB_H_INCLUDED  */

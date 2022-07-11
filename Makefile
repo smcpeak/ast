@@ -124,7 +124,7 @@ endif
 
 # ---------------------- intermediate files -------------------
 ifeq ($(MAINTAINER_MODE),1)
-# Run bison.  I am currently using bison-3.0.4.
+# Run bison.  I am currently using bison-3.8.2.
 #
 # This uses a pattern rule instead of a normal rule because pattern
 # rules with multiple targets mean that a single rule creates multiple
@@ -149,7 +149,17 @@ ifeq ($(MAINTAINER_MODE),1)
 	@# token codes in the lexer without also having to declare
 	@# everything that is in the YYSTYPE union.
 	@#
-	sed -n -e '/enum yytokentype/,/};/p' < $*.tab.h > $*.codes.h
+	@# Explanation of the 'sed' command:
+	@#   -n: Do not automatically print lines.
+	@#   -e: Execute the given program.
+	@#   /R1/,/R2/p: Print everything between R1 and R2.
+	@#   /R2/q: Quit after seeing R2.
+	@#
+	@# The 'q' part is needed because bison-3.8.2 output has a
+	@# second line that matches my R1 (the typedef of yytoken_kind_t)
+	@# but I only want the first set of lines.
+	@#
+	sed -n -e '/enum yytokentype/,/};/p; /};/q' < $*.tab.h > $*.codes.h
 endif # MAINTAINER_MODE
 
 # Run smflex.
