@@ -2251,10 +2251,13 @@ void checkUnusedCustoms(ASTClass const *c)
 }
 
 
-void grabOptionName(rostring opname, string &oparg, TF_option const *op)
+// Retrieve the single argument in 'op' and store it in 'oparg'.
+//
+// If 'oparg' is already non-empty, then complain.
+static void getOptionArgument(string /*INOUT*/ &oparg, TF_option const *op)
 {
   if (op->args.count() != 1) {
-    xfatal("'" << opname << "' option requires one argument");
+    xfatal("'" << op->name << "' option requires one argument");
   }
 
   if (!oparg.empty()) {
@@ -2263,12 +2266,11 @@ void grabOptionName(rostring opname, string &oparg, TF_option const *op)
     // simply changes the name, then the resulting error messages
     // (compilation errors from parts of the system using the
     // old name) are not obvious to diagnose.
-    xfatal("there is already " << a_or_an(opname) <<
+    xfatal("there is already " << a_or_an(op->name) <<
            " class, called " << oparg << ";\n" <<
            "you should use (subclass) that one");
   }
 
-  // name of the visitor interface class
   oparg = *( op->args.firstC() );
 }
 
@@ -2350,16 +2352,16 @@ void entry(int argc, char **argv)
         TF_option const *op = iter.data()->asTF_optionC();
 
         if (op->name.equals("visitor")) {
-          grabOptionName("visitor", visitorName, op);
+          getOptionArgument(visitorName, op);
         }
         else if (op->name.equals("dvisitor")) {
-          grabOptionName("dvisitor", dvisitorName, op);
+          getOptionArgument(dvisitorName, op);
         }
         else if (op->name.equals("mvisitor")) {
-          grabOptionName("mvisitor", mvisitorName, op);
+          getOptionArgument(mvisitorName, op);
         }
         else if (op->name.equals("identityManager")) {
-          grabOptionName("identityManager", identityManagerName, op);
+          getOptionArgument(identityManagerName, op);
         }
         else if (op->name.equals("gdb")) {
           wantGDB = true;
