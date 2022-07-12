@@ -62,9 +62,6 @@ inline bool wantDVisitor() { return !dvisitorName.empty(); }
 string mvisitorName;
 inline bool wantMVisitor() { return !mvisitorName.empty(); }
 
-string identityManagerName;
-inline bool wantIdentityManager() { return !identityManagerName.empty(); }
-
 // entire input
 ASTSpecFile *wholeAST = NULL;
 
@@ -430,9 +427,6 @@ void HGen::emitFile()
   }
   if (wantMVisitor()) {
     out << "class " << mvisitorName << ";\n\n";
-  }
-  if (wantIdentityManager()) {
-    out << "class " << identityManagerName << ";\n\n";
   }
 
   // do all the enums first; this became necessary when I had an
@@ -2359,9 +2353,6 @@ void entry(int argc, char **argv)
         }
         else if (op->name.equals("mvisitor")) {
           getOptionArgument(mvisitorName, op);
-        }
-        else if (op->name.equals("identityManager")) {
-          getOptionArgument(identityManagerName, op);
         }
         else if (op->name.equals("gdb")) {
           wantGDB = true;
