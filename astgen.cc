@@ -12,6 +12,7 @@
 #include "strtokp.h"       // StrtokParse
 #include "exc.h"           // xfatal
 #include "strdict.h"       // StringDict
+#include "syserr.h"        // xsyserror
 
 #include <regex>           // std::regex
 #include <string>          // std::string
@@ -120,7 +121,7 @@ Gen::Gen(rostring srcfn, ObjList<string> const &mods,
     file(f)
 {
   if (!out) {
-    throw_XOpen(destfn);
+    xsyserror("open", destfn);
   }
 }
 

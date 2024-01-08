@@ -12,6 +12,7 @@
 #include "owner.h"                     // Owner
 #include "strutil.h"                   // trimWhitespace
 #include "strtable.h"                  // StringTable
+#include "syserr.h"                    // xsyserror
 
 #include <string.h>                    // strncmp
 #include <ctype.h>                     // isalnum
@@ -147,7 +148,7 @@ ASTSpecFile *readAbstractGrammar(char const *fname)
     // file
     in = new ifstream(fname);
     if (!*in) {
-      throw_XOpen(fname);
+      xsyserror("open", fname);
     }
     trace("tmp") << "in is " << in.get() << endl;
     lexer = new GrammarLexer(isAGramlexEmbed, stringTable, fname, in.xfr());
