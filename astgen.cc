@@ -1,25 +1,31 @@
 // astgen.cc            see license.txt for copyright and terms of use
 // program to generate C++ code from an AST specification
 
+// ast
 #include "agrampar.h"      // readAbstractGrammar
-#include "sm-test.h"       // ARGS_MAIN
-#include "trace.h"         // TRACE_ARGS
-#include "owner.h"         // Owner
-#include "strutil.h"       // replace, translate, localTimeString
-#include "sobjlist.h"      // SObjList
-#include "stringset.h"     // StringSet
-#include "srcloc.h"        // SourceLocManager
-#include "strtokp.h"       // StrtokParse
-#include "exc.h"           // xfatal
-#include "strdict.h"       // StringDict
-#include "syserr.h"        // xsyserror
 
+// smbase
+#include "exc.h"           // xfatal
+#include "owner.h"         // Owner
+#include "sm-fstream.h"    // ofstream
+#include "sm-test.h"       // ARGS_MAIN
+#include "sobjlist.h"      // SObjList
+#include "srcloc.h"        // SourceLocManager
+#include "strdict.h"       // StringDict
+#include "stringset.h"     // StringSet
+#include "strtokp.h"       // StrtokParse
+#include "strutil.h"       // replace, translate, localTimeString
+#include "syserr.h"        // xsyserror
+#include "trace.h"         // TRACE_ARGS
+
+// libc++
 #include <regex>           // std::regex
 #include <string>          // std::string
 
-#include <string.h>        // strncmp
-#include "sm-fstream.h"    // ofstream
+// libc
 #include <ctype.h>         // isalnum
+#include <string.h>        // strncmp
+
 
 // propertly a member of ListClass below, but I don't like nested
 // things
