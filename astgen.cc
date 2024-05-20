@@ -191,14 +191,14 @@ TreeNodeKind getTreeNodeKind(rostring base)
   SFOREACH_OBJLIST(TF_class, allClasses, iter) {
     TF_class const *c = iter.data();
 
-    if (c->super->name.equals(base)) {
+    if (stringEquals(c->super->name, base)) {
       // found it in a superclass
       return TKN_SUPERCLASS;
     }
 
     // check the subclasses
     FOREACH_ASTLIST(ASTClass, c->ctors, ctor) {
-      if (ctor.data()->name.equals(base)) {
+      if (stringEquals(ctor.data()->name, base)) {
         // found it in a subclass
         return TKN_SUBCLASS;
       }
@@ -216,7 +216,7 @@ string getSuperTypeOf(rostring sub)
 
     // look among the subclasses
     FOREACH_ASTLIST(ASTClass, c->ctors, ctor) {
-      if (ctor.data()->name.equals(sub)) {
+      if (stringEquals(ctor.data()->name, sub)) {
         // found it
         return c->super->name;
       }
@@ -657,7 +657,7 @@ void HGen::emitCtorFormal(int &ct, CtorArg const *arg)
   out << type << " ";
   if (isListType(type) ||
       isTreeNode(type) ||
-      type.equals("LocString")) {
+      stringEquals(type, "LocString")) {
     // lists and subtrees and LocStrings are constructed by passing pointers
     trace("putStar") << "putting star for " << type << endl;
     out << "*";
@@ -804,7 +804,7 @@ void HGen::emitUserDecls(ASTList<Annotation> const &decls)
       UserDecl const &decl = *( iter.data()->asUserDeclC() );
       switch (decl.access()) {
         default:
-          xfailure(stringb(
+          xfailure(stringbc(
             "unhandled UserDecl type: " << toString(decl.access())));
 
         case AC_CTOR:
@@ -1132,7 +1132,7 @@ bool CGen::emitCustomCode(ASTList<Annotation> const &list, rostring tag)
 
   FOREACH_ASTLIST(Annotation, list, iter) {
     CustomCode const *cc = iter.data()->ifCustomCodeC();
-    if (cc && cc->qualifier.equals(tag)) {
+    if (cc && stringEquals(cc->qualifier, tag)) {
       out << "  " << cc->code << ";\n";
       emitted = true;
 
@@ -1465,7 +1465,7 @@ void HGen::emitVisitorInterfacePrelude(rostring visitorName)
       ;
 
   // custom additions to the visitor's constructor
-  emitTF_custom(out, stringc << visitorName << "_ctor", false /*addNewline*/);
+  emitTF_custom(out, stringb(visitorName << "_ctor"), false /*addNewline*/);
 
   out << "}\n"
       << "  virtual ~" << visitorName << "();   // silence gcc warning...\n"
@@ -1625,7 +1625,7 @@ void CGen::emitTraverse(ASTClass const *c, ASTClass const * /*nullable*/ super,
   // name of the 'visit' method that applies to this class;
   // these methods are always named according to the least-derived
   // class in the hierarchy
-  string visitName = stringc << "visit" << (super? super : c)->name;
+  string visitName = stringb("visit" << (super? super : c)->name);
 
   // we only call 'visit' in the most-derived classes; this of course
   // assumes that classes with children are never themselves instantiated
@@ -1950,13 +1950,13 @@ void CGen::emitMTraverse(ASTClass const *c, rostring obj, rostring i)
   // traverse into the ctor arguments
   FOREACH_ASTLIST(CtorArg, c->args, iter) {
     CtorArg const *arg = iter.data();
-    string argVar = stringc << obj << "->" << arg->name;
+    string argVar = stringb(obj << "->" << arg->name);
 
     if (isTreeNode(arg->type) || isTreeNodePtr(arg->type)) {
       string eltType = extractNodeType(arg->type);
 
       out << i << "if (" << argVar << ") {\n";
-      emitMTraverseCall(stringc << i << "  ", eltType, argVar);
+      emitMTraverseCall(stringb(i << "  "), eltType, argVar);
       out << i << "}\n";
     }
 
@@ -1966,7 +1966,7 @@ void CGen::emitMTraverse(ASTClass const *c, rostring obj, rostring i)
 
       // list of tree nodes: iterate and traverse
       out << i << "FOREACH_ASTLIST_NC(" << eltType << ", " << argVar << ", iter) {\n";
-      emitMTraverseCall(stringc << i << "  ", eltType, "iter.dataRef()");
+      emitMTraverseCall(stringb(i << "  "), eltType, "iter.dataRef()");
       out << i << "}\n";
     }
 
@@ -1984,7 +1984,7 @@ void CGen::emitMTraverse(ASTClass const *c, rostring obj, rostring i)
           << i << "  while (*iter) {\n"
           ;
 
-      emitMTraverseCall(stringc << i << "    ", eltType, "*iter");
+      emitMTraverseCall(stringb(i << "    "), eltType, "*iter");
 
       out << i << "    iter = &( (*iter)->next );\n"
           << i << "  }\n"
@@ -2024,7 +2024,7 @@ void CGen::emitMTraverseCall(rostring i, rostring eltType, rostring argVar)
 
 void mergeClass(ASTClass *base, ASTClass *ext)
 {
-  xassert(base->name.equals(ext->name));
+  xassert(stringEquals(base->name, ext->name));
   trace("merge") << "merging class: " << ext->name << endl;
 
   // move all ctor args to the base
@@ -2041,7 +2041,7 @@ void mergeClass(ASTClass *base, ASTClass *ext)
 
 void mergeEnum(TF_enum *base, TF_enum *ext)
 {
-  xassert(base->name.equals(ext->name));
+  xassert(stringEquals(base->name, ext->name));
   trace("merge") << "merging enum: " << ext->name << endl;
 
   while (ext->enumerators.isNotEmpty()) {
@@ -2053,7 +2053,7 @@ void mergeEnum(TF_enum *base, TF_enum *ext)
 ASTClass *findClass(TF_class *base, rostring name)
 {
   FOREACH_ASTLIST_NC(ASTClass, base->ctors, iter) {
-    if (iter.data()->name.equals(name)) {
+    if (stringEquals(iter.data()->name, name)) {
       return iter.data();
     }
   }
@@ -2063,7 +2063,7 @@ ASTClass *findClass(TF_class *base, rostring name)
 void mergeSuperclass(TF_class *base, TF_class *ext)
 {
   // should only get here for same-named classes
-  xassert(base->super->name.equals(ext->super->name));
+  xassert(stringEquals(base->super->name, ext->super->name));
   trace("merge") << "merging superclass: " << ext->super->name << endl;
 
   // merge the superclass ctor args and annotations
@@ -2094,7 +2094,7 @@ TF_class *findSuperclass(ASTSpecFile *base, rostring name)
   FOREACH_ASTLIST_NC(ToplevelForm, base->forms, iter) {
     ToplevelForm *tf = iter.data();
     if (tf->isTF_class() &&
-        tf->asTF_class()->super->name.equals(name)) {
+        stringEquals(tf->asTF_class()->super->name, name)) {
       return tf->asTF_class();
     }
   }
@@ -2106,7 +2106,7 @@ TF_enum *findEnum(ASTSpecFile *base, rostring name)
   FOREACH_ASTLIST_NC(ToplevelForm, base->forms, iter) {
     ToplevelForm *tf = iter.data();
     if (tf->isTF_enum() &&
-        tf->asTF_enum()->name.equals(name)) {
+        stringEquals(tf->asTF_enum()->name, name)) {
       return tf->asTF_enum();
     }
   }
@@ -2193,7 +2193,7 @@ void mergeExtension(ASTSpecFile *base, ASTSpecFile *ext)
 void recordListClass(ListKind lkind, rostring className, CtorArg const *arg) {
   rostring argName = arg->name;
   ListClass *cls = new ListClass
-    (lkind, stringc << className << "_" << argName, extractListType(arg->type));
+    (lkind, stringb(className << "_" << argName), extractListType(arg->type));
   if (!listClassesSet.contains(cls->classAndMemberName)) {
     listClassesSet.add(cls->classAndMemberName);
     listClasses.append(cls);
@@ -2352,16 +2352,16 @@ void entry(int argc, char **argv)
       if (iter.data()->isTF_option()) {
         TF_option const *op = iter.data()->asTF_optionC();
 
-        if (op->name.equals("visitor")) {
+        if (stringEquals(op->name, "visitor")) {
           getOptionArgument(visitorName, op);
         }
-        else if (op->name.equals("dvisitor")) {
+        else if (stringEquals(op->name, "dvisitor")) {
           getOptionArgument(dvisitorName, op);
         }
-        else if (op->name.equals("mvisitor")) {
+        else if (stringEquals(op->name, "mvisitor")) {
           getOptionArgument(mvisitorName, op);
         }
-        else if (op->name.equals("gdb")) {
+        else if (stringEquals(op->name, "gdb")) {
           wantGDB = true;
         }
         else {

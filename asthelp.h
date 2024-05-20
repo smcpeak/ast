@@ -220,7 +220,7 @@ void debugPrintList(ASTList<T> const &list, char const *name,
   {
     FOREACH_ASTLIST(T, list, iter) {
       iter.data()->debugPrint(os, indent+2,
-        stringc << name << "[" << ct++ << "]");
+        stringbc(name << "[" << ct++ << "]"));
     }
   }
 }
@@ -244,7 +244,7 @@ void debugPrintFakeList(FakeList<T> const *list, char const *name,
   {
     FAKELIST_FOREACH(T, list, iter) {
       iter->debugPrint(os, indent+2,
-        stringc << name << "[" << ct++ << "]");
+        stringbc(name << "[" << ct++ << "]"));
     }
   }
 }

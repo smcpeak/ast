@@ -18,7 +18,7 @@ void FileLocation::xfer(Flatten &flat)
 string FileLocation::toString() const
 {
   if (validLoc()) {
-    return stringc << "line " << line << ", col " << col;
+    return stringb("line " << line << ", col " << col);
   }
   else {
     return string("(unknown loc)");
@@ -97,8 +97,8 @@ char const *SourceLocation::fname() const
 string SourceLocation::oldToString() const
 {
   if (fname()) {
-    return stringc << "file " << fname() << ", "
-                   << FileLocation::toString();
+    return stringb("file " << fname() << ", "
+                   << FileLocation::toString());
   }
   else {
     return FileLocation::toString();
@@ -108,7 +108,7 @@ string SourceLocation::oldToString() const
 string SourceLocation::likeGccToString() const
 {
   if (validLoc()) {
-    return stringc << fname() << ":" << line << ":" << col;
+    return stringb(fname() << ":" << line << ":" << col);
   }
   else {
     return string("(?loc?)");

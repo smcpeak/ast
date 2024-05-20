@@ -53,14 +53,14 @@ CtorArg *parseCtorArg(rostring origStr)
   // check for owner flag
   if (prefixEquals(str, "owner")) {
     ret->isOwner = true;
-    str = str.substring(6, str.length() - 6);    // skip "owner "
+    str = str.substr(6, str.length() - 6);    // skip "owner "
   }
 
   // check for an initial value
   char const *equals = strchr(str.c_str(), '=');
   if (equals) {
     ret->defaultValue = equals+1;
-    str = trimWhitespace(str.substring(0, equals-str.c_str()));
+    str = trimWhitespace(str.substr(0, equals-str.c_str()));
     trace("defaultValue") << "split into `" << str
                           << "' and `" << ret->defaultValue << "'\n";
   }
@@ -74,7 +74,7 @@ CtorArg *parseCtorArg(rostring origStr)
     p--;
   }
   if (p == start) {
-    xformat(stringc << "missing type specifier in \"" << origStr << "\"");
+    xformat(stringb("missing type specifier in \"" << origStr << "\""));
   }
   p++;
 

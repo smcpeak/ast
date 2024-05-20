@@ -131,7 +131,7 @@ int GrammarLexer::yylexInc()
     // 'in' will be deleted in ~GrammarLexer
     ifstream *in = new ifstream(fname.c_str());
     if (!*in) {
-      err(stringc << "unable to open include file `" << fname << "'");
+      err(stringb("unable to open include file `" << fname << "'"));
     }
     else {
       recursivelyProcess(fname, in);
@@ -239,18 +239,18 @@ void GrammarLexer::printWarning(SourceLoc loc, rostring msg)
 
 void GrammarLexer::errorUnterminatedComment()
 {
-  err(stringc << "unterminated comment, beginning on line " //<< commentStartLine);
-              << sourceLocManager->getLine(tokenStartLoc));
+  err(stringb("unterminated comment, beginning on line " //<< commentStartLine);
+              << sourceLocManager->getLine(tokenStartLoc)));
 }
 
 void GrammarLexer::errorMalformedInclude()
 {
-  err(stringc << "malformed include");
+  err(stringb("malformed include"));
 }
 
 void GrammarLexer::errorIllegalCharacter(char ch)
 {
-  err(stringc << "illegal character: `" << ch << "'");
+  err(stringb("illegal character: `" << ch << "'"));
 }
 
 
