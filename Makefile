@@ -97,13 +97,6 @@ include config.mk
 -include personal.mk
 
 
-# Check this after config.mk and personal.mk have had a chance to fix
-# it.
-ifeq ($(SMFLEX),)
-$(error The smflex program is expected to be in $(SMFLEXDIR).)
-endif
-
-
 # ----------------------------- Rules ------------------------------
 # Get rid of (some...) built-in rules.
 .SUFFIXES:
