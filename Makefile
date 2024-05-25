@@ -40,7 +40,10 @@ WARNING_FLAGS =
 CXX_WARNING_FLAGS =
 
 # Flags for C++ standard to use.
-CXX_STD_FLAGS = -std=c++11
+#
+# C++17 is needed because that is what smbase uses and it affects
+# mangled names (at least when using GCC).
+CXX_STD_FLAGS = -std=c++17
 
 # Preprocessing flags.
 CPPFLAGS = -I$(SMBASE)
