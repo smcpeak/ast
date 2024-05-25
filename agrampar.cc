@@ -164,7 +164,7 @@ ASTSpecFile *readAbstractGrammar(char const *fname)
   try {
     retval = agrampar_yyparse(&params);
   }
-  catch (xFormat &x) {
+  catch (XFormat &x) {
     lexer->err(x.cond());     // print with line number info
     throw;
   }
