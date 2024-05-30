@@ -9,17 +9,19 @@
 #include "gramlex.h"                   // GrammarLexer
 
 // smbase
-#include "exc.h"                       // xformat
+#include "exc.h"                       // smbase::xformat
 #include "owner.h"                     // Owner
 #include "sm-fstream.h"                // ifstream
 #include "strtable.h"                  // StringTable
 #include "strutil.h"                   // trimWhitespace
-#include "syserr.h"                    // xsyserror
+#include "syserr.h"                    // smbase::xsyserror
 #include "trace.h"                     // tracing debugging functions
 
 // libc
 #include <ctype.h>                     // isalnum
 #include <string.h>                    // strncmp
+
+using namespace smbase;
 
 
 string unbox(string *s)

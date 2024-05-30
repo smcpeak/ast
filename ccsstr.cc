@@ -3,12 +3,14 @@
 
 #include "ccsstr.h"      // this module
 #include "xassert.h"     // xassert
-#include "exc.h"         // xformat
+#include "exc.h"         // smbase::xformat
 #include "strutil.h"     // string, replace
 #include "reporterr.h"   // silentReportError
 
 #include "sm-iostream.h" // cout
 #include <ctype.h>       // isspace
+
+using namespace smbase;
 
 
 CCSubstrate::CCSubstrate(ReportError *err)

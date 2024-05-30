@@ -15,7 +15,7 @@
 #include "stringset.h"     // StringSet
 #include "strtokp.h"       // StrtokParse
 #include "strutil.h"       // replace, translate, localTimeString
-#include "syserr.h"        // xsyserror
+#include "syserr.h"        // smbase::xsyserror
 #include "trace.h"         // TRACE_ARGS
 
 // libc++
@@ -25,6 +25,8 @@
 // libc
 #include <ctype.h>         // isalnum
 #include <string.h>        // strncmp
+
+using namespace smbase;
 
 
 // propertly a member of ListClass below, but I don't like nested
