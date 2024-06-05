@@ -13,7 +13,7 @@
 #include "owner.h"                     // Owner
 #include "sm-fstream.h"                // ifstream
 #include "strtable.h"                  // StringTable
-#include "strutil.h"                   // trimWhitespace
+#include "string-util.h"               // trimWhitespace, beginsWith
 #include "syserr.h"                    // smbase::xsyserror
 #include "trace.h"                     // tracing debugging functions
 
@@ -53,7 +53,7 @@ CtorArg *parseCtorArg(rostring origStr)
   string str = trimWhitespace(origStr);
 
   // check for owner flag
-  if (prefixEquals(str, "owner")) {
+  if (beginsWith(str, "owner")) {
     ret->isOwner = true;
     str = str.substr(6, str.length() - 6);    // skip "owner "
   }

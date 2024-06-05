@@ -6,6 +6,7 @@
 
 // smbase
 #include "exc.h"           // xfatal
+#include "datetime.h"      // localTimeString
 #include "owner.h"         // Owner
 #include "sm-fstream.h"    // ofstream
 #include "sm-test.h"       // ARGS_MAIN
@@ -14,7 +15,7 @@
 #include "strdict.h"       // StringDict
 #include "stringset.h"     // StringSet
 #include "strtokp.h"       // StrtokParse
-#include "strutil.h"       // replace, translate, localTimeString
+#include "string-util.h"   // replaceAll, translate, beginsWith
 #include "syserr.h"        // smbase::xsyserror
 #include "trace.h"         // TRACE_ARGS
 
@@ -248,13 +249,13 @@ bool isListType(rostring type)
   // there because the type string is actually parsed by the
   // grammar, and as it assembles it back into a string it
   // inserts a space after every name-like token)
-  return prefixEquals(type, "ASTList <");
+  return beginsWith(type, "ASTList <");
 }
 
 // similar for FakeList
 bool isFakeListType(rostring type)
 {
-  return prefixEquals(type, "FakeList <");
+  return beginsWith(type, "FakeList <");
 }
 
 // is it a list type, with the elements being tree nodes?
@@ -2381,7 +2382,7 @@ void entry(int argc, char **argv)
   allClasses.reverse();
 
   // generate the header
-  string base = replace(srcFname, ".ast", "");
+  string base = replaceAll(srcFname, ".ast", "");
   if (basename) {
     base = basename;
   }

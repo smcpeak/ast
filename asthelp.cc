@@ -2,8 +2,8 @@
 // code for what's declared in asthelp.h
 
 #include "asthelp.h"       // this module
-#include "strutil.h"       // quoted
 #include "exc.h"           // xformat
+#include "string-util.h"   // doubleQuote
 
 
 // ----------- debugPrint helpers -----------------------
@@ -26,7 +26,7 @@ void debugPrintStr(char const *s, char const *name,
                    ostream &os, int indent)
 {
   string s1((s) ? string(s) : string("NULL"));
-  ind(os, indent) << name << " = " << quoted(s1) << "\n";
+  ind(os, indent) << name << " = " << doubleQuote(s1) << "\n";
 }
 
 
@@ -35,7 +35,7 @@ void debugPrintCStr(char const *s, char const *name,
 {
   ind(os, indent) << name << " = ";
   if (s) {
-    os << quoted(s);
+    os << doubleQuote(s);
   }
   else {
     os << "(null)";
@@ -55,7 +55,7 @@ void debugPrintStringList(ASTList<STR> const &list, char const *name,
       if (ct++ > 0) {
         os << ", ";
       }
-      os << quoted(string(*( iter.data() )));
+      os << doubleQuote(string(*( iter.data() )));
     }
   }
   os << "\n";

@@ -107,7 +107,7 @@ class BaseClass (AccessCtl access, string name);
 // ------------------- extra implementation helpers ------------------
 impl_verbatim {
 
-#include "strutil.h"      // stringToupper
+#include "string-util.h"               // stringToupper, beginsWith
 
 string toString(AccessCtl acc)
 {
@@ -153,7 +153,7 @@ bool AccessMod::hasModPrefix(char const *mod) const
   string mod0(mod);
   FOREACH_ASTLIST(string, mods, iter) {
     rostring i = *iter.data();
-    if (prefixEquals(i, mod0)) {
+    if (beginsWith(i, mod0)) {
       return true;
     }
   }
@@ -167,7 +167,7 @@ string AccessMod::getModSuffixFromPrefix(char const *mod) const
   bool found = false;
   FOREACH_ASTLIST(string, mods, iter) {
     rostring s = *iter.data();
-    if (prefixEquals(s, mod0)) {
+    if (beginsWith(s, mod0)) {
       if (found) {
         xfailure(stringbc("two modifiers with this prefix found " << mod));
       }

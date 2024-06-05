@@ -3,7 +3,7 @@
 
 #include "ccsstr.h"                    // module under test
 
-#include "strutil.h"                   // replace
+#include "string-util.h"               // replaceAll
 #include "xassert.h"                   // xassert
 
 
@@ -66,7 +66,7 @@ void Test::str(rostring src, int nesting, bool bs)
   test(src, CC::ST_STRING, nesting, bs);
 
   // repeat the test with single-tick
-  string another = replace(src, "\"", "\'");
+  string another = replaceAll(src, "\"", "\'");
   test(another, CC::ST_CHAR, nesting, bs);
 }
 
