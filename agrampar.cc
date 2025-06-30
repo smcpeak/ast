@@ -82,6 +82,10 @@ CtorArg *parseCtorArg(rostring origStr)
 
   ret->type = trimWhitespace(substring(start, p-start));
   ret->name = trimWhitespace(string(p));
+  trace("parseCtorArg")
+    << "split " << doubleQuote(origStr)
+    << " into type=" << doubleQuote(ret->type)
+    << " and name=" << doubleQuote(ret->name) << "\n";
 
   return ret;
 }

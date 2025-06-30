@@ -61,6 +61,8 @@ after = NodeList:
       x = 4
       y = 5
       w = 3
+tree = HasStdString:
+  m_str = "hi"
 example-test passed
 ---- stderr ----
 ---- exit status ----

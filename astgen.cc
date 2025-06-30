@@ -1238,10 +1238,37 @@ void CGen::emitPrintFields(ASTList<Annotation> const &decls)
   }
 }
 
+static bool isStringType(rostring type)
+{
+  // This is used in older code that was originally using the smbase
+  // `string` class, and now is using `std::string` via an alias.
+  if (streq(type, "string")) {
+    return true;
+  }
+
+  // Also recognize `std::string` when written in full.
+  //
+  // Inside `agrampar.y`, when a sequence of `TOK_NAME` is parsed as a
+  // sequence of `ArgWord` to make an `Arg`, we append a space after
+  // each name:
+  //
+  //   : TOK_NAME         { $$ = appendStr($1, box(" ")); }
+  //                                                ^
+  //
+  // Consequently, we have to check for a slightly weird way of writing
+  // the type name here.
+  //
+  if (streq(type, "std ::string")) {
+    return true;
+  }
+
+  return false;
+}
+
 void CGen::emitPrintField(rostring print,
                           bool isOwner, rostring type, rostring name)
 {
-  if (streq(type, "string")) {
+  if (isStringType(type)) {
     out << "  " << print << "_STRING(" << name << ");\n";
   }
   else if (streq(type, "StringRef")) {

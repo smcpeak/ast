@@ -3,6 +3,7 @@
 
 verbatim {
   // first verbatim in example.ast
+  #include <string>                    // std::string
 }
 
 // I want a visitor, with the interface called ExampleVisitor
@@ -109,5 +110,8 @@ class SomethingElse(int x, int y) {
 class TypeSpecifier {
   define_customizable void preprint(int &env) const;
 }
+
+// Demonstrate we can use `std::string` as a type.
+class HasStdString(std::string m_str);
 
 // EOF

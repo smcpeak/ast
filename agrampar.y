@@ -226,6 +226,7 @@ ArgWord
   | "*"              { $$ = box("*"); }
   | "&"              { $$ = box("&"); }
   | "="              { $$ = box("="); }
+  | ":"              { $$ = box(":"); }
   | TOK_CLASS        { $$ = box("class "); }    /* special b/c is ast spec keyword */
   ;
 

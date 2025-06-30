@@ -5,6 +5,8 @@
 
 #include "example.ast.gen.h"           // module under test
 
+#include "smbase/sm-test.h"            // EXPECT_EQ
+
 #include <iostream>                    // cout
 
 using namespace std;
@@ -115,11 +117,20 @@ static void testMVisitor()
 }
 
 
+static void testHasStdString()
+{
+  HasStdString hss("hi");
+  hss.gdb();
+  EXPECT_EQ(hss.m_str, std::string("hi"));
+}
+
+
 int main()
 {
   testNode();
   testNodeList();
   testMVisitor();
+  testHasStdString();
 
   cout << "example-test passed\n";
   return 0;
