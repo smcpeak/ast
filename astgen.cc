@@ -318,25 +318,25 @@ void Gen::emitFiltered(ASTList<Annotation> const &decls, AccessCtl mode,
 }
 
 
-// ------------------ generation of the header -----------------------
-// emit header code for an entire AST spec file
-void HGen::emitFile()
+std::string Gen::makeIncludeLatch() const
 {
-  string includeLatch = translate(sm_basename(destFname), "a-z.-", "A-Z__");
+  return translate(sm_basename(destFname), "a-z.-", "A-Z__");
+}
+
+
+// ------------------------------ FwdGen -------------------------------
+void FwdGen::emitFile()
+{
+  string includeLatch = makeIncludeLatch();
 
   headerComments();
 
   out << "#ifndef " << includeLatch << "\n";
   out << "#define " << includeLatch << "\n";
   out << "\n";
-  out << "#include \"ast/asthelp.h\"    // helpers for generated code\n";
-  if (wantDVisitor()) {
-    out << "#include \"smbase/sobjset.h\" // SObjSet\n";
-  }
-  out << "\n";
 
   // forward-declare all the classes
-  out << "// fwd decls\n";
+  out << "// Node classes.\n";
   FOREACH_ASTLIST(ToplevelForm, file.forms, form) {
     TF_class const *c = form.data()->ifTF_classC();
     if (c) {
@@ -365,6 +365,30 @@ void HGen::emitFile()
   if (wantMVisitor()) {
     out << "class " << mvisitorName << ";\n\n";
   }
+
+  out << "\n";
+  out << "#endif // " << includeLatch << "\n";
+}
+
+
+// ------------------ generation of the header -----------------------
+// emit header code for an entire AST spec file
+void HGen::emitFile()
+{
+  string includeLatch = makeIncludeLatch();
+
+  headerComments();
+
+  out << "#ifndef " << includeLatch << "\n";
+  out << "#define " << includeLatch << "\n";
+  out << "\n";
+  out << "#include \"" << m_fwdFname << "\"   // fwds for this module\n";
+  out << "\n";
+  out << "#include \"ast/asthelp.h\"    // helpers for generated code\n";
+  if (wantDVisitor()) {
+    out << "#include \"smbase/sobjset.h\" // SObjSet\n";
+  }
+  out << "\n";
 
   // do all the enums first; this became necessary when I had an
   // enum in an extension, since the use of the enum ended up
@@ -2295,8 +2319,13 @@ void entry(int argc, char **argv)
   // get all of the list classes
   getListClasses();
 
+  string fwdFname = base + ".fwd.h";
+  FwdGen fg(srcFname, modules, fwdFname, *ast);
+  cout << "writing " << fwdFname << "...\n";
+  fg.emitFile();
+
   string hdrFname = base + ".h";
-  HGen hg(srcFname, modules, hdrFname, *ast);
+  HGen hg(srcFname, modules, hdrFname, *ast, fwdFname);
   cout << "writing " << hdrFname << "...\n";
   hg.emitFile();
 

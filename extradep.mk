@@ -4,8 +4,14 @@ agrampar.o: agrampar.tab.h
 agrampar.o: ast.ast.h
 agrampar.tab.o: ast.ast.h
 astgen.o: ast.ast.h
+example-methods.o: example.ast.gen.fwd.h
 example-methods.o: example.ast.gen.h
+example-test.o: example.ast.gen.fwd.h
 example-test.o: example.ast.gen.h
+example.ast.gen.o: example.ast.gen.fwd.h
+ext1-methods.o: ext1.ast.gen.fwd.h
 ext1-methods.o: ext1.ast.gen.h
+ext1-test.o: ext1.ast.gen.fwd.h
 ext1-test.o: ext1.ast.gen.h
+ext1.ast.gen.o: ext1.ast.gen.fwd.h
 gramlex.o: agramlex.lex.gen.h

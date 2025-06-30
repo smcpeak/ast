@@ -60,11 +60,32 @@ public:           // funcs
   void doNotEdit();
   void emitFiltered(ASTList<Annotation> const &decls, AccessCtl mode,
                     rostring indent);
+
+  // Construct the header include latch symbol name.
+  std::string makeIncludeLatch() const;
+};
+
+
+// ------------------------------ FwdGen -------------------------------
+class FwdGen : public Gen {
+public:        // funcs
+  FwdGen(
+    rostring srcFname,
+    ObjList<string> const &modules,
+    rostring destFname,
+    ASTSpecFile const &file)
+    : Gen(srcFname, modules, destFname, file)
+  {}
+  void emitFile();
 };
 
 
 // ------------------------------- HGen --------------------------------
 class HGen : public Gen {
+private:        // data
+  // Name of the associated forward header file.
+  std::string m_fwdFname;
+
 private:        // funcs
   void emitVerbatim(TF_verbatim const &v);
   void emitTFClass(TF_class const &cls);
@@ -89,8 +110,10 @@ private:        // funcs
 
 public:         // funcs
   HGen(rostring srcFname, ObjList<string> const &modules,
-       rostring destFname, ASTSpecFile const &file)
-    : Gen(srcFname, modules, destFname, file)
+       rostring destFname, ASTSpecFile const &file,
+       rostring fwdFname)
+    : Gen(srcFname, modules, destFname, file),
+      m_fwdFname(fwdFname)
   {}
   void emitFile();
 };
