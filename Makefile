@@ -9,7 +9,7 @@ all: astgen.exe libast.a
 # ------------------------- Configuration --------------------------
 # directories of other software
 SMBASE    = ../smbase
-LIBSMBASE = $(SMBASE)/libsmbase.a
+LIBSMBASE = $(SMBASE)/obj/libsmbase.a
 
 SMFLEXDIR = ../smflex
 
