@@ -1,9 +1,10 @@
 // asthelp.cc            see license.txt for copyright and terms of use
 // code for what's declared in asthelp.h
 
-#include "asthelp.h"       // this module
-#include "exc.h"           // xformat
-#include "string-util.h"   // doubleQuote
+#include "asthelp.h"                   // this module
+
+#include "smbase/exc.h"                // xformat
+#include "smbase/string-util.h"        // doubleQuote
 
 
 // ----------- debugPrint helpers -----------------------

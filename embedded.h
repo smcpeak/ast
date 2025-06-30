@@ -1,11 +1,13 @@
 // embedded.h            see license.txt for copyright and terms of use
 // interface to an embedded language processor
 
-#ifndef EMBEDDED_H
-#define EMBEDDED_H
+#ifndef AST_EMBEDDED_H
+#define AST_EMBEDDED_H
 
-#include "str.h"        // stringBuilder
-#include "reporterr.h"  // ReportError
+#include "ast/reporterr.h"             // ReportError
+
+#include "smbase/str.h"                // stringBuilder
+
 
 class EmbeddedLang {
 public:
@@ -55,4 +57,4 @@ public:
   virtual string getDeclName() const = 0;
 };
 
-#endif // EMBEDDED_H
+#endif // AST_EMBEDDED_H

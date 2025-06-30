@@ -2,7 +2,7 @@
 // ast definition for an ast definition
 
 verbatim {
-  #include "str.h"         // string
+  #include "smbase/str.h"              // string
 
   // this signals to ast.hand.cc that ast.ast.cc is nonempty,
   // so none of the bootstrap code in ast.hand.cc should be used
@@ -107,7 +107,7 @@ class BaseClass (AccessCtl access, string name);
 // ------------------- extra implementation helpers ------------------
 impl_verbatim {
 
-#include "string-util.h"               // stringToupper, beginsWith
+#include "smbase/string-util.h"        // stringToupper, beginsWith
 
 string toString(AccessCtl acc)
 {

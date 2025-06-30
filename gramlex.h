@@ -3,8 +3,8 @@
 // this lexer class is used both for parsing both AST and grammar descriptions;
 // they differ in their .lex description, but their lexing state is the same
 
-#ifndef __GRAMLEX_H
-#define __GRAMLEX_H
+#ifndef AST_GRAMLEX_H
+#define AST_GRAMLEX_H
 
 
 // Due to the funky way I am sharing this file between ast and elkhound,
@@ -14,19 +14,18 @@
 #  error "Either agramlex.yy.h or gramlex.yy.h must be included first."
 #endif
 
-#include "sm-iostream.h"      // istream
+#include "ast/embedded.h"              // EmbeddedLang
+
+#include "smbase/objlist.h"            // ObjList
+#include "smbase/sm-iostream.h"        // istream
+#include "smbase/srcloc.h"             // SourceLoc
+#include "smbase/str.h"                // string
+#include "smbase/strtable.h"           // StringTable, StringRef
+
 
 // token code definitions
 #define TOK_EOF 0             // better name
 #define TOK_INCLUDE 1         // not seen by parser
-
-
-// other includes
-#include "str.h"              // string
-#include "objlist.h"          // ObjList
-#include "srcloc.h"           // SourceLoc
-#include "embedded.h"         // EmbeddedLang
-#include "strtable.h"         // StringTable, StringRef
 
 
 // this class just holds the lexer state so it is properly encapsulated
@@ -191,4 +190,4 @@ public:      // funcs
 };
 
 
-#endif // __GRAMLEX_H
+#endif // AST_GRAMLEX_H

@@ -386,7 +386,7 @@ BaseClass *BaseClass::clone() const
 // *** DO NOT EDIT ***
 
 
-#include "string-util.h"               // stringToupper, beginsWith
+#include "smbase/string-util.h"        // stringToupper, beginsWith
 
 string toString(AccessCtl acc)
 {

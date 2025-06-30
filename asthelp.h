@@ -1,17 +1,18 @@
 // asthelp.h            see license.txt for copyright and terms of use
 // included by generated ast code
 
-#ifndef ASTHELP_H
-#define ASTHELP_H
+#ifndef AST_ASTHELP_H
+#define AST_ASTHELP_H
 
-#include "astlist.h"     // ASTList
-#include "fakelist.h"    // FakeList
-#include "str.h"         // string
-#include "locstr.h"      // LocString
+#include "ast/fakelist.h"              // FakeList
+#include "ast/locstr.h"                // LocString
 
-#include "sm-iostream.h" // ostream
+#include "smbase/astlist.h"            // ASTList
+#include "smbase/str.h"                // string
+#include "smbase/sm-iostream.h"        // ostream
 
-#include <vector>        // std::vector
+#include <vector>                      // std::vector
+
 
 // ----------------- downcasts --------------------
 // the 'if' variants return NULL if the type isn't what's expected;
@@ -344,4 +345,4 @@ FakeList<T> * /*owner*/ cloneFakeList(FakeList<T> const *src)
 }
 
 
-#endif // ASTHELP_H
+#endif // AST_ASTHELP_H

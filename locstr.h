@@ -1,14 +1,15 @@
 // locstr.h            see license.txt for copyright and terms of use
 // location & string table reference
 
-#ifndef LOCSTR_H
-#define LOCSTR_H
+#ifndef AST_LOCSTR_H
+#define AST_LOCSTR_H
 
-#include "sm-iostream.h" // ostream
-#include <string.h>      // strlen
+#include "smbase/sm-iostream.h"        // ostream
+#include "smbase/srcloc.h"             // SourceLoc
+#include "smbase/strtable.h"           // StringRef
 
-#include "strtable.h"    // StringRef
-#include "srcloc.h"      // SourceLoc
+#include <string.h>                    // strlen
+
 
 class LocString {
 public:    // data
@@ -64,4 +65,4 @@ string toString(LocString const &s);
   LocString(HERE_SOURCELOC, str)
 
 
-#endif // LOCSTR_H
+#endif // AST_LOCSTR_H

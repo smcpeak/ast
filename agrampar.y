@@ -5,10 +5,12 @@
 /* C declarations */
 %{
 
-#include "agrampar.h"       // agrampar_yylex, etc.
+#include "ast/agrampar.h"              // agrampar_yylex, etc.
 
-#include <stdlib.h>         // malloc, free
-#include "sm-iostream.h"    // cout
+#include "smbase/sm-iostream.h"        // cout
+
+#include <stdlib.h>                    // malloc, free
+
 
 // enable debugging the parser
 #ifndef NDEBUG

@@ -1,9 +1,9 @@
 // reporterr.cc            see license.txt for copyright and terms of use
 // code for reporterr.h
 
-#include "reporterr.h"      // this module
+#include "reporterr.h"                 // this module
 
-#include "sm-iostream.h"    // cout
+#include "smbase/sm-iostream.h"        // cout
 
 
 // --------------------- SilentReportError -------------------------

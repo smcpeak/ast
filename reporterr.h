@@ -1,10 +1,11 @@
 // reporterr.h            see license.txt for copyright and terms of use
 // interface for reporting errors and warnings
 
-#ifndef REPORTERR_H
-#define REPORTERR_H
+#ifndef AST_REPORTERR_H
+#define AST_REPORTERR_H
 
-#include "str.h"        // rostring
+#include "smbase/str.h"                // rostring
+
 
 class ReportError {
 public:
@@ -44,4 +45,4 @@ public:
 extern SimpleReportError simpleReportError;
 
 
-#endif // REPORTERR_H
+#endif // AST_REPORTERR_H

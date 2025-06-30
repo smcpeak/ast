@@ -70,10 +70,12 @@
 #line 6 "agrampar.y"
 
 
-#include "agrampar.h"       // agrampar_yylex, etc.
+#include "ast/agrampar.h"              // agrampar_yylex, etc.
 
-#include <stdlib.h>         // malloc, free
-#include "sm-iostream.h"    // cout
+#include "smbase/sm-iostream.h"        // cout
+
+#include <stdlib.h>                    // malloc, free
+
 
 // enable debugging the parser
 #ifndef NDEBUG
@@ -88,7 +90,7 @@
 #define yyerror(param, msg) agrampar_yyerror(msg, param)
 
 
-#line 92 "agrampar.tab.c"
+#line 94 "agrampar.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -566,14 +568,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   124,   124,   130,   131,   132,   133,   134,   135,   136,
-     141,   145,   153,   154,   166,   168,   176,   177,   179,   181,
-     189,   190,   196,   198,   203,   210,   215,   217,   223,   224,
-     225,   226,   227,   228,   229,   230,   234,   236,   243,   244,
-     250,   252,   254,   260,   266,   267,   268,   269,   270,   271,
-     272,   276,   278,   283,   285,   290,   292,   297,   303,   304,
-     309,   311,   316,   318,   323,   329,   330,   335,   337,   343,
-     344,   345,   349
+       0,   126,   126,   132,   133,   134,   135,   136,   137,   138,
+     143,   147,   155,   156,   168,   170,   178,   179,   181,   183,
+     191,   192,   198,   200,   205,   212,   217,   219,   225,   226,
+     227,   228,   229,   230,   231,   232,   236,   238,   245,   246,
+     252,   254,   256,   262,   268,   269,   270,   271,   272,   273,
+     274,   278,   280,   285,   287,   292,   294,   299,   305,   306,
+     311,   313,   318,   320,   325,   331,   332,   337,   339,   345,
+     346,   347,   351
 };
 #endif
 
@@ -1222,443 +1224,443 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* StartSymbol: Input  */
-#line 125 "agrampar.y"
+#line 127 "agrampar.y"
                { (yyval.file) = parseParam->treeTop = new ASTSpecFile((yyvsp[0].formList)); }
-#line 1228 "agrampar.tab.c"
+#line 1230 "agrampar.tab.c"
     break;
 
   case 3: /* Input: %empty  */
-#line 130 "agrampar.y"
+#line 132 "agrampar.y"
                              { (yyval.formList) = new ASTList<ToplevelForm>; }
-#line 1234 "agrampar.tab.c"
+#line 1236 "agrampar.tab.c"
     break;
 
   case 4: /* Input: Input Class  */
-#line 131 "agrampar.y"
+#line 133 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfClass)); }
-#line 1240 "agrampar.tab.c"
+#line 1242 "agrampar.tab.c"
     break;
 
   case 5: /* Input: Input Verbatim  */
-#line 132 "agrampar.y"
+#line 134 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].verbatim)); }
-#line 1246 "agrampar.tab.c"
+#line 1248 "agrampar.tab.c"
     break;
 
   case 6: /* Input: Input Option  */
-#line 133 "agrampar.y"
+#line 135 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfOption)); }
-#line 1252 "agrampar.tab.c"
+#line 1254 "agrampar.tab.c"
     break;
 
   case 7: /* Input: Input Enum  */
-#line 134 "agrampar.y"
+#line 136 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append((yyvsp[0].tfEnum)); }
-#line 1258 "agrampar.tab.c"
+#line 1260 "agrampar.tab.c"
     break;
 
   case 8: /* Input: Input CustomCode  */
-#line 135 "agrampar.y"
+#line 137 "agrampar.y"
                              { ((yyval.formList)=(yyvsp[-1].formList))->append(new TF_custom((yyvsp[0].customCode))); }
-#line 1264 "agrampar.tab.c"
+#line 1266 "agrampar.tab.c"
     break;
 
   case 9: /* Input: Input ";"  */
-#line 136 "agrampar.y"
+#line 138 "agrampar.y"
                              { (yyval.formList)=(yyvsp[-1].formList); }
-#line 1270 "agrampar.tab.c"
+#line 1272 "agrampar.tab.c"
     break;
 
   case 10: /* Class: NewOpt "class" TOK_NAME CtorArgsOpt BaseClassesOpt ClassBody  */
-#line 142 "agrampar.y"
+#line 144 "agrampar.y"
          { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-3].str));
            (yyval.tfClass)->super->args.steal((yyvsp[-2].ctorArgList));
            (yyval.tfClass)->super->bases.steal((yyvsp[-1].baseClassList)); }
-#line 1278 "agrampar.tab.c"
+#line 1280 "agrampar.tab.c"
     break;
 
   case 11: /* Class: NewOpt "class" TOK_NAME CtorArgs CtorArgs BaseClassesOpt ClassBody  */
-#line 146 "agrampar.y"
+#line 148 "agrampar.y"
          { ((yyval.tfClass)=(yyvsp[0].tfClass))->super->name = unbox((yyvsp[-4].str));
            (yyval.tfClass)->super->args.steal((yyvsp[-3].ctorArgList));
            (yyval.tfClass)->super->lastArgs.steal((yyvsp[-2].ctorArgList));
            (yyval.tfClass)->super->bases.steal((yyvsp[-1].baseClassList)); }
-#line 1287 "agrampar.tab.c"
+#line 1289 "agrampar.tab.c"
     break;
 
   case 12: /* NewOpt: %empty  */
-#line 153 "agrampar.y"
+#line 155 "agrampar.y"
                              {}
-#line 1293 "agrampar.tab.c"
+#line 1295 "agrampar.tab.c"
     break;
 
   case 13: /* NewOpt: "new"  */
-#line 154 "agrampar.y"
+#line 156 "agrampar.y"
                              {}
-#line 1299 "agrampar.tab.c"
+#line 1301 "agrampar.tab.c"
     break;
 
   case 14: /* ClassBody: "{" ClassMembersOpt "}"  */
-#line 167 "agrampar.y"
+#line 169 "agrampar.y"
              { (yyval.tfClass)=(yyvsp[-1].tfClass); }
-#line 1305 "agrampar.tab.c"
+#line 1307 "agrampar.tab.c"
     break;
 
   case 15: /* ClassBody: ";"  */
-#line 169 "agrampar.y"
+#line 171 "agrampar.y"
              { (yyval.tfClass) = new TF_class(new ASTClass("(placeholder)", NULL, NULL, NULL, NULL), NULL); }
-#line 1311 "agrampar.tab.c"
+#line 1313 "agrampar.tab.c"
     break;
 
   case 16: /* ClassMembersOpt: %empty  */
-#line 176 "agrampar.y"
+#line 178 "agrampar.y"
       { (yyval.tfClass) = new TF_class(new ASTClass("(placeholder)", NULL, NULL, NULL, NULL), NULL); }
-#line 1317 "agrampar.tab.c"
+#line 1319 "agrampar.tab.c"
     break;
 
   case 17: /* ClassMembersOpt: ClassMembersOpt "->" TOK_NAME CtorArgsOpt BaseClassesOpt ";"  */
-#line 178 "agrampar.y"
+#line 180 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-5].tfClass))->ctors.append(new ASTClass(unbox((yyvsp[-3].str)), (yyvsp[-2].ctorArgList), NULL, (yyvsp[-1].baseClassList), NULL)); }
-#line 1323 "agrampar.tab.c"
+#line 1325 "agrampar.tab.c"
     break;
 
   case 18: /* ClassMembersOpt: ClassMembersOpt "->" TOK_NAME CtorArgsOpt BaseClassesOpt "{" CtorMembersOpt "}"  */
-#line 180 "agrampar.y"
+#line 182 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-7].tfClass))->ctors.append(new ASTClass(unbox((yyvsp[-5].str)), (yyvsp[-4].ctorArgList), NULL, (yyvsp[-3].baseClassList), (yyvsp[-1].userDeclList))); }
-#line 1329 "agrampar.tab.c"
+#line 1331 "agrampar.tab.c"
     break;
 
   case 19: /* ClassMembersOpt: ClassMembersOpt Annotation  */
-#line 182 "agrampar.y"
+#line 184 "agrampar.y"
       { ((yyval.tfClass)=(yyvsp[-1].tfClass))->super->decls.append((yyvsp[0].annotation)); }
-#line 1335 "agrampar.tab.c"
+#line 1337 "agrampar.tab.c"
     break;
 
   case 20: /* CtorArgsOpt: %empty  */
-#line 189 "agrampar.y"
+#line 191 "agrampar.y"
       { (yyval.ctorArgList) = new ASTList<CtorArg>; }
-#line 1341 "agrampar.tab.c"
+#line 1343 "agrampar.tab.c"
     break;
 
   case 21: /* CtorArgsOpt: CtorArgs  */
-#line 191 "agrampar.y"
+#line 193 "agrampar.y"
       { (yyval.ctorArgList) = (yyvsp[0].ctorArgList); }
-#line 1347 "agrampar.tab.c"
+#line 1349 "agrampar.tab.c"
     break;
 
   case 22: /* CtorArgs: "(" ")"  */
-#line 197 "agrampar.y"
+#line 199 "agrampar.y"
       { (yyval.ctorArgList) = new ASTList<CtorArg>; }
-#line 1353 "agrampar.tab.c"
+#line 1355 "agrampar.tab.c"
     break;
 
   case 23: /* CtorArgs: "(" CtorArgList ")"  */
-#line 199 "agrampar.y"
+#line 201 "agrampar.y"
       { (yyval.ctorArgList) = (yyvsp[-1].ctorArgList); }
-#line 1359 "agrampar.tab.c"
+#line 1361 "agrampar.tab.c"
     break;
 
   case 24: /* CtorArgList: Arg  */
-#line 204 "agrampar.y"
+#line 206 "agrampar.y"
                { (yyval.ctorArgList) = new ASTList<CtorArg>;
                  {
                    string tmp = unbox((yyvsp[0].str));
                    (yyval.ctorArgList)->append(parseCtorArg(tmp));
                  }
                }
-#line 1370 "agrampar.tab.c"
+#line 1372 "agrampar.tab.c"
     break;
 
   case 25: /* CtorArgList: CtorArgList "," Arg  */
-#line 211 "agrampar.y"
+#line 213 "agrampar.y"
                { ((yyval.ctorArgList)=(yyvsp[-2].ctorArgList))->append(parseCtorArg(unbox((yyvsp[0].str)))); }
-#line 1376 "agrampar.tab.c"
+#line 1378 "agrampar.tab.c"
     break;
 
   case 26: /* Arg: ArgWord  */
-#line 216 "agrampar.y"
+#line 218 "agrampar.y"
        { (yyval.str) = (yyvsp[0].str); }
-#line 1382 "agrampar.tab.c"
+#line 1384 "agrampar.tab.c"
     break;
 
   case 27: /* Arg: Arg ArgWord  */
-#line 218 "agrampar.y"
+#line 220 "agrampar.y"
        { (yyval.str) = appendStr((yyvsp[-1].str), (yyvsp[0].str)); }
-#line 1388 "agrampar.tab.c"
+#line 1390 "agrampar.tab.c"
     break;
 
   case 28: /* ArgWord: TOK_NAME  */
-#line 223 "agrampar.y"
+#line 225 "agrampar.y"
                      { (yyval.str) = appendStr((yyvsp[0].str), box(" ")); }
-#line 1394 "agrampar.tab.c"
+#line 1396 "agrampar.tab.c"
     break;
 
   case 29: /* ArgWord: TOK_INTLIT  */
-#line 224 "agrampar.y"
+#line 226 "agrampar.y"
                      { (yyval.str) = appendStr((yyvsp[0].str), box(" ")); }
-#line 1400 "agrampar.tab.c"
+#line 1402 "agrampar.tab.c"
     break;
 
   case 30: /* ArgWord: "<" ArgList ">"  */
-#line 225 "agrampar.y"
+#line 227 "agrampar.y"
                      { (yyval.str) = appendStr(box("<"), appendStr((yyvsp[-1].str), box(">"))); }
-#line 1406 "agrampar.tab.c"
+#line 1408 "agrampar.tab.c"
     break;
 
   case 31: /* ArgWord: "*"  */
-#line 226 "agrampar.y"
+#line 228 "agrampar.y"
                      { (yyval.str) = box("*"); }
-#line 1412 "agrampar.tab.c"
+#line 1414 "agrampar.tab.c"
     break;
 
   case 32: /* ArgWord: "&"  */
-#line 227 "agrampar.y"
+#line 229 "agrampar.y"
                      { (yyval.str) = box("&"); }
-#line 1418 "agrampar.tab.c"
+#line 1420 "agrampar.tab.c"
     break;
 
   case 33: /* ArgWord: "="  */
-#line 228 "agrampar.y"
+#line 230 "agrampar.y"
                      { (yyval.str) = box("="); }
-#line 1424 "agrampar.tab.c"
+#line 1426 "agrampar.tab.c"
     break;
 
   case 34: /* ArgWord: ":"  */
-#line 229 "agrampar.y"
+#line 231 "agrampar.y"
                      { (yyval.str) = box(":"); }
-#line 1430 "agrampar.tab.c"
+#line 1432 "agrampar.tab.c"
     break;
 
   case 35: /* ArgWord: "class"  */
-#line 230 "agrampar.y"
+#line 232 "agrampar.y"
                      { (yyval.str) = box("class "); }
-#line 1436 "agrampar.tab.c"
+#line 1438 "agrampar.tab.c"
     break;
 
   case 36: /* ArgList: Arg  */
-#line 235 "agrampar.y"
+#line 237 "agrampar.y"
            { (yyval.str) = (yyvsp[0].str); }
-#line 1442 "agrampar.tab.c"
+#line 1444 "agrampar.tab.c"
     break;
 
   case 37: /* ArgList: Arg "," ArgList  */
-#line 237 "agrampar.y"
+#line 239 "agrampar.y"
            { (yyval.str) = appendStr((yyvsp[-2].str), appendStr(box(","), (yyvsp[0].str))); }
-#line 1448 "agrampar.tab.c"
+#line 1450 "agrampar.tab.c"
     break;
 
   case 38: /* CtorMembersOpt: %empty  */
-#line 243 "agrampar.y"
+#line 245 "agrampar.y"
       { (yyval.userDeclList) = new ASTList<Annotation>; }
-#line 1454 "agrampar.tab.c"
+#line 1456 "agrampar.tab.c"
     break;
 
   case 39: /* CtorMembersOpt: CtorMembersOpt Annotation  */
-#line 245 "agrampar.y"
+#line 247 "agrampar.y"
       { ((yyval.userDeclList)=(yyvsp[-1].userDeclList))->append((yyvsp[0].annotation)); }
-#line 1460 "agrampar.tab.c"
+#line 1462 "agrampar.tab.c"
     break;
 
   case 40: /* Annotation: AccessMod TOK_EMBEDDED_CODE ";"  */
-#line 251 "agrampar.y"
+#line 253 "agrampar.y"
       { (yyval.annotation) = new UserDecl((yyvsp[-2].accessMod), unbox((yyvsp[-1].str)), ""); }
-#line 1466 "agrampar.tab.c"
+#line 1468 "agrampar.tab.c"
     break;
 
   case 41: /* Annotation: AccessMod TOK_EMBEDDED_CODE "=" TOK_EMBEDDED_CODE ";"  */
-#line 253 "agrampar.y"
+#line 255 "agrampar.y"
       { (yyval.annotation) = new UserDecl((yyvsp[-4].accessMod), unbox((yyvsp[-3].str)), unbox((yyvsp[-1].str))); }
-#line 1472 "agrampar.tab.c"
+#line 1474 "agrampar.tab.c"
     break;
 
   case 42: /* Annotation: CustomCode  */
-#line 255 "agrampar.y"
+#line 257 "agrampar.y"
       { (yyval.annotation) = (yyvsp[0].customCode); }
-#line 1478 "agrampar.tab.c"
+#line 1480 "agrampar.tab.c"
     break;
 
   case 43: /* CustomCode: "custom" TOK_NAME "{" TOK_EMBEDDED_CODE "}"  */
-#line 261 "agrampar.y"
+#line 263 "agrampar.y"
       { (yyval.customCode) = new CustomCode(unbox((yyvsp[-3].str)), unbox((yyvsp[-1].str))); }
-#line 1484 "agrampar.tab.c"
+#line 1486 "agrampar.tab.c"
     break;
 
   case 44: /* Public: "public"  */
-#line 266 "agrampar.y"
+#line 268 "agrampar.y"
                              { (yyval.accessCtl) = AC_PUBLIC; }
-#line 1490 "agrampar.tab.c"
+#line 1492 "agrampar.tab.c"
     break;
 
   case 45: /* Public: "private"  */
-#line 267 "agrampar.y"
+#line 269 "agrampar.y"
                              { (yyval.accessCtl) = AC_PRIVATE; }
-#line 1496 "agrampar.tab.c"
+#line 1498 "agrampar.tab.c"
     break;
 
   case 46: /* Public: "protected"  */
-#line 268 "agrampar.y"
+#line 270 "agrampar.y"
                              { (yyval.accessCtl) = AC_PROTECTED; }
-#line 1502 "agrampar.tab.c"
+#line 1504 "agrampar.tab.c"
     break;
 
   case 47: /* Public: "ctor"  */
-#line 269 "agrampar.y"
+#line 271 "agrampar.y"
                              { (yyval.accessCtl) = AC_CTOR; }
-#line 1508 "agrampar.tab.c"
+#line 1510 "agrampar.tab.c"
     break;
 
   case 48: /* Public: "dtor"  */
-#line 270 "agrampar.y"
+#line 272 "agrampar.y"
                              { (yyval.accessCtl) = AC_DTOR; }
-#line 1514 "agrampar.tab.c"
+#line 1516 "agrampar.tab.c"
     break;
 
   case 49: /* Public: "pure_virtual"  */
-#line 271 "agrampar.y"
+#line 273 "agrampar.y"
                              { (yyval.accessCtl) = AC_PUREVIRT; }
-#line 1520 "agrampar.tab.c"
+#line 1522 "agrampar.tab.c"
     break;
 
   case 50: /* Public: "define_customizable"  */
-#line 272 "agrampar.y"
+#line 274 "agrampar.y"
                              { (yyval.accessCtl) = AC_DEFINE_CUSTOMIZABLE; }
-#line 1526 "agrampar.tab.c"
+#line 1528 "agrampar.tab.c"
     break;
 
   case 51: /* AccessMod: Public  */
-#line 277 "agrampar.y"
+#line 279 "agrampar.y"
              { (yyval.accessMod) = new AccessMod((yyvsp[0].accessCtl), NULL); }
-#line 1532 "agrampar.tab.c"
+#line 1534 "agrampar.tab.c"
     break;
 
   case 52: /* AccessMod: Public "(" StringList ")"  */
-#line 279 "agrampar.y"
+#line 281 "agrampar.y"
              { (yyval.accessMod) = new AccessMod((yyvsp[-3].accessCtl), (yyvsp[-1].stringList)); }
-#line 1538 "agrampar.tab.c"
+#line 1540 "agrampar.tab.c"
     break;
 
   case 53: /* StringList: TOK_NAME  */
-#line 284 "agrampar.y"
+#line 286 "agrampar.y"
               { (yyval.stringList) = new ASTList<string>((yyvsp[0].str)); }
-#line 1544 "agrampar.tab.c"
+#line 1546 "agrampar.tab.c"
     break;
 
   case 54: /* StringList: StringList "," TOK_NAME  */
-#line 286 "agrampar.y"
+#line 288 "agrampar.y"
               { ((yyval.stringList)=(yyvsp[-2].stringList))->append((yyvsp[0].str)); }
-#line 1550 "agrampar.tab.c"
+#line 1552 "agrampar.tab.c"
     break;
 
   case 55: /* Verbatim: "verbatim" "{" TOK_EMBEDDED_CODE "}"  */
-#line 291 "agrampar.y"
+#line 293 "agrampar.y"
             { (yyval.verbatim) = new TF_verbatim(unbox((yyvsp[-1].str))); }
-#line 1556 "agrampar.tab.c"
+#line 1558 "agrampar.tab.c"
     break;
 
   case 56: /* Verbatim: "impl_verbatim" "{" TOK_EMBEDDED_CODE "}"  */
-#line 293 "agrampar.y"
+#line 295 "agrampar.y"
             { (yyval.verbatim) = new TF_impl_verbatim(unbox((yyvsp[-1].str))); }
-#line 1562 "agrampar.tab.c"
+#line 1564 "agrampar.tab.c"
     break;
 
   case 57: /* Option: "option" TOK_NAME OptionArgs ";"  */
-#line 298 "agrampar.y"
+#line 300 "agrampar.y"
           { (yyval.tfOption) = new TF_option(unbox((yyvsp[-2].str)), (yyvsp[-1].stringList)); }
-#line 1568 "agrampar.tab.c"
+#line 1570 "agrampar.tab.c"
     break;
 
   case 58: /* OptionArgs: %empty  */
-#line 303 "agrampar.y"
+#line 305 "agrampar.y"
               { (yyval.stringList) = new ASTList<string>; }
-#line 1574 "agrampar.tab.c"
+#line 1576 "agrampar.tab.c"
     break;
 
   case 59: /* OptionArgs: OptionArgs TOK_NAME  */
-#line 305 "agrampar.y"
+#line 307 "agrampar.y"
               { ((yyval.stringList)=(yyvsp[-1].stringList))->append((yyvsp[0].str)); }
-#line 1580 "agrampar.tab.c"
+#line 1582 "agrampar.tab.c"
     break;
 
   case 60: /* Enum: "enum" TOK_NAME "{" EnumeratorSeq "}"  */
-#line 310 "agrampar.y"
+#line 312 "agrampar.y"
         { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-3].str)), (yyvsp[-1].enumeratorList)); }
-#line 1586 "agrampar.tab.c"
+#line 1588 "agrampar.tab.c"
     break;
 
   case 61: /* Enum: "enum" TOK_NAME "{" EnumeratorSeq "," "}"  */
-#line 312 "agrampar.y"
+#line 314 "agrampar.y"
         { (yyval.tfEnum) = new TF_enum(unbox((yyvsp[-4].str)), (yyvsp[-2].enumeratorList)); }
-#line 1592 "agrampar.tab.c"
+#line 1594 "agrampar.tab.c"
     break;
 
   case 62: /* EnumeratorSeq: Enumerator  */
-#line 317 "agrampar.y"
+#line 319 "agrampar.y"
                  { (yyval.enumeratorList) = new ASTList<string>((yyvsp[0].enumerator)); }
-#line 1598 "agrampar.tab.c"
+#line 1600 "agrampar.tab.c"
     break;
 
   case 63: /* EnumeratorSeq: EnumeratorSeq "," Enumerator  */
-#line 319 "agrampar.y"
+#line 321 "agrampar.y"
                  { ((yyval.enumeratorList)=(yyvsp[-2].enumeratorList))->append((yyvsp[0].enumerator)); }
-#line 1604 "agrampar.tab.c"
+#line 1606 "agrampar.tab.c"
     break;
 
   case 64: /* Enumerator: TOK_NAME  */
-#line 324 "agrampar.y"
+#line 326 "agrampar.y"
               { (yyval.enumerator) = (yyvsp[0].str); }
-#line 1610 "agrampar.tab.c"
+#line 1612 "agrampar.tab.c"
     break;
 
   case 65: /* BaseClassesOpt: %empty  */
-#line 329 "agrampar.y"
+#line 331 "agrampar.y"
                   { (yyval.baseClassList) = new ASTList<BaseClass>; }
-#line 1616 "agrampar.tab.c"
+#line 1618 "agrampar.tab.c"
     break;
 
   case 66: /* BaseClassesOpt: ":" BaseClassSeq  */
-#line 331 "agrampar.y"
+#line 333 "agrampar.y"
                   { (yyval.baseClassList) = (yyvsp[0].baseClassList); }
-#line 1622 "agrampar.tab.c"
+#line 1624 "agrampar.tab.c"
     break;
 
   case 67: /* BaseClassSeq: BaseClass  */
-#line 336 "agrampar.y"
+#line 338 "agrampar.y"
                 { (yyval.baseClassList) = new ASTList<BaseClass>((yyvsp[0].baseClass)); }
-#line 1628 "agrampar.tab.c"
+#line 1630 "agrampar.tab.c"
     break;
 
   case 68: /* BaseClassSeq: BaseClassSeq "," BaseClass  */
-#line 338 "agrampar.y"
+#line 340 "agrampar.y"
                 { ((yyval.baseClassList)=(yyvsp[-2].baseClassList))->append((yyvsp[0].baseClass)); }
-#line 1634 "agrampar.tab.c"
+#line 1636 "agrampar.tab.c"
     break;
 
   case 69: /* BaseAccess: "public"  */
-#line 343 "agrampar.y"
+#line 345 "agrampar.y"
                     { (yyval.accessCtl) = AC_PUBLIC; }
-#line 1640 "agrampar.tab.c"
+#line 1642 "agrampar.tab.c"
     break;
 
   case 70: /* BaseAccess: "private"  */
-#line 344 "agrampar.y"
+#line 346 "agrampar.y"
                     { (yyval.accessCtl) = AC_PRIVATE; }
-#line 1646 "agrampar.tab.c"
+#line 1648 "agrampar.tab.c"
     break;
 
   case 71: /* BaseAccess: "protected"  */
-#line 345 "agrampar.y"
+#line 347 "agrampar.y"
                     { (yyval.accessCtl) = AC_PROTECTED; }
-#line 1652 "agrampar.tab.c"
+#line 1654 "agrampar.tab.c"
     break;
 
   case 72: /* BaseClass: BaseAccess TOK_NAME  */
-#line 350 "agrampar.y"
+#line 352 "agrampar.y"
              { (yyval.baseClass) = new BaseClass((yyvsp[-1].accessCtl), unbox((yyvsp[0].str))); }
-#line 1658 "agrampar.tab.c"
+#line 1660 "agrampar.tab.c"
     break;
 
 
-#line 1662 "agrampar.tab.c"
+#line 1664 "agrampar.tab.c"
 
       default: break;
     }
@@ -1851,7 +1853,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 353 "agrampar.y"
+#line 355 "agrampar.y"
 
 
 /* ----------------- extra C code ------------------- */

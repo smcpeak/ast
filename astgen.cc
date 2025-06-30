@@ -2,30 +2,30 @@
 // program to generate C++ code from an AST specification
 
 // ast
-#include "agrampar.h"      // readAbstractGrammar
+#include "ast/agrampar.h"              // readAbstractGrammar
 
 // smbase
-#include "exc.h"           // xfatal
-#include "datetime.h"      // localTimeString
-#include "owner.h"         // Owner
-#include "sm-fstream.h"    // ofstream
-#include "sm-test.h"       // ARGS_MAIN
-#include "sobjlist.h"      // SObjList
-#include "srcloc.h"        // SourceLocManager
-#include "strdict.h"       // StringDict
-#include "stringset.h"     // StringSet
-#include "strtokp.h"       // StrtokParse
-#include "string-util.h"   // replaceAll, translate, beginsWith
-#include "syserr.h"        // smbase::xsyserror
-#include "trace.h"         // TRACE_ARGS
+#include "smbase/exc.h"                // xfatal
+#include "smbase/datetime.h"           // localTimeString
+#include "smbase/owner.h"              // Owner
+#include "smbase/sm-fstream.h"         // ofstream
+#include "smbase/sm-test.h"            // ARGS_MAIN
+#include "smbase/sobjlist.h"           // SObjList
+#include "smbase/srcloc.h"             // SourceLocManager
+#include "smbase/strdict.h"            // StringDict
+#include "smbase/stringset.h"          // StringSet
+#include "smbase/strtokp.h"            // StrtokParse
+#include "smbase/string-util.h"        // replaceAll, translate, beginsWith
+#include "smbase/syserr.h"             // smbase::xsyserror
+#include "smbase/trace.h"              // TRACE_ARGS
 
 // libc++
-#include <regex>           // std::regex
-#include <string>          // std::string
+#include <regex>                       // std::regex
+#include <string>                      // std::string
 
 // libc
-#include <ctype.h>         // isalnum
-#include <string.h>        // strncmp
+#include <ctype.h>                     // isalnum
+#include <string.h>                    // strncmp
 
 using namespace smbase;
 

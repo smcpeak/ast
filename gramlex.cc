@@ -4,10 +4,10 @@
 #include "agramlex.lex.gen.h"          // needed by gramlex.h
 #include "gramlex.h"                   // this module
 
-#include "trace.h"                     // debugging trace()
-#include "ccsstr.h"                    // CCSubstrate
+#include "ast/ccsstr.h"                // CCSubstrate
 
-#include "sm-fstream.h"                // cout, ifstream
+#include "smbase/sm-fstream.h"         // cout, ifstream
+#include "smbase/trace.h"              // debugging trace()
 
 
 // ----------------- GrammarLexer::AltReportError ---------------

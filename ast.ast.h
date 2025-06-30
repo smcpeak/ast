@@ -5,7 +5,7 @@
 #ifndef AST_AST_H
 #define AST_AST_H
 
-#include "asthelp.h"        // helpers for generated code
+#include "ast/asthelp.h"    // helpers for generated code
 
 // fwd decls
 class ASTSpecFile;
@@ -27,7 +27,7 @@ class BaseClass;
 
 // *** DO NOT EDIT ***
 
-  #include "str.h"         // string
+  #include "smbase/str.h"              // string
 
   // this signals to ast.hand.cc that ast.ast.cc is nonempty,
   // so none of the bootstrap code in ast.hand.cc should be used

@@ -3,8 +3,8 @@
 
 #include "ccsstr.h"                    // module under test
 
-#include "string-util.h"               // replaceAll
-#include "xassert.h"                   // xassert
+#include "smbase/string-util.h"        // replaceAll
+#include "smbase/xassert.h"            // xassert
 
 
 #define CC CCSubstrate

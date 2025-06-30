@@ -92,7 +92,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 77 "agrampar.y"
+#line 79 "agrampar.y"
 
   ASTSpecFile *file;
   ASTList<ToplevelForm> *formList;

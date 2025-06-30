@@ -1,10 +1,10 @@
 // ccsstr.h            see license.txt for copyright and terms of use
 // C++ substrate for my parser
 
-#ifndef CCSSTR_H
-#define CCSSTR_H
+#ifndef AST_CCSSTR_H
+#define AST_CCSSTR_H
 
-#include "embedded.h"      // EmbeddedLang
+#include "ast/embedded.h"              // EmbeddedLang
 
 class CCSubstrateTest;
 
@@ -39,4 +39,4 @@ public:
   virtual string getDeclName() const override;
 };
 
-#endif // CCSSTR_H
+#endif // AST_CCSSTR_H

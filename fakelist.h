@@ -1,10 +1,10 @@
 // fakelist.h            see license.txt for copyright and terms of use
 // headerless list of nodes where each node has a 'next' field
 
-#ifndef FAKELIST_H
-#define FAKELIST_H
+#ifndef AST_FAKELIST_H
+#define AST_FAKELIST_H
 
-#include "xassert.h"                   // xassert
+#include "smbase/xassert.h"            // xassert
 
 #include <stddef.h>                    // NULL
 
@@ -231,4 +231,4 @@ FakeList<T> *fl_reverse(FakeList<T> *src)
 }
 
 
-#endif // FAKELIST_H
+#endif // AST_FAKELIST_H

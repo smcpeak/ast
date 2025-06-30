@@ -46,7 +46,7 @@ CXX_WARNING_FLAGS =
 CXX_STD_FLAGS = -std=c++17
 
 # Preprocessing flags.
-CPPFLAGS = -I$(SMBASE)
+CPPFLAGS =
 
 # Include the parent directory so #includes like "smbase/..." will work.
 CPPFLAGS += -I..

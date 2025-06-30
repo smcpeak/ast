@@ -4,18 +4,18 @@
 #include "agrampar.h"                  // this module
 
 // ast
-#include "agramlex.lex.gen.h"          // needed by gramlex.h
-#include "agrampar.tab.h"              // YYSTYPE union
-#include "gramlex.h"                   // GrammarLexer
+#include "ast/agramlex.lex.gen.h"      // needed by gramlex.h
+#include "ast/agrampar.tab.h"          // YYSTYPE union
+#include "ast/gramlex.h"               // GrammarLexer
 
 // smbase
-#include "exc.h"                       // smbase::xformat
-#include "owner.h"                     // Owner
-#include "sm-fstream.h"                // ifstream
-#include "strtable.h"                  // StringTable
-#include "string-util.h"               // trimWhitespace, beginsWith
-#include "syserr.h"                    // smbase::xsyserror
-#include "trace.h"                     // tracing debugging functions
+#include "smbase/exc.h"                // smbase::xformat
+#include "smbase/owner.h"              // Owner
+#include "smbase/sm-fstream.h"         // ifstream
+#include "smbase/strtable.h"           // StringTable
+#include "smbase/string-util.h"        // trimWhitespace, beginsWith
+#include "smbase/syserr.h"             // smbase::xsyserror
+#include "smbase/trace.h"              // tracing debugging functions
 
 // libc
 #include <ctype.h>                     // isalnum

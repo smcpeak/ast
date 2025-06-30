@@ -1,13 +1,15 @@
 // agrampar.h            see license.txt for copyright and terms of use
 // declarations for things that the bison-generated parser uses
 
-#ifndef AGRAMPAR_H
-#define AGRAMPAR_H
+#ifndef AST_AGRAMPAR_H
+#define AST_AGRAMPAR_H
 
-#include "ast.ast.h"        // AST node class declarations
-#include "str.h"            // string
+#include "ast/ast.ast.h"               // AST node class declarations
+
+#include "smbase/str.h"                // string
 
 class GrammarLexer;
+
 
 // ---------------- agrampar's view of the parser --------------------
 // name of extra parameter to yyparse (i.e. the context in
@@ -64,4 +66,4 @@ bool isAGramlexEmbed(int code);
 ASTSpecFile *readAbstractGrammar(char const *fname);
 
 
-#endif // AGRAMPAR_H
+#endif // AST_AGRAMPAR_H

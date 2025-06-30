@@ -1,14 +1,16 @@
 // ccsstr.cc            see license.txt for copyright and terms of use
 // code for ccsstr.h
 
-#include "ccsstr.h"      // this module
-#include "xassert.h"     // xassert
-#include "exc.h"         // smbase::xformat
-#include "strutil.h"     // string, replace
-#include "reporterr.h"   // silentReportError
+#include "ccsstr.h"                    // this module
 
-#include "sm-iostream.h" // cout
-#include <ctype.h>       // isspace
+#include "ast/reporterr.h"             // silentReportError
+
+#include "smbase/exc.h"                // smbase::xformat
+#include "smbase/sm-iostream.h"        // cout
+#include "smbase/strutil.h"            // string, replace
+#include "smbase/xassert.h"            // xassert
+
+#include <ctype.h>                     // isspace
 
 using namespace smbase;
 
