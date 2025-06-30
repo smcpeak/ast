@@ -395,7 +395,7 @@ public:         // funcs
 // emit header code for an entire AST spec file
 void HGen::emitFile()
 {
-  string includeLatch = translate(sm_basename(destFname), "a-z.", "A-Z_");
+  string includeLatch = translate(sm_basename(destFname), "a-z.-", "A-Z__");
 
   headerComments();
 
