@@ -1,8 +1,8 @@
 # ast/Makefile
 # see license.txt for copyright and terms of use
 
-# main targets
-all: astgen.exe libast.a
+# Main target.
+all:
 .PHONY: all
 
 
@@ -80,18 +80,9 @@ CHECK_INTRAFILE_LINKS = check-intrafile-links
 HTML_VNU_CHECK = html-vnu-check
 
 
-# ---- Automatic Configuration ----
-# Pull in settings from ./configure.  They override the defaults above,
-# and are in turn overridden by personal.mk, below.
-ifeq ($(wildcard config.mk),)
-  $(error The file 'config.mk' does not exist.  Run './configure' before 'make'.)
-endif
-include config.mk
-
-
 # ---- Customization ----
 # Allow customization of the above variables in a separate file.  Just
-# create personal.mk with desired settings.
+# create config.mk or personal.mk with desired settings.
 #
 # Common things to set during development:
 #
@@ -100,6 +91,7 @@ include config.mk
 #   OPTIMIZATION_FLAGS =
 #   CXX_WARNING_FLAGS = -Wsuggest-override
 #
+-include config.mk
 -include personal.mk
 
 
@@ -182,6 +174,8 @@ ASTGEN_OBJS += astgen.o
 astgen.exe: $(ASTGEN_OBJS) $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $(ASTGEN_OBJS) $(LIBS)
 
+all: astgen.exe
+
 
 # ---------------------- run astgen ----------------------
 # Rule to generate code from an AST specification.
@@ -232,6 +226,8 @@ LIB_OBJS += locstr.o
 libast.a: $(LIB_OBJS)
 	$(AR) -r $@ $(LIB_OBJS)
 	-$(RANLIB) $@
+
+all: libast.a
 
 
 # -------------------- test programs -------------------
