@@ -48,6 +48,9 @@ CXX_STD_FLAGS = -std=c++17
 # Preprocessing flags.
 CPPFLAGS = -I$(SMBASE)
 
+# Include the parent directory so #includes like "smbase/..." will work.
+CPPFLAGS += -I..
+
 # Flags for the C++ compiler and preprocessor.
 #
 # Note: $(GENDEPS_FLAGS) are not included because these flags are used

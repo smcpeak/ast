@@ -402,9 +402,9 @@ void HGen::emitFile()
   out << "#ifndef " << includeLatch << "\n";
   out << "#define " << includeLatch << "\n";
   out << "\n";
-  out << "#include \"asthelp.h\"        // helpers for generated code\n";
+  out << "#include \"ast/asthelp.h\"    // helpers for generated code\n";
   if (wantDVisitor()) {
-    out << "#include \"sobjset.h\"        // SObjSet\n";
+    out << "#include \"smbase/sobjset.h\" // SObjSet\n";
   }
   out << "\n";
 
