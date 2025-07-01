@@ -151,6 +151,13 @@ public:
   void emitUserDefinedCustomHook(ASTClass const &cls,
     string const &declaration);
 
+  void emitSuperclassToGDValueCode(TF_class const &cls);
+  void emitSubclassToGDValueCode(
+    ASTClass const &super, ASTClass const &sub);
+  void emitToGDValueField(bool isOwner, rostring type, rostring name);
+  void emitToGDValueCtorArgs(ASTList<CtorArg> const &args);
+  void emitToGDValueFields(ASTList<Annotation> const &decls);
+
   void emitVisitorImplementation();
 
   private:

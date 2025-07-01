@@ -23,6 +23,8 @@ custom ExampleVisitor_ctor { someVisitorField = 0; }
 // and gdb
 option gdb;
 
+// Generate `toGDValue` methods.
+option toGDValue;
 
 
 class Node (

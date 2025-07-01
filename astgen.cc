@@ -78,6 +78,10 @@ bool wantGDB = false;
 //   virtual Sub *clone() const;
 bool nocvr = false;
 
+// True to generate code that will convert an AST node to GDValue (General
+// Data Value).
+bool wantToGDValue = false;
+
 
 // --------------------------- TreeNodeKind ----------------------------
 // type queries
@@ -384,9 +388,12 @@ void HGen::emitFile()
   out << "\n";
   out << "#include \"" << m_fwdFname << "\"   // fwds for this module\n";
   out << "\n";
-  out << "#include \"ast/asthelp.h\"    // helpers for generated code\n";
+  out << "#include \"ast/asthelp.h\"               // helpers for generated code\n";
+  if (wantToGDValue) {
+    out << "#include \"smbase/gdvalue-fwd.h\"        // gdv::GDValue\n";
+  }
   if (wantDVisitor()) {
-    out << "#include \"smbase/sobjset.h\" // SObjSet\n";
+    out << "#include \"smbase/sobjset.h\"            // SObjSet\n";
   }
   out << "\n";
 
@@ -406,6 +413,10 @@ void HGen::emitFile()
             << "\n"
             << "char const *toString(" << e->name << ");\n"
             ;
+
+        if (wantToGDValue) {
+          out << "gdv::GDValue toGDValue(" << e->name << ");\n";
+        }
 
         out << "\n"
             << "\n"
@@ -542,6 +553,13 @@ void HGen::emitTFClass(TF_class const &cls)
 
   if (wantGDB) {
     out << "  void gdb() const;\n\n";
+  }
+
+  if (wantToGDValue) {
+    out << "  operator gdv::GDValue() const;\n\n";
+    if (cls.hasChildren()) {
+      out << "  virtual void saveSubclassFieldsToGDV(gdv::GDValue &m) const;\n";
+    }
   }
 
   emitUserDecls(cls.super->decls);
@@ -841,6 +859,10 @@ void HGen::emitCtor(ASTClass const &ctor, ASTClass const &parent)
   out << "\n";
   emitUserDecls(ctor.decls);
 
+  if (wantToGDValue) {
+    out << "  virtual void saveSubclassFieldsToGDV(gdv::GDValue &m) const override;\n";
+  }
+
   // emit implementation declarations for parent's pure virtuals
   FOREACH_ASTLIST(Annotation, parent.decls, iter) {
     UserDecl const *decl = iter.data()->ifUserDeclC();
@@ -867,6 +889,11 @@ void CGen::emitFile()
   headerComments();
 
   out << "#include \"" << hdrFname << "\"      // this module\n";
+  if (wantToGDValue) {
+    out << "#include \"ast/fakelist-gdvalue.h\"      // toGDValue(List)\n";
+    out << "#include \"smbase/astlist-gdvalue.h\"    // toGDValue(ASTList)\n";
+    out << "#include \"smbase/gdvalue.h\"            // gdv::GDValue\n";
+  }
   out << "\n";
   out << "\n";
 
@@ -894,9 +921,18 @@ void CGen::emitFile()
         out << "  };\n"
             << "  xassert((unsigned)x < TABLESIZE(map));\n"
             << "  return map[x];\n"
-            << "};\n"
+            << "}\n"
             << "\n"
             ;
+
+        if (wantToGDValue) {
+          out << "gdv::GDValue toGDValue(" << e->name << " x)\n"
+              << "{\n"
+              << "  return gdv::GDVSymbol(toString(x));\n"
+              << "}\n"
+              << "\n"
+              ;
+        }
 
         out << "\n";
         break;
@@ -979,6 +1015,10 @@ void CGen::emitTFClass(TF_class const &cls)
     emitCloneCode(cls.super, NULL /*sub*/);
   }
 
+  if (wantToGDValue) {
+    emitSuperclassToGDValueCode(cls);
+  }
+
 
   // constructors (class hierarchy children)
   FOREACH_ASTLIST(ASTClass, cls.ctors, ctoriter) {
@@ -1025,6 +1065,10 @@ void CGen::emitTFClass(TF_class const &cls)
 
     // clone for subclasses
     emitCloneCode(cls.super, &ctor);
+
+    if (wantToGDValue) {
+      emitSubclassToGDValueCode(*(cls.super), ctor);
+    }
   }
 
   out << "\n";
@@ -1167,6 +1211,15 @@ static bool isStringType(rostring type)
   return false;
 }
 
+
+// True if `type` is a tree node, or an owner pointer to one.
+static bool isTreeNodeOrOwnerPtr(bool isOwner, rostring type)
+{
+  return isTreeNode(type) ||
+         (isTreeNodePtr(type) && isOwner);
+}
+
+
 void CGen::emitPrintField(rostring print,
                           bool isOwner, rostring type, rostring name)
 {
@@ -1190,8 +1243,7 @@ void CGen::emitPrintField(rostring print,
     out << "  " << print << "_FAKE_LIST(" << extractListType(type) << ", "
         << name << ");\n";
   }
-  else if (isTreeNode(type) ||
-           (isTreeNodePtr(type) && isOwner)) {
+  else if (isTreeNodeOrOwnerPtr(isOwner, type)) {
     // don't print subtrees that are possibly shared or circular
     out << "  " << print << "_SUBTREE(" << name << ");\n";
   }
@@ -1362,6 +1414,105 @@ void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
   }
 
   out << "}\n\n\n";
+}
+
+
+void CGen::emitSuperclassToGDValueCode(TF_class const &cls)
+{
+  out << cls.super->name << "::operator gdv::GDValue() const\n"
+      << "{\n"
+      << "  using namespace gdv;\n"
+      << "\n"
+      << "  GDValue m(GDVK_TAGGED_MAP);\n"
+      << "  m.taggedContainerSetTag(GDVSymbol(\"" << cls.super->name << "\"));\n"
+      << "\n"
+      ;
+
+  emitToGDValueCtorArgs(cls.super->args);
+  emitToGDValueFields(cls.super->decls);
+
+  if (cls.hasChildren()) {
+    out << "\n"
+        << "  saveSubclassFieldsToGDV(m);\n";
+  }
+
+  out << "\n"
+      << "  return m;\n"
+      << "}\n"
+      << "\n"
+      ;
+
+  if (cls.hasChildren()) {
+    // Although I do not expect this to ever be called, by defining it,
+    // I avoid forcing the supercass to be abstract.
+    out << "void " << cls.super->name << "::saveSubclassFieldsToGDV(gdv::GDValue &m) const\n"
+        << "{}\n"
+        << "\n"
+        ;
+  }
+}
+
+
+void CGen::emitSubclassToGDValueCode(
+  ASTClass const &super, ASTClass const &sub)
+{
+  out << "void " << sub.name << "::saveSubclassFieldsToGDV(gdv::GDValue &m) const\n"
+      << "{\n"
+      << "  using namespace gdv;\n"
+      << "\n"
+      << "  // This overwrites the tag set by the superclass.\n"
+      << "  m.taggedContainerSetTag(GDVSymbol(\"" << sub.name << "\"));\n"
+      << "\n"
+      ;
+
+  emitToGDValueCtorArgs(sub.args);
+  emitToGDValueFields(sub.decls);
+
+  out << "}\n"
+      << "\n"
+      ;
+}
+
+
+void CGen::emitToGDValueField(bool isOwner, rostring type, rostring name)
+{
+  if (isTreeNodeOrOwnerPtr(isOwner, type)) {
+    out << "  m.mapSetSym(\"" << name << "\", "
+        <<     "nullablePtrToGDValue(" << name << "));\n";
+  }
+  else if (isPtrKind(type) && !isFakeListType(type)) {
+    // Could be circular, etc.
+    out << "  // Skip non-owner pointer `" << name << "`.\n";
+  }
+  else {
+    out << "  m.mapSetSym(\"" << name << "\", "
+        <<     "toGDValue(" << name << "));\n";
+  }
+}
+
+
+void CGen::emitToGDValueCtorArgs(ASTList<CtorArg> const &args)
+{
+  FOREACH_ASTLIST(CtorArg, args, argiter) {
+    CtorArg const &arg = *(argiter.data());
+
+    emitToGDValueField(arg.isOwner, arg.type, arg.name);
+  }
+}
+
+
+void CGen::emitToGDValueFields(ASTList<Annotation> const &decls)
+{
+  FOREACH_ASTLIST(Annotation, decls, iter) {
+    if (!iter.data()->isUserDecl()) continue;
+    UserDecl const *ud = iter.data()->asUserDeclC();
+    if (!ud->amod->hasMod("field")) continue;
+
+    emitToGDValueField(
+      ud->amod->hasMod("owner"),
+      extractFieldType(ud->code),
+      extractFieldName(ud->code));
+  }
 }
 
 
@@ -2295,6 +2446,9 @@ void entry(int argc, char **argv)
         }
         else if (stringEquals(op->name, "gdb")) {
           wantGDB = true;
+        }
+        else if (stringEquals(op->name, "toGDValue")) {
+          wantToGDValue = true;
         }
         else {
           xfatal("unknown option: " << op->name);

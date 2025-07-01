@@ -5,10 +5,13 @@
 
 #include "example.ast.gen.h"           // module under test
 
+#include "smbase/gdvalue.h"            // gdv::toGDValue
 #include "smbase/sm-test.h"            // EXPECT_EQ
 
-#include <iostream>                    // cout
+#include <iostream>                    // std::cout
+#include <memory>                      // std::unique_ptr
 
+using namespace gdv;
 using namespace std;
 
 
@@ -21,6 +24,10 @@ static void testNode()
   xassert(n1->y == 2);
   xassert(n1->w == 3);
   n1->debugPrint(cout, 0);
+
+  EXPECT_EQ(toGDValue(*n1).asString(),
+    "Node{w:3 x:1 y:2}");
+
   delete n1;
 }
 
@@ -36,8 +43,58 @@ static void testNodeList()
 
   NodeList *nlist = new NodeList(list);
   nlist->debugPrint(cout, 0);
+
+  EXPECT_EQ(toGDValue(*nlist).asString(),
+    "NodeList{list:["
+      "Node{w:3 x:1 y:2} "
+      "Node{w:3 x:4 y:5} "
+      "Node{w:3 x:7 y:8}"
+    "]}");
+
   fl_deallocNodes(nlist->list);
   delete nlist;
+}
+
+
+static void testAnotherList()
+{
+  ASTList<Node> *list2 = new ASTList<Node>();
+  list2->append(new Node(1,2));
+
+  StringTable table;
+  StringRef s = table.add("bar");
+
+  AnotherList *list = new AnotherList(
+    list2,
+    new LocString((SourceLoc)5, s));
+
+  EXPECT_EQ(toGDValue(*list).asString(),
+    "AnotherList{list2:[Node{w:3 x:1 y:2}] "
+                "str:LocString(5 \"bar\")}");
+
+  delete list;
+}
+
+
+static void testSuper()
+{
+  // Note: The `p` field of `Super` does not get emitted because it is
+  // not marked with the "field" attribute.
+
+  std::unique_ptr<Sub1> sub1(new Sub1(7, 4));
+  EXPECT_EQ(toGDValue(*sub1).asString(),
+    "Sub1{x:7 y:4}");
+
+  std::unique_ptr<SubWithDefault> subWD(new SubWithDefault(9));
+  EXPECT_EQ(toGDValue(*subWD).asString(),
+    "SubWithDefault{q:5 x:9}");
+
+  std::unique_ptr<Sub3> sub3(new Sub3(
+    11,
+    new Sub1(13, 17),
+    new Sub2(19, 23)));
+  EXPECT_EQ(toGDValue(*sub3).asString(),
+    "Sub3{s1:Sub1{x:13 y:17} s2:Sub2{x:19 z:23} x:11}");
 }
 
 
@@ -122,6 +179,8 @@ static void testHasStdString()
   HasStdString hss("hi");
   hss.gdb();
   EXPECT_EQ(hss.m_str, std::string("hi"));
+  EXPECT_EQ(toGDValue(hss).asString(),
+    "HasStdString{m_str:\"hi\"}");
 }
 
 
@@ -129,6 +188,8 @@ int main()
 {
   testNode();
   testNodeList();
+  testAnotherList();
+  testSuper();
   testMVisitor();
   testHasStdString();
 
