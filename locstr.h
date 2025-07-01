@@ -4,6 +4,7 @@
 #ifndef AST_LOCSTR_H
 #define AST_LOCSTR_H
 
+#include "smbase/gdvalue-fwd.h"        // gdv::GDValue
 #include "smbase/sm-iostream.h"        // ostream
 #include "smbase/srcloc.h"             // SourceLoc
 #include "smbase/strtable.h"           // StringRef
@@ -13,7 +14,10 @@
 
 class LocString {
 public:    // data
+  // A place in some input where `str` occurred.
   SourceLoc loc;
+
+  // The string that appeared in the input.
   StringRef str;
 
 public:    // funcs
@@ -54,6 +58,12 @@ public:    // funcs
   bool isNonNull() const { return !isNull(); }
 
   bool validLoc() const { return loc != SL_UNKNOWN; }
+
+  // Returns a tagged tuple with the location as an integer offset into
+  // the virtually concatenated input, followed by the string.  The
+  // integer is not easy to interpret, but could be used as part of a
+  // round-trip within the same process at least.
+  operator gdv::GDValue() const;
 };
 
 // yields simply the string, no location info

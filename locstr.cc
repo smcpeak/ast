@@ -3,7 +3,10 @@
 
 #include "locstr.h"                    // this module
 
+#include "smbase/gdvalue.h"            // gdv::GDValue
 #include "smbase/xassert.h"            // xassert
+
+using namespace gdv;
 
 
 LocString::LocString()
@@ -66,6 +69,15 @@ bool LocString::equals(char const *other) const
 string toString(LocString const &s)
 {
   return string(s.str);
+}
+
+
+LocString::operator GDValue() const
+{
+  return GDVTaggedTuple(GDVSymbol("LocString"), {
+    toGDValue(static_cast<int>(loc)),
+    toGDValue(str),
+  });
 }
 
 

@@ -246,6 +246,10 @@ TESTS += fakelist-test.exe
 fakelist-test.exe: fakelist-test.o $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
 
+TESTS += locstr-test.exe
+locstr-test.exe: locstr-test.o libast.a $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
+
 TESTS += example-test.exe
 example-test.exe: example-test.o example-methods.o example.ast.gen.o libast.a $(LIBS)
 	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) $^
