@@ -1,10 +1,14 @@
 // fakelist-test.cc
 // Exercise FakeList.
 
-#include "fakelist.h"                  // module under test
+#include "ast/fakelist.h"              // module under test
+#include "ast/fakelist-gdvalue.h"      // module extension under test
+
+#include "smbase/sm-test.h"            // EXPECT_EQ
 
 #include <iostream>                    // std::cout
 
+using namespace gdv;
 using namespace std;
 
 
@@ -27,6 +31,17 @@ public:      // methods
   ~Node()
   {
     s_nodeCount--;
+  }
+
+  operator GDValue() const
+  {
+    return GDVTaggedMap(GDVSymbol("Node"), {
+      GDV_SKV("x", m_x),
+
+      // The `next` link is *not* serialized here because the intention
+      // is it is the link of a `FakeList`, and the code that serializes
+      // FakeLists will traverse that.
+    });
   }
 };
 
@@ -53,10 +68,15 @@ int main()
   printList(list);
   xassert(fl_isEmpty(list));
 
+  EXPECT_EQ(toGDValue(list).asString(), "[]");
+
   Node *n1 = new Node(1);
   list = fl_prepend(list, n1);
   printList(list);
   xassert(fl_isNotEmpty(list));
+
+  EXPECT_EQ(toGDValue(list).asString(),
+    "[Node{x:1}]");
 
   fl_deallocNodes(list);
 
