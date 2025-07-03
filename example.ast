@@ -26,6 +26,9 @@ option gdb;
 // Generate `toGDValue` methods.
 option toGDValue;
 
+// Generate constuctors that accept `GDValue`.
+option fromGDValue;
+
 
 class Node (
   int x,

@@ -89,6 +89,7 @@ private:        // data
 private:        // funcs
   void emitVerbatim(TF_verbatim const &v);
   void emitTFClass(TF_class const &cls);
+  void emitGDVToNewSpecialization(std::string const &name);
   void emitBaseClassDecls(ASTClass const &cls, int ct);
   static char const *virtualIfChildren(TF_class const &cls);
   void emitCtorFields(ASTList<CtorArg> const &args,
@@ -134,6 +135,7 @@ public:
 
   void emitFile();
   void emitTFClass(TF_class const &cls);
+  void emitTFEnum(TF_enum const *e);
   void emitDestructor(ASTClass const &cls);
   void emitDestroyField(bool isOwner, rostring type, rostring name);
   void emitPrintCtorArgs(ASTList<CtorArg> const &args);
@@ -157,6 +159,21 @@ public:
   void emitToGDValueField(bool isOwner, rostring type, rostring name);
   void emitToGDValueCtorArgs(ASTList<CtorArg> const &args);
   void emitToGDValueFields(ASTList<Annotation> const &decls);
+
+  void emitClassFromGDValueCtor(
+    ASTClass const &cls,
+    bool hasChildren,
+    std::string superName);
+  void emitSuperclassFromGDValueCode(TF_class const &cls);
+  void emitSubclassFromGDValueCode(
+    ASTClass const &super, ASTClass const &sub);
+  std::string emitFromGDValueField(bool isOwner, rostring type, rostring name);
+  void emitFromGDValueCtorArgs(
+    std::vector<std::string> &inits,
+    ASTList<CtorArg> const &args);
+  void emitFromGDValueFields(
+    std::vector<std::string> &inits,
+    ASTList<Annotation> const &decls);
 
   void emitVisitorImplementation();
 

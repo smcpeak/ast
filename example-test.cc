@@ -6,7 +6,9 @@
 #include "example.ast.gen.h"           // module under test
 
 #include "smbase/gdvalue.h"            // gdv::toGDValue
+#include "smbase/save-restore.h"       // SET_RESTORE
 #include "smbase/sm-test.h"            // EXPECT_EQ
+#include "smbase/strtable.h"           // flattenStrTable
 
 #include <iostream>                    // std::cout
 #include <memory>                      // std::unique_ptr
@@ -19,16 +21,19 @@ static void testNode()
 {
   cout << "---- testNode ----\n";
 
-  Node *n1 = new Node(1,2);
+  std::unique_ptr<Node> n1(new Node(1,2));
   xassert(n1->x == 1);
   xassert(n1->y == 2);
   xassert(n1->w == 3);
   n1->debugPrint(cout, 0);
 
-  EXPECT_EQ(toGDValue(*n1).asString(),
-    "Node{w:3 x:1 y:2}");
+  GDValue v(toGDValue(*n1));
+  EXPECT_EQ(v.asString(), "Node{w:3 x:1 y:2}");
 
-  delete n1;
+  std::unique_ptr<Node> n2(gdvToNew<Node>(v));
+  EXPECT_EQ(n2->x, n1->x);
+  EXPECT_EQ(n2->y, n1->y);
+  EXPECT_EQ(n2->w, n1->w);
 }
 
 
@@ -44,15 +49,23 @@ static void testNodeList()
   NodeList *nlist = new NodeList(list);
   nlist->debugPrint(cout, 0);
 
-  EXPECT_EQ(toGDValue(*nlist).asString(),
+  GDValue v(toGDValue(*nlist));
+  EXPECT_EQ(v.asString(),
     "NodeList{list:["
       "Node{w:3 x:1 y:2} "
       "Node{w:3 x:4 y:5} "
       "Node{w:3 x:7 y:8}"
     "]}");
 
+  NodeList *nlist2 = gdvToNew<NodeList>(v);
+  GDValue v2(toGDValue(*nlist2));
+  EXPECT_EQ(v, v2);
+
   fl_deallocNodes(nlist->list);
   delete nlist;
+
+  fl_deallocNodes(nlist2->list);
+  delete nlist2;
 }
 
 
@@ -64,15 +77,30 @@ static void testAnotherList()
   StringTable table;
   StringRef s = table.add("bar");
 
-  AnotherList *list = new AnotherList(
+  std::unique_ptr<AnotherList> list(new AnotherList(
     list2,
-    new LocString((SourceLoc)5, s));
+    new LocString((SourceLoc)5, s)));
 
-  EXPECT_EQ(toGDValue(*list).asString(),
+  GDValue v(*list);
+  EXPECT_EQ(v.asString(),
     "AnotherList{list2:[Node{w:3 x:1 y:2}] "
                 "str:LocString(5 \"bar\")}");
 
-  delete list;
+  // Deserialize using `table`.
+  SET_RESTORE(flattenStrTable, &table);
+
+  std::unique_ptr<AnotherList> list3(gdvToNew<AnotherList>(v));
+  EXPECT_EQ(toGDValue(*list3), v);
+}
+
+
+static void testOneSuperCycle(Super const *orig, char const *expectGDVN)
+{
+  GDValue v(*orig);
+  EXPECT_EQ(v.asString(), expectGDVN);
+
+  std::unique_ptr<Super> after(gdv::gdvToNew<Super>(v));
+  EXPECT_EQ(toGDValue(*after), v);
 }
 
 
@@ -82,18 +110,18 @@ static void testSuper()
   // not marked with the "field" attribute.
 
   std::unique_ptr<Sub1> sub1(new Sub1(7, 4));
-  EXPECT_EQ(toGDValue(*sub1).asString(),
+  testOneSuperCycle(sub1.get(),
     "Sub1{x:7 y:4}");
 
   std::unique_ptr<SubWithDefault> subWD(new SubWithDefault(9));
-  EXPECT_EQ(toGDValue(*subWD).asString(),
+  testOneSuperCycle(subWD.get(),
     "SubWithDefault{q:5 x:9}");
 
   std::unique_ptr<Sub3> sub3(new Sub3(
     11,
     new Sub1(13, 17),
     new Sub2(19, 23)));
-  EXPECT_EQ(toGDValue(*sub3).asString(),
+  testOneSuperCycle(sub3.get(),
     "Sub3{s1:Sub1{x:13 y:17} s2:Sub2{x:19 z:23} x:11}");
 }
 
@@ -176,7 +204,7 @@ static void testMVisitor()
 
 static void testHasStdString()
 {
-  HasStdString hss("hi");
+  HasStdString hss(std::string("hi"));
   hss.gdb();
   EXPECT_EQ(hss.m_str, std::string("hi"));
   EXPECT_EQ(toGDValue(hss).asString(),

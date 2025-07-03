@@ -9,6 +9,7 @@
 // smbase
 #include "smbase/exc.h"                // xfatal
 #include "smbase/datetime.h"           // localTimeString
+#include "smbase/overflow.h"           // safeToInt
 #include "smbase/owner.h"              // Owner
 #include "smbase/sm-fstream.h"         // ofstream
 #include "smbase/sm-test.h"            // ARGS_MAIN
@@ -81,6 +82,9 @@ bool nocvr = false;
 // True to generate code that will convert an AST node to GDValue (General
 // Data Value).
 bool wantToGDValue = false;
+
+// True to generate constructors that accept GDValue.
+bool wantFromGDValue = false;
 
 
 // --------------------------- TreeNodeKind ----------------------------
@@ -386,15 +390,19 @@ void HGen::emitFile()
   out << "#ifndef " << includeLatch << "\n";
   out << "#define " << includeLatch << "\n";
   out << "\n";
-  out << "#include \"" << m_fwdFname << "\"   // fwds for this module\n";
+  out << "#include \"" << m_fwdFname << "\"             // fwds for this module\n";
   out << "\n";
-  out << "#include \"ast/asthelp.h\"               // helpers for generated code\n";
-  if (wantToGDValue) {
-    out << "#include \"smbase/gdvalue-fwd.h\"        // gdv::GDValue\n";
+  out << "#include \"ast/asthelp.h\"                         // helpers for generated code\n";
+  if (wantToGDValue || wantFromGDValue) {
+    out << "#include \"smbase/gdvalue-fwd.h\"                  // gdv::GDValue\n";
+    if (wantFromGDValue) {
+      out << "#include \"smbase/gdvalue-parse.h\"                // gdv::gdvTo\n";
+    }
   }
   if (wantDVisitor()) {
-    out << "#include \"smbase/sobjset.h\"            // SObjSet\n";
+    out << "#include \"smbase/sobjset.h\"                      // SObjSet\n";
   }
+  out << "#include \"smbase/std-string-view-fwd.h\"          // std::string_view\n";
   out << "\n";
 
   // do all the enums first; this became necessary when I had an
@@ -412,10 +420,16 @@ void HGen::emitFile()
         out << "};\n"
             << "\n"
             << "char const *toString(" << e->name << ");\n"
+            << e->name << " stringTo" << e->name << "(std::string_view name);\n"
             ;
 
         if (wantToGDValue) {
           out << "gdv::GDValue toGDValue(" << e->name << ");\n";
+        }
+
+        if (wantFromGDValue) {
+          out << "template <>\n"
+              << e->name << " gdv::gdvTo<" << e->name << ">(gdv::GDValue const &v);\n";
         }
 
         out << "\n"
@@ -556,10 +570,16 @@ void HGen::emitTFClass(TF_class const &cls)
   }
 
   if (wantToGDValue) {
-    out << "  operator gdv::GDValue() const;\n\n";
+    out << "  operator gdv::GDValue() const;\n";
     if (cls.hasChildren()) {
       out << "  virtual void saveSubclassFieldsToGDV(gdv::GDValue &m) const;\n";
     }
+    out << "\n";
+  }
+
+  if (wantFromGDValue) {
+    out << "  explicit " << cls.super->name << "(gdv::GDValue const &v);\n";
+    out << "\n";
   }
 
   emitUserDecls(cls.super->decls);
@@ -568,14 +588,35 @@ void HGen::emitTFClass(TF_class const &cls)
   out << "};\n";
   out << "\n";
 
+  if (wantFromGDValue) {
+    emitGDVToNewSpecialization(cls.super->name);
+  }
+
   // print declarations for all child classes
   {
     FOREACH_ASTLIST(ASTClass, cls.ctors, ctor) {
       emitCtor(*(ctor.data()), *(cls.super));
+
+      // It may seem unnecessary to define these for every child class,
+      // but in `example.ast` I have a ctor argument with specifically a
+      // subclass type, and the simplest way to make that work is to
+      // ensure that `gdvToNew` works for all classes, not just the
+      // superclasses.
+      emitGDVToNewSpecialization(ctor.data()->name);
     }
   }
 
   out << "\n";
+}
+
+
+void HGen::emitGDVToNewSpecialization(std::string const &name)
+{
+  out << "template <>\n"
+      << "struct gdv::GDVToNew<" << name << "> {\n"
+      << "  static " << name << " *f(gdv::GDValue const &v);\n"
+      << "};\n"
+      << "\n";
 }
 
 
@@ -667,7 +708,7 @@ void HGen::emitCtorDefn(ASTClass const &cls, ASTClass const *parent)
   // declare the constructor
   {
     out << "public:      // funcs\n";
-    out << "  " << cls.name << "(";
+    out << "  explicit " << cls.name << "(";
 
     // list of formal parameters to the constructor
     {
@@ -861,6 +902,12 @@ void HGen::emitCtor(ASTClass const &ctor, ASTClass const &parent)
 
   if (wantToGDValue) {
     out << "  virtual void saveSubclassFieldsToGDV(gdv::GDValue &m) const override;\n";
+    out << "\n";
+  }
+
+  if (wantFromGDValue) {
+    out << "  " << ctor.name << "(gdv::GDValue const &v);\n";
+    out << "\n";
   }
 
   // emit implementation declarations for parent's pure virtuals
@@ -889,11 +936,14 @@ void CGen::emitFile()
   headerComments();
 
   out << "#include \"" << hdrFname << "\"      // this module\n";
-  if (wantToGDValue) {
+  if (wantToGDValue || wantFromGDValue) {
     out << "#include \"ast/fakelist-gdvalue.h\"      // toGDValue(List)\n";
     out << "#include \"smbase/astlist-gdvalue.h\"    // toGDValue(ASTList)\n";
     out << "#include \"smbase/gdvalue.h\"            // gdv::GDValue\n";
   }
+  out << "#include \"smbase/string-util.h\"        // doubleQuote\n";
+  out << "\n";
+  out << "#include <string_view>                 // std::string_view\n";
   out << "\n";
   out << "\n";
 
@@ -910,32 +960,7 @@ void CGen::emitFile()
         emitTFClass(*c);
       }
       ASTNEXTC(TF_enum, e) {
-        int numEnumeratorValues = 0;
-        out << "char const *toString(" << e->name << " x)\n"
-            << "{\n"
-            << "  static char const * const map[] = {\n";
-        FOREACH_ASTLIST(string, e->enumerators, iter) {
-          out << "    \"" << *(iter.data()) << "\",\n";
-          numEnumeratorValues++;
-        }
-        out << "  };\n"
-            << "  xassert((unsigned)x < TABLESIZE(map));\n"
-            << "  return map[x];\n"
-            << "}\n"
-            << "\n"
-            ;
-
-        if (wantToGDValue) {
-          out << "gdv::GDValue toGDValue(" << e->name << " x)\n"
-              << "{\n"
-              << "  return gdv::GDVSymbol(toString(x));\n"
-              << "}\n"
-              << "\n"
-              ;
-        }
-
-        out << "\n";
-        break;
+        emitTFEnum(e);
       }
       ASTENDCASECD
     }
@@ -1019,6 +1044,10 @@ void CGen::emitTFClass(TF_class const &cls)
     emitSuperclassToGDValueCode(cls);
   }
 
+  if (wantFromGDValue) {
+    emitSuperclassFromGDValueCode(cls);
+  }
+
 
   // constructors (class hierarchy children)
   FOREACH_ASTLIST(ASTClass, cls.ctors, ctoriter) {
@@ -1069,6 +1098,64 @@ void CGen::emitTFClass(TF_class const &cls)
     if (wantToGDValue) {
       emitSubclassToGDValueCode(*(cls.super), ctor);
     }
+
+    if (wantFromGDValue) {
+      emitSubclassFromGDValueCode(*(cls.super), ctor);
+    }
+  }
+
+  out << "\n";
+}
+
+
+void CGen::emitTFEnum(TF_enum const *e)
+{
+  out << "char const *toString(" << e->name << " x)\n"
+      << "{\n"
+      << "  static char const * const map[] = {\n";
+  FOREACH_ASTLIST(string, e->enumerators, iter) {
+    out << "    \"" << *(iter.data()) << "\",\n";
+  }
+  out << "  };\n"
+      << "  xassert((unsigned)x < TABLESIZE(map));\n"
+      << "  return map[x];\n"
+      << "}\n"
+      << "\n"
+      ;
+
+  out << e->name << " stringTo" << e->name << "(std::string_view name)\n"
+      << "{\n"
+      ;
+  FOREACH_ASTLIST(string, e->enumerators, iter) {
+    out << "  if (name == \"" << *(iter.data()) << "\") {\n"
+        << "    return " << *(iter.data()) << ";\n"
+        << "  }\n"
+        ;
+  }
+  out << "  xformatsb(\"invalid " << e->name << ": \" << doubleQuote(name));\n"
+      << "  return (" << e->name << ")0;  // not reached\n"
+      << "}\n"
+      << "\n"
+      ;
+
+  if (wantToGDValue) {
+    out << "gdv::GDValue toGDValue(" << e->name << " x)\n"
+        << "{\n"
+        << "  return gdv::GDVSymbol(toString(x));\n"
+        << "}\n"
+        << "\n"
+        ;
+  }
+
+  if (wantFromGDValue) {
+    out << "template <>\n"
+        << e->name << " gdv::gdvTo<" << e->name << ">(gdv::GDValue const &v)\n"
+        << "{\n"
+        << "  checkIsSymbol(v);\n"
+        << "  return stringTo" << e->name << "(v.symbolGetName());\n"
+        << "}\n"
+        << "\n"
+        ;
   }
 
   out << "\n";
@@ -1417,6 +1504,7 @@ void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
 }
 
 
+// ----------------------------- toGDValue -----------------------------
 void CGen::emitSuperclassToGDValueCode(TF_class const &cls)
 {
   out << cls.super->name << "::operator gdv::GDValue() const\n"
@@ -1444,7 +1532,7 @@ void CGen::emitSuperclassToGDValueCode(TF_class const &cls)
 
   if (cls.hasChildren()) {
     // Although I do not expect this to ever be called, by defining it,
-    // I avoid forcing the supercass to be abstract.
+    // I avoid forcing the superclass to be abstract.
     out << "void " << cls.super->name << "::saveSubclassFieldsToGDV(gdv::GDValue &m) const\n"
         << "{}\n"
         << "\n"
@@ -1516,7 +1604,191 @@ void CGen::emitToGDValueFields(ASTList<Annotation> const &decls)
 }
 
 
-// -------------------------- visitor ---------------------------
+// ---------------------------- fromGDValue ----------------------------
+void CGen::emitClassFromGDValueCtor(
+  ASTClass const &cls,
+  bool hasChildren,
+  std::string superName)     // Non-empty if `cls` is a subclass.
+{
+  // Compute the field initializers first so we know where to place the
+  // surrounding punctuation.
+  std::vector<std::string> inits;
+
+  if (!superName.empty()) {
+    inits.push_back(stringb(superName << "(m)"));
+  }
+
+  emitFromGDValueCtorArgs(inits, cls.args);
+  emitFromGDValueFields(inits, cls.decls);
+
+  out << cls.name << "::"
+      << cls.name << "(gdv::GDValue const &m)\n";
+
+  // TODO: There is ad-hoc code to format the member initializer list
+  // in the regular constructor.  Modify that code to first build a
+  // list, then factor them to share this loop.
+  if (!inits.empty()) {
+    int i=0;
+    int const lastIndex = safeToInt(inits.size() - 1);
+    for (auto const &init : inits) {
+      if (i == 0) {
+        out << "  : ";
+      }
+      else {
+        out << "    ";
+      }
+
+      out << init;
+
+      if (i < lastIndex) {
+        out << ",";
+      }
+      out << "\n";
+
+      ++i;
+    }
+  }
+
+  out << "{\n";
+
+  // If a class does not have any subclasses, check the tag.  Otherwise,
+  // the tag is checked in the subclass.  However, this is not perfect
+  // because a class with subclasses can still be instantiated directly,
+  // in which case the tag will not be checked.
+  if (!hasChildren) {
+    out << "  checkTaggedMapTag(m, \"" << cls.name << "\");\n";
+  }
+
+  emitFiltered(cls.decls, AC_CTOR, "  ");
+
+  out << "}\n"
+      << "\n";
+}
+
+
+void CGen::emitSuperclassFromGDValueCode(TF_class const &cls)
+{
+  emitClassFromGDValueCtor(*(cls.super), cls.hasChildren(), "");
+
+  out << cls.super->name << " *gdv::GDVToNew<" << cls.super->name << ">::f(gdv::GDValue const &v)\n"
+      << "{\n"
+      << "  checkIsTaggedMap(v);\n";
+
+  if (cls.hasChildren()) {
+    // Emit code that checks the symbol to see which subclass to create.
+    out << "  std::string_view tagName = v.taggedContainerGetTagName();\n";
+    FOREACH_ASTLIST(ASTClass, cls.ctors, iter) {
+      ASTClass const &sub = *(iter.data());
+      out << "  if (tagName == \"" << sub.name << "\") {\n"
+          << "    return new " << sub.name << "(v);\n"
+          << "  }\n";
+    }
+
+    out << "  xformatsb(\"expected tag to be a subclass of " << cls.super->name
+        << ", but it was \" << v.taggedContainerGetTag().asString());\n";
+  }
+  else {
+    out << "  checkContainerTag(v, \"" << cls.super->name << "\");\n";
+    out << "  return new " << cls.super->name << "(v);\n";
+  }
+
+  out << "}\n"
+      << "\n";
+}
+
+
+void CGen::emitSubclassFromGDValueCode(
+  ASTClass const &super, ASTClass const &sub)
+{
+  emitClassFromGDValueCtor(sub, false /*hasChildren*/, super.name);
+
+  out << sub.name << " *gdv::GDVToNew<" << sub.name << ">::f(gdv::GDValue const &v)\n"
+      << "{\n"
+      << "  return new " << sub.name << "(v);\n"
+      << "}\n"
+      << "\n";
+}
+
+
+std::string CGen::emitFromGDValueField(bool isOwner, rostring type, rostring name)
+{
+  // The code that, as a function argument, extracts the GDValue to
+  // parse.
+  std::string argCode =
+    stringb("(mapGetSym_parse(m, \"" << name << "\"))");
+
+  if (isTreeNodeOrOwnerPtr(isOwner, type)) {
+    return stringb(name << "(gdv::gdvToNew<" << type << ">" << argCode << ")");
+  }
+  else if (isPtrKind(type) && !isFakeListType(type)) {
+    // Could be circular, etc.
+    return "";
+  }
+  else {
+    return stringb(name << "(gdv::gdvTo<" << type << ">" << argCode << ")");
+  }
+}
+
+
+// Append `element` to `vec` if `element` is not empty.
+static void push_back_if_not_empty(
+  std::vector<std::string> &vec,
+  std::string const &element)
+{
+  if (!element.empty()) {
+    vec.push_back(element);
+  }
+}
+
+
+void CGen::emitFromGDValueCtorArgs(
+  std::vector<std::string> &inits,
+  ASTList<CtorArg> const &args)
+{
+  FOREACH_ASTLIST(CtorArg, args, argiter) {
+    CtorArg const &arg = *(argiter.data());
+
+    push_back_if_not_empty(inits,
+      emitFromGDValueField(arg.isOwner, arg.type, arg.name));
+  }
+}
+
+
+void CGen::emitFromGDValueFields(
+  std::vector<std::string> &inits,
+  ASTList<Annotation> const &decls)
+{
+  FOREACH_ASTLIST(Annotation, decls, iter) {
+    if (!iter.data()->isUserDecl()) continue;
+    UserDecl const *ud = iter.data()->asUserDeclC();
+    if (isFuncDecl(ud)) continue;
+
+    if (ud->amod->hasMod("field")) {
+      // "Fields" get deserialized.
+      push_back_if_not_empty(inits,
+        emitFromGDValueField(
+          ud->amod->hasMod("owner"),
+          extractFieldType(ud->code),
+          extractFieldName(ud->code)));
+    }
+    else {
+      if (ud->init.empty()) {
+        // This happens for ordinary data that lacks an initializer, but
+        // it also happens for a variety of other annotations such as
+        // "ctor" code.  It is unfortunate that I don't have an easy way
+        // to recognize data fields in this AST.
+      }
+      else {
+        // Other data gets initialized.
+        push_back_if_not_empty(inits,
+          stringb(extractFieldName(ud->code) << "(" << ud->init << ")"));
+      }
+    }
+  }
+}
+
+
+// ------------------------------ visitor ------------------------------
 void emitTF_custom(ofstream &out, rostring qualifierName, bool addNewline)
 {
   FOREACH_ASTLIST_NC(ToplevelForm, wholeAST->forms, iter) {
@@ -2449,6 +2721,9 @@ void entry(int argc, char **argv)
         }
         else if (stringEquals(op->name, "toGDValue")) {
           wantToGDValue = true;
+        }
+        else if (stringEquals(op->name, "fromGDValue")) {
+          wantFromGDValue = true;
         }
         else {
           xfatal("unknown option: " << op->name);

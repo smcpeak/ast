@@ -5,6 +5,7 @@
 #define AST_LOCSTR_H
 
 #include "smbase/gdvalue-fwd.h"        // gdv::GDValue
+#include "smbase/gdvalue-parse.h"      // gdv::GDVTo
 #include "smbase/sm-iostream.h"        // ostream
 #include "smbase/srcloc.h"             // SourceLoc
 #include "smbase/strtable.h"           // StringRef
@@ -64,10 +65,21 @@ public:    // funcs
   // integer is not easy to interpret, but could be used as part of a
   // round-trip within the same process at least.
   operator gdv::GDValue() const;
+
+  // Parse a value previously converted from `LocString`.
+  explicit LocString(gdv::GDValue const &v);
 };
 
 // yields simply the string, no location info
 string toString(LocString const &s);
+
+template <>
+struct gdv::GDVTo<LocString> {
+  static LocString f(GDValue const &v)
+  {
+    return LocString(v);
+  }
+};
 
 
 // useful for constructing literal strings in source code

@@ -4,12 +4,16 @@
 #include "ast/fakelist.h"              // module under test
 #include "ast/fakelist-gdvalue.h"      // module extension under test
 
+#include "smbase/sm-macros.h"          // {OPEN,CLOSE}_ANONYMOUS_NAMESPACE
 #include "smbase/sm-test.h"            // EXPECT_EQ
 
 #include <iostream>                    // std::cout
 
 using namespace gdv;
 using namespace std;
+
+
+OPEN_ANONYMOUS_NAMESPACE
 
 
 class Node {
@@ -21,7 +25,7 @@ public:      // instance data
   Node *next;
 
 public:      // methods
-  Node(int x)
+  explicit Node(int x)
     : m_x(x),
       next(NULL)
   {
@@ -43,9 +47,31 @@ public:      // methods
       // FakeLists will traverse that.
     });
   }
+
+  explicit Node(GDValue const &v)
+    : m_x(gdvTo<int>(mapGetSym_parse(v, "x"))),
+      next(nullptr)
+  {
+    checkTaggedMapTag(v, "Node");
+  }
 };
 
 int Node::s_nodeCount = 0;
+
+
+CLOSE_ANONYMOUS_NAMESPACE
+
+
+template <>
+struct gdv::GDVToNew<Node> {
+  static Node *f(GDValue const &v)
+  {
+    return new Node(v);
+  }
+};
+
+
+OPEN_ANONYMOUS_NAMESPACE
 
 
 void printList(FakeList<Node> *list)
@@ -60,6 +86,31 @@ void printList(FakeList<Node> *list)
 }
 
 
+// Convert `orig` to GDV and back, verifying the result is the same.
+// Also check that the serialized form is `expectGDVN`.
+void testGDVCycle(FakeList<Node> const *orig, char const *expectGDVN)
+{
+  VPVAL(expectGDVN);
+
+  GDValue v(toGDValue(orig));
+  EXPECT_EQ(v.asString(), expectGDVN);
+
+  FakeList<Node> *after = gdvTo<FakeList<Node>*>(v);
+
+  EXPECT_EQ(fl_count(after), fl_count(orig));
+
+  for (int i=0; i < fl_count(orig); ++i) {
+    Node const *origNode = fl_nthC(orig, i);
+    Node const *afterNode = fl_nthC(after, i);
+
+    EXPECT_EQ(afterNode->m_x, origNode->m_x);
+  }
+}
+
+
+CLOSE_ANONYMOUS_NAMESPACE
+
+
 int main()
 {
   // These tests are pretty light.  example-test.cc has a bit more.
@@ -68,15 +119,19 @@ int main()
   printList(list);
   xassert(fl_isEmpty(list));
 
-  EXPECT_EQ(toGDValue(list).asString(), "[]");
+  testGDVCycle(list, "[]");
 
   Node *n1 = new Node(1);
   list = fl_prepend(list, n1);
   printList(list);
   xassert(fl_isNotEmpty(list));
 
-  EXPECT_EQ(toGDValue(list).asString(),
-    "[Node{x:1}]");
+  testGDVCycle(list, "[Node{x:1}]");
+
+  list = fl_prepend(list, new Node(2));
+  EXPECT_EQ(fl_count(list), 2);
+
+  testGDVCycle(list, "[Node{x:2} Node{x:1}]");
 
   fl_deallocNodes(list);
 
