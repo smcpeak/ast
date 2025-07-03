@@ -163,7 +163,7 @@ FakeList<T> *fl_prepend(FakeList<T> *list, T *newHead)
 
 
 template <class T>
-int fl_count(FakeList<T> *list)
+int fl_count(FakeList<T> const *list)
 {
   int ct = 0;
   FAKELIST_FOREACH(T, list, p) {
