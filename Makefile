@@ -179,7 +179,7 @@ all: astgen.exe
 
 # ---------------------- run astgen ----------------------
 # Rule to generate code from an AST specification.
-%.ast.gen.h %.ast.gen.cc: astgen.exe %.ast
+%.ast.gen.h %.ast.gen.fwd.h %.ast.gen.cc: astgen.exe %.ast
 	./astgen.exe -o$*.ast.gen $*.ast
 
 
@@ -193,6 +193,11 @@ ext1.ast.gen.cc: astgen.exe example.ast ext1.ast
 # Crude, only partly correct hack to insert ext1.ast.gen.h into the
 # dependency chain.
 ext1.ast.gen.h: ext1.ast.gen.cc
+	test -f $<
+	test -f $@
+
+# And also for the fwd file.
+ext1.ast.gen.fwd.h: ext1.ast.gen.cc
 	test -f $<
 	test -f $@
 
