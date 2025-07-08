@@ -9,10 +9,12 @@
 // smbase
 #include "smbase/exc.h"                // xfatal
 #include "smbase/datetime.h"           // localTimeString
+#include "smbase/gdvalue.h"            // gdv::GDValue
 #include "smbase/overflow.h"           // safeToInt
 #include "smbase/owner.h"              // Owner
 #include "smbase/sm-fstream.h"         // ofstream
 #include "smbase/sm-test.h"            // ARGS_MAIN
+#include "smbase/sm-trace.h"           // TRACE
 #include "smbase/sobjlist.h"           // SObjList
 #include "smbase/srcloc.h"             // SourceLocManager
 #include "smbase/strdict.h"            // StringDict
@@ -20,7 +22,6 @@
 #include "smbase/strtokp.h"            // StrtokParse
 #include "smbase/string-util.h"        // replaceAll, translate, beginsWith
 #include "smbase/syserr.h"             // smbase::xsyserror
-#include "smbase/trace.h"              // TRACE_ARGS
 
 // libc++
 #include <regex>                       // std::regex
@@ -30,7 +31,11 @@
 #include <ctype.h>                     // isalnum
 #include <string.h>                    // strncmp
 
+using namespace gdv;
 using namespace smbase;
+
+
+INIT_TRACE("astgen");
 
 
 // ----------------------------- ListClass -----------------------------
@@ -672,11 +677,7 @@ void HGen::emitCtorFormal(int &ct, CtorArg const *arg)
       isTreeNode(type) ||
       stringEquals(type, "LocString")) {
     // lists and subtrees and LocStrings are constructed by passing pointers
-    trace("putStar") << "putting star for " << type << endl;
     out << "*";
-  }
-  else {
-    trace("putStar") << "NOT putting star for " << type << endl;
   }
 
   out << "_" << arg->name;      // prepend underscore to param's name
@@ -1466,6 +1467,11 @@ void CGen::emitUserDefinedCustomHooks(ASTClass const &cls)
 void CGen::emitUserDefinedCustomHook(ASTClass const &cls,
   string const &declaration)
 {
+  TRACE2(GDValue(GDVTaggedMap("emitUserDefinedCustomHook"_sym, {
+    { "cls.name"_sym, cls.name },
+    { "declaration"_sym, declaration },
+  })));
+
   // Parse the declaration.
   //
   //              rettype      method name      params, etc.
@@ -2380,7 +2386,7 @@ void CGen::emitMTraverseCall(rostring i, rostring eltType, rostring argVar)
 void mergeClass(ASTClass *base, ASTClass *ext)
 {
   xassert(stringEquals(base->name, ext->name));
-  trace("merge") << "merging class: " << ext->name << endl;
+  TRACE1("merging class: " << doubleQuote(ext->name));
 
   // move all ctor args to the base
   while (ext->args.isNotEmpty()) {
@@ -2397,7 +2403,6 @@ void mergeClass(ASTClass *base, ASTClass *ext)
 void mergeEnum(TF_enum *base, TF_enum *ext)
 {
   xassert(stringEquals(base->name, ext->name));
-  trace("merge") << "merging enum: " << ext->name << endl;
 
   while (ext->enumerators.isNotEmpty()) {
     base->enumerators.append(ext->enumerators.removeFirst());
@@ -2419,7 +2424,6 @@ void mergeSuperclass(TF_class *base, TF_class *ext)
 {
   // should only get here for same-named classes
   xassert(stringEquals(base->super->name, ext->super->name));
-  trace("merge") << "merging superclass: " << ext->super->name << endl;
 
   // merge the superclass ctor args and annotations
   mergeClass(base->super, ext->super);
@@ -2435,7 +2439,6 @@ void mergeSuperclass(TF_class *base, TF_class *ext)
     }
     else {
       // add it wholesale
-      trace("merge") << "adding subclass: " << c->name << endl;
       base->ctors.append(c);
     }
   }
@@ -2487,7 +2490,6 @@ void mergeExtension(ASTSpecFile *base, ASTSpecFile *ext)
       }
       else {
         // add the whole class
-        trace("merge") << "adding new superclass: " << c->super->name << endl;
         base->forms.append(c);
       }
     }
@@ -2503,7 +2505,6 @@ void mergeExtension(ASTSpecFile *base, ASTSpecFile *ext)
       }
       else {
         // add the whole enum
-        trace("merge") << "adding new enum: " << e->name << endl;
         base->forms.append(e);
       }
     }
@@ -2527,13 +2528,11 @@ void mergeExtension(ASTSpecFile *base, ASTSpecFile *ext)
         }
 
         // insert the base so it becomes position 'i'
-        trace("merge") << "inserting extension verbatim near top\n";
         base->forms.insertAt(tf, i);
       }
 
       else {
         // normal processing: append everything
-        trace("merge") << "appending extension verbatim/option section\n";
         base->forms.append(tf);
       }
     }
@@ -2600,7 +2599,8 @@ void checkUnusedCustoms(ASTClass const *c)
       CustomCode const *cc = a->asCustomCodeC();
       if (cc->used == false) {
         xfatal(stringb(
-          "unused custom code '" << cc->qualifier << "'"));
+          "unused custom code " << doubleQuote(cc->qualifier) <<
+          " in class " << doubleQuote(c->name)));
       }
     }
   }
@@ -2633,7 +2633,6 @@ static void getOptionArgument(string /*INOUT*/ &oparg, TF_option const *op)
 
 void entry(int argc, char **argv)
 {
-  TRACE_ARGS();
   SourceLocManager mgr;
 
   if (argc < 2) {
@@ -2641,7 +2640,6 @@ void entry(int argc, char **argv)
          << "  options:\n"
          << "    -o<name>   output filenames are name.{h,cc}\n"
          << "               (default is \"file\" for \"file.ast\")\n"
-         << "    -v         verbose operation, particularly for merging\n"
          << "    -nocvr     do not use covariant return types in clone()\n"
          ;
 
@@ -2663,9 +2661,6 @@ void entry(int argc, char **argv)
         basename = argv[1];
         argv++;
       }
-    }
-    else if (argv[0][1] == 'v') {
-      traceAddSys("merge");
     }
     else if (streq(argv[0], "-nocvr")) {
       nocvr = true;
