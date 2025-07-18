@@ -4,6 +4,7 @@
 #include "ast/fakelist.h"              // module under test
 #include "ast/fakelist-gdvalue.h"      // module extension under test
 
+#include "smbase/gdvalue-parser.h"     // gdv::GDValueParser
 #include "smbase/sm-macros.h"          // {OPEN,CLOSE}_ANONYMOUS_NAMESPACE
 #include "smbase/sm-test.h"            // EXPECT_EQ
 
@@ -48,11 +49,11 @@ public:      // methods
     });
   }
 
-  explicit Node(GDValue const &v)
-    : m_x(gdvTo<int>(mapGetSym_parse(v, "x"))),
+  explicit Node(GDValueParser const &p)
+    : m_x(gdvpTo<int>(p.mapGetValueAtSym("x"))),
       next(nullptr)
   {
-    checkTaggedMapTag(v, "Node");
+    p.checkTaggedMapTag("Node");
   }
 };
 
@@ -63,10 +64,10 @@ CLOSE_ANONYMOUS_NAMESPACE
 
 
 template <>
-struct gdv::GDVToNew<Node> {
-  static Node *f(GDValue const &v)
+struct gdv::GDVPToNew<Node> {
+  static Node *f(GDValueParser const &p)
   {
-    return new Node(v);
+    return new Node(p);
   }
 };
 
@@ -95,7 +96,7 @@ void testGDVCycle(FakeList<Node> const *orig, char const *expectGDVN)
   GDValue v(toGDValue(orig));
   EXPECT_EQ(v.asString(), expectGDVN);
 
-  FakeList<Node> *after = gdvTo<FakeList<Node>*>(v);
+  FakeList<Node> *after = gdvpTo<FakeList<Node>*>(GDValueParser(v));
 
   EXPECT_EQ(fl_count(after), fl_count(orig));
 

@@ -4,7 +4,7 @@
 #include "locstr.h"                    // this module
 
 #include "smbase/gdvalue.h"            // gdv::GDValue
-#include "smbase/gdvalue-parse.h"      // gdv::gdvTo
+#include "smbase/gdvalue-parser.h"     // gdv::GDValueParser
 #include "smbase/xassert.h"            // xassert, smbase::xassertPtr
 
 using namespace gdv;
@@ -83,13 +83,13 @@ LocString::operator GDValue() const
 }
 
 
-LocString::LocString(GDValue const &v)
-  : loc(static_cast<SourceLoc>(gdvTo<int>(
-      tupleGetValueAt_parse(v, 0)))),
-    str(xassertPtr(flattenStrTable)->add(gdvTo<std::string>(
-      tupleGetValueAt_parse(v, 1))))
+LocString::LocString(GDValueParser const &p)
+  : loc(static_cast<SourceLoc>(gdvpTo<int>(
+      p.tupleGetValueAt(0)))),
+    str(xassertPtr(flattenStrTable)->add(gdvpTo<std::string>(
+      p.tupleGetValueAt(1))))
 {
-  checkContainerTag(v, "LocString");
+  p.checkContainerTag("LocString");
 }
 
 

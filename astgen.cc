@@ -401,7 +401,7 @@ void HGen::emitFile()
   if (wantToGDValue || wantFromGDValue) {
     out << "#include \"smbase/gdvalue-fwd.h\"                  // gdv::GDValue\n";
     if (wantFromGDValue) {
-      out << "#include \"smbase/gdvalue-parse.h\"                // gdv::gdvTo\n";
+      out << "#include \"smbase/gdvalue-parser.h\"               // gdv::GDValueParser\n";
     }
   }
   if (wantDVisitor()) {
@@ -434,7 +434,7 @@ void HGen::emitFile()
 
         if (wantFromGDValue) {
           out << "template <>\n"
-              << e->name << " gdv::gdvTo<" << e->name << ">(gdv::GDValue const &v);\n";
+              << e->name << " gdv::gdvpTo<" << e->name << ">(gdv::GDValueParser const &p);\n";
         }
 
         out << "\n"
@@ -583,7 +583,7 @@ void HGen::emitTFClass(TF_class const &cls)
   }
 
   if (wantFromGDValue) {
-    out << "  explicit " << cls.super->name << "(gdv::GDValue const &v);\n";
+    out << "  explicit " << cls.super->name << "(gdv::GDValueParser const &p);\n";
     out << "\n";
   }
 
@@ -618,8 +618,8 @@ void HGen::emitTFClass(TF_class const &cls)
 void HGen::emitGDVToNewSpecialization(std::string const &name)
 {
   out << "template <>\n"
-      << "struct gdv::GDVToNew<" << name << "> {\n"
-      << "  static " << name << " *f(gdv::GDValue const &v);\n"
+      << "struct gdv::GDVPToNew<" << name << "> {\n"
+      << "  static " << name << " *f(gdv::GDValueParser const &p);\n"
       << "};\n"
       << "\n";
 }
@@ -907,7 +907,7 @@ void HGen::emitCtor(ASTClass const &ctor, ASTClass const &parent)
   }
 
   if (wantFromGDValue) {
-    out << "  " << ctor.name << "(gdv::GDValue const &v);\n";
+    out << "  explicit " << ctor.name << "(gdv::GDValueParser const &p);\n";
     out << "\n";
   }
 
@@ -940,6 +940,7 @@ void CGen::emitFile()
   if (wantToGDValue || wantFromGDValue) {
     out << "#include \"ast/fakelist-gdvalue.h\"      // toGDValue(List)\n";
     out << "#include \"smbase/astlist-gdvalue.h\"    // toGDValue(ASTList)\n";
+    out << "#include \"smbase/gdvalue-parser.h\"     // gdv::GDValueParser\n";
     out << "#include \"smbase/gdvalue.h\"            // gdv::GDValue\n";
   }
   out << "#include \"smbase/string-util.h\"        // doubleQuote\n";
@@ -1150,10 +1151,10 @@ void CGen::emitTFEnum(TF_enum const *e)
 
   if (wantFromGDValue) {
     out << "template <>\n"
-        << e->name << " gdv::gdvTo<" << e->name << ">(gdv::GDValue const &v)\n"
+        << e->name << " gdv::gdvpTo<" << e->name << ">(gdv::GDValueParser const &p)\n"
         << "{\n"
-        << "  checkIsSymbol(v);\n"
-        << "  return stringTo" << e->name << "(v.symbolGetName());\n"
+        << "  p.checkIsSymbol();\n"
+        << "  return stringTo" << e->name << "(p.symbolGetName());\n"
         << "}\n"
         << "\n"
         ;
@@ -1621,14 +1622,14 @@ void CGen::emitClassFromGDValueCtor(
   std::vector<std::string> inits;
 
   if (!superName.empty()) {
-    inits.push_back(stringb(superName << "(m)"));
+    inits.push_back(stringb(superName << "(p)"));
   }
 
   emitFromGDValueCtorArgs(inits, cls.args);
   emitFromGDValueFields(inits, cls.decls);
 
   out << cls.name << "::"
-      << cls.name << "(gdv::GDValue const &m)\n";
+      << cls.name << "(gdv::GDValueParser const &p)\n";
 
   // TODO: There is ad-hoc code to format the member initializer list
   // in the regular constructor.  Modify that code to first build a
@@ -1662,7 +1663,7 @@ void CGen::emitClassFromGDValueCtor(
   // because a class with subclasses can still be instantiated directly,
   // in which case the tag will not be checked.
   if (!hasChildren) {
-    out << "  checkTaggedMapTag(m, \"" << cls.name << "\");\n";
+    out << "  p.checkTaggedMapTag(\"" << cls.name << "\");\n";
   }
 
   emitFiltered(cls.decls, AC_CTOR, "  ");
@@ -1676,26 +1677,26 @@ void CGen::emitSuperclassFromGDValueCode(TF_class const &cls)
 {
   emitClassFromGDValueCtor(*(cls.super), cls.hasChildren(), "");
 
-  out << cls.super->name << " *gdv::GDVToNew<" << cls.super->name << ">::f(gdv::GDValue const &v)\n"
+  out << cls.super->name << " *gdv::GDVPToNew<" << cls.super->name << ">::f(gdv::GDValueParser const &p)\n"
       << "{\n"
-      << "  checkIsTaggedMap(v);\n";
+      << "  p.checkIsTaggedMap();\n";
 
   if (cls.hasChildren()) {
     // Emit code that checks the symbol to see which subclass to create.
-    out << "  std::string_view tagName = v.taggedContainerGetTagName();\n";
+    out << "  std::string_view tagName = p.taggedContainerGetTagName();\n";
     FOREACH_ASTLIST(ASTClass, cls.ctors, iter) {
       ASTClass const &sub = *(iter.data());
       out << "  if (tagName == \"" << sub.name << "\") {\n"
-          << "    return new " << sub.name << "(v);\n"
+          << "    return new " << sub.name << "(p);\n"
           << "  }\n";
     }
 
-    out << "  xformatsb(\"expected tag to be a subclass of " << cls.super->name
-        << ", but it was \" << v.taggedContainerGetTag().asString());\n";
+    out << "  p.throwError(stringb(\"expected tag to be a subclass of " << cls.super->name
+        << ", but it was \" << p.taggedContainerGetTag().asString()));\n";
   }
   else {
-    out << "  checkContainerTag(v, \"" << cls.super->name << "\");\n";
-    out << "  return new " << cls.super->name << "(v);\n";
+    out << "  p.checkContainerTag(\"" << cls.super->name << "\");\n";
+    out << "  return new " << cls.super->name << "(p);\n";
   }
 
   out << "}\n"
@@ -1708,9 +1709,9 @@ void CGen::emitSubclassFromGDValueCode(
 {
   emitClassFromGDValueCtor(sub, false /*hasChildren*/, super.name);
 
-  out << sub.name << " *gdv::GDVToNew<" << sub.name << ">::f(gdv::GDValue const &v)\n"
+  out << sub.name << " *gdv::GDVPToNew<" << sub.name << ">::f(gdv::GDValueParser const &p)\n"
       << "{\n"
-      << "  return new " << sub.name << "(v);\n"
+      << "  return new " << sub.name << "(p);\n"
       << "}\n"
       << "\n";
 }
@@ -1721,17 +1722,17 @@ std::string CGen::emitFromGDValueField(bool isOwner, rostring type, rostring nam
   // The code that, as a function argument, extracts the GDValue to
   // parse.
   std::string argCode =
-    stringb("(mapGetSym_parse(m, \"" << name << "\"))");
+    stringb("(p.mapGetValueAtSym(\"" << name << "\"))");
 
   if (isTreeNodeOrOwnerPtr(isOwner, type)) {
-    return stringb(name << "(gdv::gdvToNew<" << type << ">" << argCode << ")");
+    return stringb(name << "(gdv::gdvpToNew<" << type << ">" << argCode << ")");
   }
   else if (isPtrKind(type) && !isFakeListType(type)) {
     // Could be circular, etc.
     return "";
   }
   else {
-    return stringb(name << "(gdv::gdvTo<" << type << ">" << argCode << ")");
+    return stringb(name << "(gdv::gdvpTo<" << type << ">" << argCode << ")");
   }
 }
 

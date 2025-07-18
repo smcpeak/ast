@@ -5,6 +5,7 @@
 
 #include "example.ast.gen.h"           // module under test
 
+#include "smbase/gdvalue-parser.h"     // gdv::GDValueParser
 #include "smbase/gdvalue.h"            // gdv::toGDValue
 #include "smbase/save-restore.h"       // SET_RESTORE
 #include "smbase/sm-test.h"            // EXPECT_EQ
@@ -30,7 +31,7 @@ static void testNode()
   GDValue v(toGDValue(*n1));
   EXPECT_EQ(v.asString(), "Node{w:3 x:1 y:2}");
 
-  std::unique_ptr<Node> n2(gdvToNew<Node>(v));
+  std::unique_ptr<Node> n2(gdvpToNew<Node>(GDValueParser(v)));
   EXPECT_EQ(n2->x, n1->x);
   EXPECT_EQ(n2->y, n1->y);
   EXPECT_EQ(n2->w, n1->w);
@@ -57,7 +58,7 @@ static void testNodeList()
       "Node{w:3 x:7 y:8}"
     "]}");
 
-  NodeList *nlist2 = gdvToNew<NodeList>(v);
+  NodeList *nlist2 = gdvpToNew<NodeList>(GDValueParser(v));
   GDValue v2(toGDValue(*nlist2));
   EXPECT_EQ(v, v2);
 
@@ -89,7 +90,8 @@ static void testAnotherList()
   // Deserialize using `table`.
   SET_RESTORE(flattenStrTable, &table);
 
-  std::unique_ptr<AnotherList> list3(gdvToNew<AnotherList>(v));
+  std::unique_ptr<AnotherList> list3(
+    gdvpToNew<AnotherList>(GDValueParser(v)));
   EXPECT_EQ(toGDValue(*list3), v);
 }
 
@@ -99,7 +101,7 @@ static void testOneSuperCycle(Super const *orig, char const *expectGDVN)
   GDValue v(*orig);
   EXPECT_EQ(v.asString(), expectGDVN);
 
-  std::unique_ptr<Super> after(gdv::gdvToNew<Super>(v));
+  std::unique_ptr<Super> after(gdv::gdvpToNew<Super>(GDValueParser(v)));
   EXPECT_EQ(toGDValue(*after), v);
 }
 

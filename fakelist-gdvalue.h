@@ -8,7 +8,7 @@
 #include "ast/fakelist.h"              // FakeList
 
 #include "smbase/gdvalue.h"            // gdv::GDValue
-#include "smbase/gdvalue-parse.h"      // gdv::gdvTo
+#include "smbase/gdvalue-parser.h"     // gdv::GDValueParser
 
 
 // Convert `lst` to a GDV sequence.
@@ -17,7 +17,7 @@ gdv::GDValue toGDValue(FakeList<T> const *lst)
 {
   using namespace gdv;
 
-  GDValue s(GDVK_SEQUENCE);
+  gdv::GDValue s(GDVK_SEQUENCE);
 
   FAKELIST_FOREACH(T, lst, element) {
     s.sequenceAppend(toGDValue(*element));
@@ -28,15 +28,16 @@ gdv::GDValue toGDValue(FakeList<T> const *lst)
 
 
 template <typename T>
-struct gdv::GDVTo<FakeList<T> *> {
-  static FakeList<T> *f(GDValue const &s)
+struct gdv::GDVPTo<FakeList<T> *> {
+  static FakeList<T> *f(gdv::GDValueParser const &p)
   {
-    checkIsSequence(s);
+    p.checkIsSequence();
 
     FakeList<T> *ret = FakeList<T>::emptyList();
 
-    for (auto const &element : s.sequenceGet()) {
-      ret = fl_prepend(ret, gdv::gdvToNew<T>(element));
+    // Iterate with an index so we can keep track of the path.
+    for (gdv::GDVIndex i=0; i < p.containerSize(); ++i) {
+      ret = fl_prepend(ret, gdv::gdvpToNew<T>(p.sequenceGetValueAt(i)));
     }
 
     // As usual for FakeList, we build it in reverse order initially.
