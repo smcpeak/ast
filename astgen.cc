@@ -1572,7 +1572,7 @@ void CGen::emitSubclassToGDValueCode(
 void CGen::emitToGDValueField(bool isOwner, rostring type, rostring name)
 {
   if (isTreeNodeOrOwnerPtr(isOwner, type)) {
-    out << "  m.mapSetSym(\"" << name << "\", "
+    out << "  m.mapSetValueAtSym(\"" << name << "\", "
         <<     "nullablePtrToGDValue(" << name << "));\n";
   }
   else if (isPtrKind(type) && !isFakeListType(type)) {
@@ -1580,7 +1580,7 @@ void CGen::emitToGDValueField(bool isOwner, rostring type, rostring name)
     out << "  // Skip non-owner pointer `" << name << "`.\n";
   }
   else {
-    out << "  m.mapSetSym(\"" << name << "\", "
+    out << "  m.mapSetValueAtSym(\"" << name << "\", "
         <<     "toGDValue(" << name << "));\n";
   }
 }
