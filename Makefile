@@ -19,6 +19,9 @@ ifeq ($(SMFLEX),)
 # Then try without the extension.
 SMFLEX    = $(wildcard $(SMFLEXDIR)/smflex)
 endif
+ifeq ($(SMFLEX),)
+$(error smflex executable not found in $(SMFLEXDIR))
+endif
 
 
 # C++ compiler.
